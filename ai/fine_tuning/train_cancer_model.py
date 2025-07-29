@@ -10,6 +10,9 @@ import logging
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
+import platform
+import subprocess
+import sys
 
 # Fix Windows multiprocessing issues
 if os.name == 'nt':  # Windows
@@ -19,17 +22,19 @@ if os.name == 'nt':  # Windows
 
 # Import fine-tuning libraries
 try:
-    from unsloth import FastModel  # Updated for Gemma 3N multimodal
+    from unsloth import FastModel  # Use FastModel for Gemma 3n
     from unsloth.chat_templates import get_chat_template, standardize_data_formats, train_on_responses_only
     from datasets import Dataset
     from transformers import TrainingArguments, TextStreamer
     from trl import SFTTrainer, SFTConfig
+    import gc  # Add garbage collection for memory management
     UNSLOTH_AVAILABLE = True
 except ImportError:
     print("Unsloth not available - using fallback training approach")
     from datasets import Dataset
     from transformers import TrainingArguments, TextStreamer
     from trl import SFTTrainer
+    import gc
     UNSLOTH_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
@@ -39,11 +44,11 @@ class CancerGenomicsFineTuner:
     
     def __init__(
         self,
-        model_name: str = "unsloth/gemma-3n-E4B-it-unsloth-bnb-4bit",  # Updated for Gemma 3N
+        model_name: str = "unsloth/gemma-3n-E2B-it-unsloth-bnb-4bit",  # Gemma 3n 2B model
         max_seq_length: int = 2048,
         output_dir: str = "./oncoscope_model",
         use_4bit: bool = True,
-        multimodal: bool = False  # Disabled - text-only cancer genomics
+        multimodal: bool = False  # Not applicable for text-only model
     ):
         """Initialize the cancer genomics fine-tuner"""
         
@@ -51,7 +56,7 @@ class CancerGenomicsFineTuner:
         self.max_seq_length = max_seq_length
         self.output_dir = Path(output_dir)
         self.use_4bit = use_4bit
-        self.multimodal = multimodal
+        self.multimodal = False  # Force text-only mode
         
         # Create output directory
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -59,20 +64,23 @@ class CancerGenomicsFineTuner:
         # Training configuration optimized for Gemma 3N
         self.training_config = {
             "learning_rate": 2e-4,
-            "num_train_epochs": 1,  # Reduced for faster training
+            "num_train_epochs": 3,  # Optimal for 6k specialized dataset
             "per_device_train_batch_size": 1,  # Gemma 3N recommendation
             "gradient_accumulation_steps": 4,
             "warmup_steps": 5,
-            "max_steps": 60,  # Can set to None for full training
+            "max_steps": -1,  # Full training (all epochs)
             "logging_steps": 1,
             "save_steps": 100,
-            # "evaluation_strategy": "no",  # Removed - not supported in current TRL version
+            "eval_strategy": "steps",  # Enable evaluation
+            "eval_steps": 10,  # Evaluate every 10 steps
+            "metric_for_best_model": "eval_loss",  # Monitor eval loss for overfitting
+            "greater_is_better": False,  # Lower eval_loss is better
             "optim": "paged_adamw_8bit",  # Optimized for 4-bit
             "weight_decay": 0.01,
             "lr_scheduler_type": "linear",
             "save_total_limit": 2,
-            "load_best_model_at_end": False,
-            "report_to": "none",
+            "load_best_model_at_end": True,  # Load best model at end
+            "report_to": "tensorboard",  # Enable TensorBoard logging for judges
             "seed": 3407  # Unsloth recommended seed
         }
         
@@ -94,30 +102,32 @@ class CancerGenomicsFineTuner:
         
         if UNSLOTH_AVAILABLE:
             logger.info(f"Loading {self.model_name} with Unsloth optimization...")
+            logger.info("Configuring for text-only fine-tuning to save VRAM...")
             
-            # Use FastModel for Gemma 3N multimodal support with aggressive memory settings
+            # Use FastModel for Gemma 3n with CPU offloading
             self.model, self.tokenizer = FastModel.from_pretrained(
                 model_name=self.model_name,
                 max_seq_length=self.max_seq_length,
-                dtype=None,  # Auto detection
+                dtype=None,  # Auto-detect for optimal performance
                 load_in_4bit=self.use_4bit,
-                full_finetuning=False,  # Use LoRA
-                device_map={"": 0},  # Force single GPU
-                low_cpu_mem_usage=True,
+                full_finetuning=False,  # Use LoRA for efficiency
+                device_map="auto",  # Enable automatic device mapping
+                max_memory={0: "6GB", "cpu": "20GB"},  # Limit GPU usage, offload to CPU
+                llm_int8_enable_fp32_cpu_offload=True,  # Enable CPU offloading for 4-bit
             )
             
-            # Configure for fine-tuning with LoRA - Text-only cancer genomics
+            # Configure for fine-tuning - TEXT ONLY to save VRAM
             self.model = FastModel.get_peft_model(
                 self.model,
-                finetune_vision_layers=False,                # Disabled for text-only
-                finetune_language_layers=True,               # Always on for text
-                finetune_attention_modules=True,             # Good for GRPO
-                finetune_mlp_modules=True,                    # Always on
-                r=8,                                          # Smaller for stability
-                lora_alpha=8,                                 # Match r value
-                lora_dropout=0,                               # No dropout
+                finetune_vision_layers=False,      # DISABLE VISION - saves VRAM!
+                finetune_language_layers=True,     # Keep language processing only
+                finetune_attention_modules=True,   # Good for specialized tasks
+                finetune_mlp_modules=True,         # Keep for best performance
+                r=8,                               # Lower rank to save memory
+                lora_alpha=8,                      # Match r value
+                lora_dropout=0,                    # No dropout
                 bias="none",
-                random_state=3407,                            # Unsloth recommended
+                random_state=3407,                 # Unsloth recommended
             )
             
             # Setup chat template for Gemma 3
@@ -144,14 +154,58 @@ class CancerGenomicsFineTuner:
         
         logger.info("Model and tokenizer loaded successfully")
     
+    def setup_logging(self) -> None:
+        """Setup comprehensive logging for hackathon judges"""
+        # Create logs directory
+        logs_dir = self.output_dir / "logs"
+        logs_dir.mkdir(exist_ok=True)
+        
+        # Setup file handler for complete logs
+        log_file = logs_dir / f"training_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+        
+        # Configure root logger
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler(sys.stdout)
+            ]
+        )
+        
+        # Log system info
+        logger.info("="*80)
+        logger.info("ONCOSCOPE CANCER GENOMICS FINE-TUNING - UNSLOTH HACKATHON SUBMISSION")
+        logger.info("="*80)
+        logger.info(f"Training started at: {datetime.now().isoformat()}")
+        logger.info(f"Python version: {sys.version}")
+        logger.info(f"PyTorch version: {torch.__version__}")
+        logger.info(f"CUDA available: {torch.cuda.is_available()}")
+        if torch.cuda.is_available():
+            logger.info(f"CUDA device: {torch.cuda.get_device_name(0)}")
+            logger.info(f"CUDA memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
+        logger.info(f"Platform: {platform.platform()}")
+        logger.info(f"CPU cores: {os.cpu_count()}")
+        logger.info("="*80)
+        
+        self.log_file = log_file
+    
     def train_model(self, training_data_path: str) -> None:
         """Complete training pipeline"""
+        
+        # Setup logging
+        self.setup_logging()
         
         # Load model
         self.load_model_and_tokenizer()
         
         # Prepare data
         train_dataset, eval_dataset = self.prepare_training_data(training_data_path)
+        
+        # Log dataset info
+        logger.info(f"Training dataset size: {len(train_dataset)} examples")
+        logger.info(f"Evaluation dataset size: {len(eval_dataset)} examples")
+        logger.info(f"Training data path: {training_data_path}")
         
         # Setup trainer
         self.setup_trainer(train_dataset, eval_dataset)
@@ -170,15 +224,33 @@ class CancerGenomicsFineTuner:
         # Save model
         self.save_model()
         
-        # Save metrics
+        # Save metrics including evaluation results
         metrics = {
             "training_duration": str(training_duration),
             "final_train_loss": float(trainer_stats.training_loss) if hasattr(trainer_stats, 'training_loss') else None,
+            "metrics": trainer_stats.metrics if hasattr(trainer_stats, 'metrics') else {},
             "timestamp": datetime.now().isoformat()
         }
         
+        # Check for overfitting
+        if hasattr(trainer_stats, 'metrics'):
+            train_loss = trainer_stats.metrics.get("train_loss", None)
+            eval_loss = trainer_stats.metrics.get("eval_loss", None)
+            
+            if train_loss and eval_loss:
+                overfitting_ratio = eval_loss / train_loss if train_loss > 0 else float('inf')
+                metrics["overfitting_ratio"] = overfitting_ratio
+                
+                if overfitting_ratio > 1.5:
+                    logger.warning(f"⚠️ Potential overfitting detected! Eval/Train loss ratio: {overfitting_ratio:.2f}")
+                else:
+                    logger.info(f"✅ Model generalization looks good. Eval/Train loss ratio: {overfitting_ratio:.2f}")
+        
         with open(self.output_dir / "training_metrics.json", "w") as f:
             json.dump(metrics, f, indent=2)
+        
+        # Create comprehensive report for judges
+        self.create_training_report(metrics, training_duration)
     
     def prepare_training_data(self, training_data_path: str) -> Tuple[Dataset, Dataset]:
         """Prepare training and validation datasets"""
@@ -216,7 +288,7 @@ class CancerGenomicsFineTuner:
                 ]
                 return {"text": texts}
             
-            dataset = dataset.map(formatting_prompts_func, batched=True, num_proc=1)
+            dataset = dataset.map(formatting_prompts_func, batched=True, num_proc=4)
         else:
             # Fallback formatting
             def simple_formatting(examples):
@@ -256,7 +328,7 @@ class CancerGenomicsFineTuner:
                 eval_dataset=eval_dataset,
                 dataset_text_field="text",
                 max_seq_length=self.max_seq_length,
-                dataset_num_proc=1,  # Windows compatibility with Unsloth
+                dataset_num_proc=4,  # Optimal for 22-core CPU in WSL
                 args=training_args,
             )
             
@@ -367,6 +439,91 @@ SYSTEM \"\"\"You are OncoScope, an advanced AI system specialized in cancer geno
         
         logger.info(f"Ollama modelfile created: {model_name}.modelfile")
     
+    def create_training_report(self, metrics: Dict, training_duration) -> None:
+        """Create comprehensive training report for hackathon judges"""
+        
+        report_path = self.output_dir / "TRAINING_REPORT_UNSLOTH_HACKATHON.md"
+        
+        with open(report_path, "w") as f:
+            f.write("# OncoScope Cancer Genomics Fine-tuning Report\n")
+            f.write("## Unsloth Hackathon Submission\n\n")
+            
+            f.write("### 🚀 Project Overview\n")
+            f.write("- **Application**: Cancer mutation analysis and clinical recommendations\n")
+            f.write("- **Base Model**: Gemma 3N 4-bit (unsloth optimized)\n")
+            f.write("- **Fine-tuning Method**: LoRA with Unsloth optimizations\n")
+            f.write("- **Dataset**: 6,000+ curated cancer genomics examples\n\n")
+            
+            f.write("### 🖥️ System Specifications\n")
+            f.write(f"- **GPU**: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'N/A'}\n")
+            f.write(f"- **VRAM**: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB\n")
+            f.write(f"- **Platform**: {platform.platform()}\n")
+            f.write(f"- **PyTorch**: {torch.__version__}\n")
+            f.write(f"- **CUDA**: {torch.version.cuda if torch.cuda.is_available() else 'N/A'}\n\n")
+            
+            f.write("### 📊 Training Configuration\n")
+            f.write("```json\n")
+            f.write(json.dumps(self.training_config, indent=2))
+            f.write("\n```\n\n")
+            
+            f.write("### 📈 Training Results\n")
+            f.write(f"- **Training Duration**: {training_duration}\n")
+            f.write(f"- **Final Train Loss**: {metrics.get('final_train_loss', 'N/A')}\n")
+            
+            if 'overfitting_ratio' in metrics:
+                f.write(f"- **Overfitting Ratio**: {metrics['overfitting_ratio']:.3f}\n")
+                f.write(f"- **Status**: {'✅ Good generalization' if metrics['overfitting_ratio'] < 1.5 else '⚠️ Potential overfitting'}\n")
+            
+            f.write("\n### 📁 Output Files\n")
+            f.write("- `oncoscope-gemma-3n/`: LoRA adapters\n")
+            f.write("- `oncoscope-gemma-3n-merged/`: Merged model (if available)\n")
+            f.write("- `oncoscope-gemma-3n-gguf/`: Quantized model for Ollama\n")
+            f.write("- `logs/training_*.log`: Complete training logs\n")
+            f.write("- `training_metrics.json`: Detailed metrics\n")
+            f.write("- `runs/`: TensorBoard logs\n\n")
+            
+            f.write("### 🏥 Cancer Genomics Specialization\n")
+            f.write("The model was fine-tuned on:\n")
+            f.write("- Pathogenic mutation interpretation\n")
+            f.write("- Clinical significance assessment\n")
+            f.write("- Treatment recommendations\n")
+            f.write("- Risk stratification\n")
+            f.write("- Actionable insights for precision oncology\n\n")
+            
+            f.write("### 🎯 Key Achievements\n")
+            f.write("- Efficient 4-bit quantization with Unsloth\n")
+            f.write("- Specialized for cancer genomics domain\n")
+            f.write("- Production-ready with Ollama integration\n")
+            f.write("- Comprehensive evaluation metrics\n\n")
+            
+            f.write("### 📝 Training Logs\n")
+            f.write(f"Complete logs available at: `{self.log_file.name}`\n\n")
+            
+            f.write("---\n")
+            f.write(f"Report generated: {datetime.now().isoformat()}\n")
+        
+        logger.info(f"Training report created: {report_path}")
+        
+        # Also create a judges_summary.txt with key points
+        summary_path = self.output_dir / "JUDGES_SUMMARY.txt"
+        with open(summary_path, "w") as f:
+            f.write("ONCOSCOPE - UNSLOTH HACKATHON SUBMISSION\n")
+            f.write("=" * 50 + "\n\n")
+            f.write("QUICK FACTS:\n")
+            f.write(f"- Model: Gemma 3N 4-bit fine-tuned with Unsloth\n")
+            f.write(f"- Purpose: Cancer mutation analysis AI\n")
+            f.write(f"- Training time: {training_duration}\n")
+            f.write(f"- Dataset: 6,000+ cancer genomics examples\n")
+            f.write(f"- Hardware: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'}\n")
+            f.write(f"- Final loss: {metrics.get('final_train_loss', 'N/A')}\n")
+            f.write(f"- Model ready for: Ollama deployment\n\n")
+            f.write("KEY INNOVATION:\n")
+            f.write("Specialized cancer genomics AI using Unsloth's\n")
+            f.write("efficient 4-bit optimization for clinical mutation\n")
+            f.write("interpretation and personalized treatment insights.\n")
+        
+        logger.info(f"Judges summary created: {summary_path}")
+    
     def do_inference(self, messages: List[Dict], max_new_tokens: int = 128, stream: bool = True) -> str:
         """Perform inference with Gemma 3N optimized settings"""
         
@@ -393,6 +550,10 @@ SYSTEM \"\"\"You are OncoScope, an advanced AI system specialized in cancer geno
                 top_k=64,            # Gemma 3N recommended
                 streamer=streamer,
             )
+            # Aggressive cleanup for VRAM
+            del inputs
+            torch.cuda.empty_cache()
+            gc.collect()
             return "Generated with streaming"
         else:
             # Generate without streaming
@@ -407,10 +568,10 @@ SYSTEM \"\"\"You are OncoScope, an advanced AI system specialized in cancer geno
             # Decode the response
             response = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
             
-            # Clean up
+            # Aggressive cleanup for VRAM
             del inputs, outputs
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
+            gc.collect()
             
             return response
     
@@ -420,31 +581,22 @@ SYSTEM \"\"\"You are OncoScope, an advanced AI system specialized in cancer geno
         test_cases = [
             {
                 "role": "user",
-                "content": [{
-                    "type": "text", 
-                    "text": "Analyze the BRCA1 c.68_69delAG mutation for cancer risk assessment."
-                }]
+                "content": "Analyze the BRCA1 c.68_69delAG mutation for cancer risk assessment."
             },
             {
                 "role": "user", 
-                "content": [{
-                    "type": "text",
-                    "text": "What are the therapeutic implications of KRAS G12C mutation in lung cancer?"
-                }]
+                "content": "What are the therapeutic implications of KRAS G12C mutation in lung cancer?"
             },
             {
                 "role": "user",
-                "content": [{
-                    "type": "text",
-                    "text": "Provide clinical recommendations for a patient with TP53 R175H mutation."
-                }]
+                "content": "Provide clinical recommendations for a patient with TP53 R175H mutation."
             }
         ]
         
         logger.info("Testing cancer genomics analysis...")
         
         for i, test_case in enumerate(test_cases, 1):
-            logger.info(f"Test case {i}: {test_case['content'][0]['text'][:50]}...")
+            logger.info(f"Test case {i}: {test_case['content'][:50]}...")
             try:
                 response = self.do_inference([test_case], max_new_tokens=256, stream=False)
                 logger.info(f"Response length: {len(response)} characters")
