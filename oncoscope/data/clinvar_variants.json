@@ -1,0 +1,188 @@
+{
+  "BRCA1": {
+    "c.68_69delAG": {
+      "protein_change": "p.E23fs",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.95,
+      "review_status": "4_stars",
+      "cancer_types": ["breast", "ovarian"],
+      "frequency": "1 in 400 Ashkenazi Jewish individuals",
+      "mechanism": "Frameshift leading to loss of DNA repair function",
+      "clinical_interpretation": "High risk for hereditary breast and ovarian cancer syndrome",
+      "references": ["ClinVar:17661", "PMID:20104584"],
+      "last_updated": "2024-01-15"
+    },
+    "c.5266dupC": {
+      "protein_change": "p.Q1756fs",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.93,
+      "review_status": "4_stars",
+      "cancer_types": ["breast", "ovarian"],
+      "frequency": "1 in 800 individuals",
+      "mechanism": "Frameshift disrupting BRCT domains",
+      "clinical_interpretation": "High risk for hereditary breast and ovarian cancer syndrome",
+      "references": ["ClinVar:17662", "PMID:22234738"],
+      "last_updated": "2024-01-15"
+    },
+    "c.181T>G": {
+      "protein_change": "p.C61G",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.91,
+      "review_status": "3_stars",
+      "cancer_types": ["breast", "ovarian"],
+      "frequency": "rare",
+      "mechanism": "Disruption of zinc finger domain",
+      "clinical_interpretation": "High risk for hereditary breast and ovarian cancer syndrome",
+      "references": ["ClinVar:17663"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "BRCA2": {
+    "c.5946delT": {
+      "protein_change": "p.S1982fs",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.94,
+      "review_status": "4_stars",
+      "cancer_types": ["breast", "ovarian", "prostate"],
+      "frequency": "1 in 100 Ashkenazi Jewish individuals",
+      "mechanism": "Frameshift disrupting DNA binding domain",
+      "clinical_interpretation": "High risk for hereditary breast and ovarian cancer syndrome",
+      "references": ["ClinVar:17664", "PMID:20104584"],
+      "last_updated": "2024-01-15"
+    },
+    "c.9097dupA": {
+      "protein_change": "p.T3033fs",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.92,
+      "review_status": "4_stars",
+      "cancer_types": ["breast", "ovarian"],
+      "frequency": "rare",
+      "mechanism": "Frameshift leading to premature termination",
+      "clinical_interpretation": "High risk for hereditary breast and ovarian cancer syndrome",
+      "references": ["ClinVar:17665"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "TP53": {
+    "c.524G>A": {
+      "protein_change": "p.R175H",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.95,
+      "review_status": "4_stars",
+      "cancer_types": ["breast", "sarcoma", "brain", "adrenal"],
+      "frequency": "hotspot mutation",
+      "mechanism": "Hotspot mutation disrupting DNA binding domain",
+      "clinical_interpretation": "Li-Fraumeni syndrome - very high cancer risk",
+      "references": ["ClinVar:17666", "PMID:12117737"],
+      "last_updated": "2024-01-15"
+    },
+    "c.733G>A": {
+      "protein_change": "p.G245S",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.92,
+      "review_status": "3_stars",
+      "cancer_types": ["lung", "colorectal", "breast"],
+      "frequency": "rare",
+      "mechanism": "Disrupts DNA binding specificity",
+      "clinical_interpretation": "Li-Fraumeni syndrome - very high cancer risk",
+      "references": ["ClinVar:17667"],
+      "last_updated": "2024-01-15"
+    },
+    "c.817C>T": {
+      "protein_change": "p.R273C",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.93,
+      "review_status": "4_stars",
+      "cancer_types": ["breast", "colorectal", "lung"],
+      "frequency": "hotspot mutation",
+      "mechanism": "Contact mutant affecting DNA binding",
+      "clinical_interpretation": "Li-Fraumeni syndrome - very high cancer risk",
+      "references": ["ClinVar:17668", "PMID:12117737"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "MLH1": {
+    "c.677G>A": {
+      "protein_change": "p.A226T",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.89,
+      "review_status": "3_stars",
+      "cancer_types": ["colorectal", "endometrial"],
+      "frequency": "rare",
+      "mechanism": "Disrupts mismatch repair function",
+      "clinical_interpretation": "Lynch syndrome - high colorectal and endometrial cancer risk",
+      "references": ["ClinVar:17669"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "MSH2": {
+    "c.942+3A>T": {
+      "protein_change": "splice site",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.91,
+      "review_status": "4_stars",
+      "cancer_types": ["colorectal", "endometrial"],
+      "frequency": "rare",
+      "mechanism": "Splice site disruption leading to protein truncation",
+      "clinical_interpretation": "Lynch syndrome - high colorectal and endometrial cancer risk",
+      "references": ["ClinVar:17670"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "APC": {
+    "c.3927_3931delAAAGA": {
+      "protein_change": "p.E1309fs",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.94,
+      "review_status": "4_stars",
+      "cancer_types": ["colorectal"],
+      "frequency": "rare",
+      "mechanism": "Frameshift in mutation cluster region",
+      "clinical_interpretation": "Familial adenomatous polyposis - very high colorectal cancer risk",
+      "references": ["ClinVar:17671"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "PALB2": {
+    "c.3113G>A": {
+      "protein_change": "p.W1038X",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.88,
+      "review_status": "3_stars",
+      "cancer_types": ["breast"],
+      "frequency": "rare",
+      "mechanism": "Nonsense mutation leading to protein truncation",
+      "clinical_interpretation": "Moderate to high breast cancer risk",
+      "references": ["ClinVar:17672"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "CHEK2": {
+    "c.1100delC": {
+      "protein_change": "p.T367fs",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.85,
+      "review_status": "3_stars",
+      "cancer_types": ["breast"],
+      "frequency": "1% in Northern European populations",
+      "mechanism": "Frameshift leading to loss of kinase function",
+      "clinical_interpretation": "Moderate breast cancer risk increase",
+      "references": ["ClinVar:17673"],
+      "last_updated": "2024-01-15"
+    }
+  },
+  "ATM": {
+    "c.5932G>T": {
+      "protein_change": "p.E1978X",
+      "clinical_significance": "PATHOGENIC",
+      "pathogenicity_score": 0.87,
+      "review_status": "3_stars",
+      "cancer_types": ["breast"],
+      "frequency": "rare",
+      "mechanism": "Nonsense mutation disrupting DNA damage response",
+      "clinical_interpretation": "Moderate breast cancer risk increase",
+      "references": ["ClinVar:17674"],
+      "last_updated": "2024-01-15"
+    }
+  }
+}

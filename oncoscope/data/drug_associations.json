@@ -1,0 +1,274 @@
+{
+  "erlotinib": {
+    "targets": [
+      "EGFR"
+    ],
+    "class": "EGFR Tyrosine Kinase Inhibitor",
+    "generation": "1st",
+    "fda_approved": true,
+    "indications": [
+      "Non-small cell lung cancer"
+    ],
+    "mechanism": "Reversibly inhibits EGFR tyrosine kinase",
+    "biomarkers": [
+      "EGFR mutations"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "70% (EGFR+ first-line)",
+    "clinical_context": "standard approval pathway",
+    "fda_verified": true,
+    "nda_number": "021743",
+    "approval_date": "2004-11-18",
+    "special_designations": [],
+    "companion_diagnostics": []
+  },
+  "osimertinib": {
+    "targets": [
+      "EGFR",
+      "EGFR T790M"
+    ],
+    "class": "EGFR Tyrosine Kinase Inhibitor",
+    "generation": "3rd",
+    "fda_approved": true,
+    "indications": [
+      "EGFR-mutated NSCLC",
+      "T790M resistance NSCLC"
+    ],
+    "mechanism": "Irreversibly inhibits EGFR and T790M mutant",
+    "biomarkers": [
+      "EGFR exon 19 deletion",
+      "EGFR L858R",
+      "EGFR T790M"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "70-80% (first-line EGFR+)",
+    "clinical_context": "breakthrough therapy, multiple indications",
+    "fda_verified": true,
+    "nda_number": "208065",
+    "approval_date": "2015-11-13",
+    "special_designations": [
+      "Breakthrough Therapy"
+    ],
+    "companion_diagnostics": []
+  },
+  "sotorasib": {
+    "targets": [
+      "KRAS G12C"
+    ],
+    "class": "KRAS Inhibitor",
+    "generation": "1st",
+    "fda_approved": true,
+    "indications": [
+      "KRAS G12C mutated locally advanced or metastatic NSCLC"
+    ],
+    "mechanism": "Covalently binds KRAS G12C in GDP-bound state",
+    "biomarkers": [
+      "KRAS G12C mutation"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "37% overall response rate",
+    "clinical_context": "first-in-class, accelerated approval",
+    "fda_verified": true,
+    "nda_number": "214665",
+    "approval_date": "2021-05-28",
+    "special_designations": [
+      "Accelerated Approval",
+      "First-in-Class"
+    ],
+    "companion_diagnostics": []
+  },
+  "adagrasib": {
+    "targets": [
+      "KRAS G12C"
+    ],
+    "class": "KRAS Inhibitor",
+    "generation": "1st",
+    "fda_approved": true,
+    "indications": [
+      "KRAS G12C mutated locally advanced or metastatic NSCLC",
+      "KRAS G12C mutated colorectal cancer"
+    ],
+    "mechanism": "Covalently binds KRAS G12C, locks in inactive state",
+    "biomarkers": [
+      "KRAS G12C mutation"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "43% (NSCLC), 22% (CRC)",
+    "clinical_context": "accelerated approval, multiple indications",
+    "fda_verified": true,
+    "nda_number": "215400",
+    "approval_date": "2022-12-12",
+    "special_designations": [
+      "Accelerated Approval"
+    ],
+    "companion_diagnostics": []
+  },
+  "olaparib": {
+    "targets": [
+      "BRCA1",
+      "BRCA2",
+      "HRD"
+    ],
+    "class": "PARP Inhibitor",
+    "generation": "1st",
+    "fda_approved": true,
+    "indications": [
+      "BRCA-mutated advanced ovarian cancer",
+      "BRCA-mutated HER2-negative metastatic breast cancer",
+      "BRCA-mutated metastatic pancreatic cancer",
+      "BRCA-mutated metastatic castration-resistant prostate cancer"
+    ],
+    "mechanism": "Inhibits PARP1/2, exploits homologous recombination deficiency",
+    "biomarkers": [
+      "germline BRCA mutations",
+      "HRD-positive"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "60% (BRCA+ ovarian)",
+    "clinical_context": "first-in-class, multiple indications",
+    "fda_verified": true,
+    "nda_number": "206162",
+    "approval_date": "2014-12-19",
+    "special_designations": [
+      "First-in-Class"
+    ],
+    "companion_diagnostics": [
+      "BRACAnalysis CDx",
+      "FoundationFocus CDxBRCA"
+    ]
+  },
+  "talazoparib": {
+    "targets": [
+      "BRCA1",
+      "BRCA2"
+    ],
+    "class": "PARP Inhibitor",
+    "generation": "1st",
+    "fda_approved": true,
+    "indications": [
+      "BRCA-mutated HER2-negative locally advanced or metastatic breast cancer"
+    ],
+    "mechanism": "PARP trapping, prevents DNA repair in BRCA-deficient cells",
+    "biomarkers": [
+      "germline BRCA1 mutations",
+      "germline BRCA2 mutations"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "63% (BRCA+ breast)",
+    "clinical_context": "standard approval pathway",
+    "fda_verified": true,
+    "nda_number": "211651",
+    "approval_date": "2018-10-16",
+    "special_designations": [],
+    "companion_diagnostics": [
+      "BRACAnalysis CDx"
+    ]
+  },
+  "alpelisib": {
+    "targets": [
+      "PIK3CA"
+    ],
+    "class": "PI3K Inhibitor",
+    "generation": "2nd",
+    "fda_approved": true,
+    "indications": [
+      "PIK3CA-mutated, hormone receptor-positive, HER2-negative, advanced or metastatic breast cancer"
+    ],
+    "mechanism": "Selectively inhibits PI3K\u03b1 isoform",
+    "biomarkers": [
+      "PIK3CA mutations"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "26% (PIK3CA+ breast)",
+    "clinical_context": "standard approval pathway",
+    "fda_verified": true,
+    "nda_number": "212526",
+    "approval_date": "2019-05-24",
+    "special_designations": [],
+    "companion_diagnostics": [
+      "therascreen PIK3CA RGQ PCR Kit"
+    ]
+  },
+  "vemurafenib": {
+    "targets": [
+      "BRAF V600E"
+    ],
+    "class": "BRAF Inhibitor",
+    "generation": "1st",
+    "fda_approved": true,
+    "indications": [
+      "BRAF V600E mutation-positive unresectable or metastatic melanoma"
+    ],
+    "mechanism": "Inhibits mutant BRAF V600E kinase activity",
+    "biomarkers": [
+      "BRAF V600E mutation"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "48% (BRAF+ melanoma)",
+    "clinical_context": "standard approval pathway",
+    "fda_verified": true,
+    "nda_number": "202429",
+    "approval_date": "2011-08-17",
+    "special_designations": [],
+    "companion_diagnostics": [
+      "cobas 4800 BRAF V600 Mutation Test"
+    ]
+  },
+  "dabrafenib": {
+    "targets": [
+      "BRAF V600E",
+      "BRAF V600K"
+    ],
+    "class": "BRAF Inhibitor",
+    "generation": "2nd",
+    "fda_approved": true,
+    "indications": [
+      "BRAF V600E mutation-positive unresectable or metastatic melanoma",
+      "BRAF V600E mutation-positive metastatic NSCLC",
+      "BRAF V600E mutation-positive anaplastic thyroid cancer"
+    ],
+    "mechanism": "Selective BRAF kinase inhibitor",
+    "biomarkers": [
+      "BRAF V600E mutation",
+      "BRAF V600K mutation"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "50% (BRAF+ melanoma)",
+    "clinical_context": "multiple indications",
+    "fda_verified": true,
+    "nda_number": "202806",
+    "approval_date": "2013-05-29",
+    "special_designations": [],
+    "companion_diagnostics": []
+  },
+  "crizotinib": {
+    "targets": [
+      "ALK",
+      "ROS1",
+      "MET"
+    ],
+    "class": "ALK Inhibitor",
+    "generation": "1st",
+    "fda_approved": true,
+    "indications": [
+      "ALK-positive metastatic NSCLC",
+      "ROS1-positive metastatic NSCLC"
+    ],
+    "mechanism": "Multi-kinase inhibitor targeting ALK, ROS1, MET",
+    "biomarkers": [
+      "ALK rearrangements",
+      "ROS1 rearrangements"
+    ],
+    "resistance_mutations": [],
+    "response_rate": "65% (ALK+), 80% (ROS1+)",
+    "clinical_context": "multiple indications",
+    "fda_verified": true,
+    "nda_number": "202570",
+    "approval_date": "2011-08-26",
+    "special_designations": [],
+    "companion_diagnostics": [
+      "Vysis ALK Break Apart FISH Probe Kit",
+      "VENTANA ALK (D5F3) CDx Assay"
+    ]
+  }
+}

@@ -1,0 +1,669 @@
+{
+  "lung_adenocarcinoma": {
+    "tcga_study_code": "LUAD",
+    "most_frequent_mutations": {
+      "KRAS": {
+        "frequency": "32%",
+        "subtypes": [
+          "G12C: 13%",
+          "G12V: 9%",
+          "G12D: 7%"
+        ]
+      },
+      "EGFR": {
+        "frequency": "14%",
+        "subtypes": [
+          "L858R: 8%",
+          "Exon 19 del: 6%"
+        ]
+      },
+      "TP53": {
+        "frequency": "50%",
+        "subtypes": [
+          "Various missense: 45%",
+          "Nonsense: 5%"
+        ]
+      },
+      "STK11": {
+        "frequency": "17%",
+        "subtypes": [
+          "Truncating: 15%"
+        ]
+      },
+      "KEAP1": {
+        "frequency": "17%",
+        "subtypes": [
+          "Various: 17%"
+        ]
+      },
+      "ALK": {
+        "frequency": "4%",
+        "subtypes": [
+          "EML4-ALK: 3%",
+          "Other fusions: 1%"
+        ]
+      },
+      "ROS1": {
+        "frequency": "2%",
+        "subtypes": [
+          "CD74-ROS1: 1%",
+          "Other fusions: 1%"
+        ]
+      },
+      "BRAF": {
+        "frequency": "8%",
+        "subtypes": [
+          "V600E: 3%",
+          "Non-V600: 5%"
+        ]
+      },
+      "MET": {
+        "frequency": "4%",
+        "subtypes": [
+          "Exon 14 skipping: 3%",
+          "Amplification: 1%"
+        ]
+      },
+      "RET": {
+        "frequency": "1%",
+        "subtypes": [
+          "KIF5B-RET: 0.5%",
+          "CCDC6-RET: 0.5%"
+        ]
+      }
+    },
+    "clinical_characteristics": {
+      "median_age_at_diagnosis": 66,
+      "five_year_survival_rate": "23%",
+      "microsatellite_instability_rate": null,
+      "tumor_mutational_burden": "High (median: 8.4 mutations/Mb)"
+    },
+    "therapeutic_targets": [
+      {
+        "gene": "KRAS",
+        "frequency": "32%",
+        "actionable_subtypes": [
+          "G12C"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "EGFR",
+        "frequency": "14%",
+        "actionable_subtypes": [
+          "L858R",
+          "Exon 19 del",
+          "T790M"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "ALK",
+        "frequency": "4%",
+        "actionable_subtypes": [
+          "EML4-ALK",
+          "Other fusions"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "ROS1",
+        "frequency": "2%",
+        "actionable_subtypes": [
+          "CD74-ROS1",
+          "Other fusions"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "BRAF",
+        "frequency": "8%",
+        "actionable_subtypes": [
+          "V600E",
+          "V600K"
+        ],
+        "clinical_significance": "Targetable"
+      }
+    ],
+    "biomarker_prevalence": {
+      "KRAS": "32%",
+      "EGFR": "14%",
+      "TP53": "50%",
+      "STK11": "17%",
+      "KEAP1": "17%",
+      "ALK": "4%",
+      "ROS1": "2%",
+      "BRAF": "8%",
+      "MET": "4%",
+      "RET": "1%"
+    },
+    "clinical_actionability": {
+      "overall_actionability": "5/10 genes targetable",
+      "actionable_mutations": {
+        "KRAS": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "EGFR": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "TP53": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "STK11": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "KEAP1": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "ALK": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "ROS1": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "BRAF": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "MET": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "RET": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        }
+      },
+      "precision_medicine_eligibility": 0.5
+    },
+    "data_sources": "TCGA LUAD (n=585), Lung Cancer Mutation Consortium (n=1007)",
+    "verification_date": "2025-07-28T23:11:35.958821",
+    "confidence_level": "TCGA_VERIFIED",
+    "sample_size": "1592 samples"
+  },
+  "breast": {
+    "tcga_study_code": "BRCA",
+    "most_frequent_mutations": {
+      "PIK3CA": {
+        "frequency": "36%",
+        "subtypes": [
+          "H1047R: 15%",
+          "E545K: 8%",
+          "E542K: 6%"
+        ]
+      },
+      "TP53": {
+        "frequency": "37%",
+        "subtypes": [
+          "Various missense: 28%",
+          "Nonsense: 9%"
+        ]
+      },
+      "CDH1": {
+        "frequency": "13%",
+        "subtypes": [
+          "Truncating: 10%",
+          "Missense: 3%"
+        ]
+      },
+      "GATA3": {
+        "frequency": "13%",
+        "subtypes": [
+          "Frameshift: 8%",
+          "Nonsense: 5%"
+        ]
+      },
+      "MAP3K1": {
+        "frequency": "9%",
+        "subtypes": [
+          "Truncating: 7%",
+          "Missense: 2%"
+        ]
+      },
+      "HER2": {
+        "frequency": "15%",
+        "subtypes": [
+          "Amplification: 15%"
+        ]
+      },
+      "BRCA1": {
+        "frequency": "3%",
+        "subtypes": [
+          "Germline: 2.5%",
+          "Somatic: 0.5%"
+        ]
+      },
+      "BRCA2": {
+        "frequency": "4%",
+        "subtypes": [
+          "Germline: 3.5%",
+          "Somatic: 0.5%"
+        ]
+      }
+    },
+    "clinical_characteristics": {
+      "median_age_at_diagnosis": 58,
+      "five_year_survival_rate": "90%",
+      "microsatellite_instability_rate": null,
+      "tumor_mutational_burden": "Low-Intermediate (median: 1.8 mutations/Mb)"
+    },
+    "therapeutic_targets": [
+      {
+        "gene": "PIK3CA",
+        "frequency": "36%",
+        "actionable_subtypes": [
+          "H1047R",
+          "E545K",
+          "E542K"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "HER2",
+        "frequency": "15%",
+        "actionable_subtypes": [
+          "Amplification"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "BRCA1",
+        "frequency": "3%",
+        "actionable_subtypes": [
+          "Germline",
+          "Somatic"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "BRCA2",
+        "frequency": "4%",
+        "actionable_subtypes": [
+          "Germline",
+          "Somatic"
+        ],
+        "clinical_significance": "Targetable"
+      }
+    ],
+    "biomarker_prevalence": {
+      "PIK3CA": "36%",
+      "TP53": "37%",
+      "CDH1": "13%",
+      "GATA3": "13%",
+      "MAP3K1": "9%",
+      "HER2": "15%",
+      "BRCA1": "3%",
+      "BRCA2": "4%"
+    },
+    "clinical_actionability": {
+      "overall_actionability": "4/8 genes targetable",
+      "actionable_mutations": {
+        "PIK3CA": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "TP53": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "CDH1": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "GATA3": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "MAP3K1": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "HER2": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "BRCA1": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "BRCA2": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        }
+      },
+      "precision_medicine_eligibility": 0.5
+    },
+    "data_sources": "TCGA BRCA (n=1098), METABRIC (n=2509)",
+    "verification_date": "2025-07-28T23:11:35.958880",
+    "confidence_level": "TCGA_VERIFIED",
+    "sample_size": "3607 samples"
+  },
+  "colorectal": {
+    "tcga_study_code": "COADREAD",
+    "most_frequent_mutations": {
+      "APC": {
+        "frequency": "82%",
+        "subtypes": [
+          "Truncating: 75%",
+          "Missense: 7%"
+        ]
+      },
+      "TP53": {
+        "frequency": "60%",
+        "subtypes": [
+          "Missense: 45%",
+          "Nonsense: 15%"
+        ]
+      },
+      "KRAS": {
+        "frequency": "43%",
+        "subtypes": [
+          "G12D: 17%",
+          "G12V: 13%",
+          "G13D: 8%",
+          "G12C: 3%"
+        ]
+      },
+      "PIK3CA": {
+        "frequency": "18%",
+        "subtypes": [
+          "H1047R: 8%",
+          "E545K: 5%",
+          "E542K: 3%"
+        ]
+      },
+      "FBXW7": {
+        "frequency": "11%",
+        "subtypes": [
+          "R465C: 4%",
+          "R479Q: 3%",
+          "Other: 4%"
+        ]
+      },
+      "SMAD4": {
+        "frequency": "10%",
+        "subtypes": [
+          "Truncating: 8%",
+          "Missense: 2%"
+        ]
+      },
+      "BRAF": {
+        "frequency": "10%",
+        "subtypes": [
+          "V600E: 8%",
+          "Other: 2%"
+        ]
+      },
+      "NRAS": {
+        "frequency": "3%",
+        "subtypes": [
+          "G12D: 1%",
+          "G13R: 1%",
+          "Q61K: 1%"
+        ]
+      }
+    },
+    "clinical_characteristics": {
+      "median_age_at_diagnosis": 68,
+      "five_year_survival_rate": "65%",
+      "microsatellite_instability_rate": "15%",
+      "tumor_mutational_burden": "Low (median: 4.5 mutations/Mb), High if MSI-H (>100 mutations/Mb)"
+    },
+    "therapeutic_targets": [
+      {
+        "gene": "KRAS",
+        "frequency": "43%",
+        "actionable_subtypes": [
+          "G12C"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "PIK3CA",
+        "frequency": "18%",
+        "actionable_subtypes": [
+          "H1047R",
+          "E545K",
+          "E542K"
+        ],
+        "clinical_significance": "Targetable"
+      },
+      {
+        "gene": "BRAF",
+        "frequency": "10%",
+        "actionable_subtypes": [
+          "V600E",
+          "V600K"
+        ],
+        "clinical_significance": "Targetable"
+      }
+    ],
+    "biomarker_prevalence": {
+      "APC": "82%",
+      "TP53": "60%",
+      "KRAS": "43%",
+      "PIK3CA": "18%",
+      "FBXW7": "11%",
+      "SMAD4": "10%",
+      "BRAF": "10%",
+      "NRAS": "3%"
+    },
+    "clinical_actionability": {
+      "overall_actionability": "3/8 genes targetable",
+      "actionable_mutations": {
+        "APC": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "TP53": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "KRAS": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "PIK3CA": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "FBXW7": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "SMAD4": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "BRAF": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "NRAS": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        }
+      },
+      "precision_medicine_eligibility": 0.375
+    },
+    "data_sources": "TCGA COADREAD (n=594), MSK-IMPACT (n=1134)",
+    "verification_date": "2025-07-28T23:11:35.958899",
+    "confidence_level": "TCGA_VERIFIED",
+    "sample_size": "1728 samples"
+  },
+  "melanoma": {
+    "tcga_study_code": "SKCM",
+    "most_frequent_mutations": {
+      "BRAF": {
+        "frequency": "52%",
+        "subtypes": [
+          "V600E: 40%",
+          "V600K: 8%",
+          "Other: 4%"
+        ]
+      },
+      "NRAS": {
+        "frequency": "28%",
+        "subtypes": [
+          "Q61R: 12%",
+          "Q61K: 8%",
+          "Q61L: 5%",
+          "G12D: 3%"
+        ]
+      },
+      "NF1": {
+        "frequency": "14%",
+        "subtypes": [
+          "Truncating: 12%",
+          "Missense: 2%"
+        ]
+      },
+      "TP53": {
+        "frequency": "15%",
+        "subtypes": [
+          "UV signature: 12%",
+          "Other: 3%"
+        ]
+      },
+      "CDKN2A": {
+        "frequency": "13%",
+        "subtypes": [
+          "Deletion: 10%",
+          "Point mutations: 3%"
+        ]
+      },
+      "KIT": {
+        "frequency": "2%",
+        "subtypes": [
+          "Exon 11: 1%",
+          "Exon 17: 0.5%",
+          "Other: 0.5%"
+        ]
+      },
+      "GNA11": {
+        "frequency": "1%",
+        "subtypes": [
+          "Q209P: 0.5%",
+          "Q209L: 0.5%"
+        ]
+      },
+      "GNAQ": {
+        "frequency": "1%",
+        "subtypes": [
+          "Q209P: 0.5%",
+          "Q209L: 0.5%"
+        ]
+      }
+    },
+    "clinical_characteristics": {
+      "median_age_at_diagnosis": 61,
+      "five_year_survival_rate": "93% (localized), 68% (regional), 27% (distant)",
+      "microsatellite_instability_rate": null,
+      "tumor_mutational_burden": "Very High (median: 15.8 mutations/Mb)"
+    },
+    "therapeutic_targets": [
+      {
+        "gene": "BRAF",
+        "frequency": "52%",
+        "actionable_subtypes": [
+          "V600E",
+          "V600K"
+        ],
+        "clinical_significance": "Targetable"
+      }
+    ],
+    "biomarker_prevalence": {
+      "BRAF": "52%",
+      "NRAS": "28%",
+      "NF1": "14%",
+      "TP53": "15%",
+      "CDKN2A": "13%",
+      "KIT": "2%",
+      "GNA11": "1%",
+      "GNAQ": "1%"
+    },
+    "clinical_actionability": {
+      "overall_actionability": "1/8 genes targetable",
+      "actionable_mutations": {
+        "BRAF": {
+          "actionability_level": "High",
+          "fda_approved_therapies": true,
+          "nccn_recommended": true
+        },
+        "NRAS": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "NF1": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "TP53": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "CDKN2A": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "KIT": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "GNA11": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        },
+        "GNAQ": {
+          "actionability_level": "Research",
+          "fda_approved_therapies": false,
+          "nccn_recommended": false
+        }
+      },
+      "precision_medicine_eligibility": 0.125
+    },
+    "data_sources": "TCGA SKCM (n=448), International Melanoma Consortium",
+    "verification_date": "2025-07-28T23:11:35.958915",
+    "confidence_level": "TCGA_VERIFIED",
+    "sample_size": "448 samples"
+  }
+}

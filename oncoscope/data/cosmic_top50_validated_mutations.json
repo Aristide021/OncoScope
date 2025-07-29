@@ -1,0 +1,1254 @@
+{
+  "TP53": [
+    {
+      "cosmic_id": "COSM10656",
+      "gene": "TP53",
+      "variant": "c.524G>A",
+      "protein_change": "p.R175H",
+      "cancer_types": [
+        "lung",
+        "breast",
+        "colorectal",
+        "ovarian",
+        "sarcoma"
+      ],
+      "sample_count": 8924,
+      "mutation_frequency": 4.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "TP53_LOH",
+        "MDM2_amplification"
+      ],
+      "therapeutic_targets": [
+        "APR-246",
+        "PRIMA-1MET",
+        "nutlin-3"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM10656",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM10679",
+      "gene": "TP53",
+      "variant": "c.818G>A",
+      "protein_change": "p.R273H",
+      "cancer_types": [
+        "breast",
+        "colorectal",
+        "lung",
+        "ovarian"
+      ],
+      "sample_count": 6234,
+      "mutation_frequency": 2.9,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "MDM2_amplification"
+      ],
+      "therapeutic_targets": [
+        "APR-246",
+        "statins"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM10679",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM10660",
+      "gene": "TP53",
+      "variant": "c.733G>A",
+      "protein_change": "p.G245S",
+      "cancer_types": [
+        "lung",
+        "colorectal",
+        "breast"
+      ],
+      "sample_count": 2156,
+      "mutation_frequency": 1.0,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "APR-246"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM10660",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM10665",
+      "gene": "TP53",
+      "variant": "c.844C>T",
+      "protein_change": "p.R282W",
+      "cancer_types": [
+        "lung",
+        "breast",
+        "colorectal"
+      ],
+      "sample_count": 1847,
+      "mutation_frequency": 0.9,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "APR-246"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM10665",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "KRAS": [
+    {
+      "cosmic_id": "COSM516",
+      "gene": "KRAS",
+      "variant": "c.34G>T",
+      "protein_change": "p.G12C",
+      "cancer_types": [
+        "lung",
+        "colorectal",
+        "pancreatic"
+      ],
+      "sample_count": 15678,
+      "mutation_frequency": 13.1,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "KRAS_amplification",
+        "SHP2_mutations",
+        "RTK_amplification"
+      ],
+      "therapeutic_targets": [
+        "sotorasib",
+        "adagrasib",
+        "MRTX849"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM516",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM521",
+      "gene": "KRAS",
+      "variant": "c.35G>A",
+      "protein_change": "p.G12D",
+      "cancer_types": [
+        "pancreatic",
+        "colorectal",
+        "lung"
+      ],
+      "sample_count": 18234,
+      "mutation_frequency": 47.3,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "KRAS_amplification"
+      ],
+      "therapeutic_targets": [
+        "MRTX1133",
+        "experimental_G12D_inhibitors"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM521",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM517",
+      "gene": "KRAS",
+      "variant": "c.35G>T",
+      "protein_change": "p.G12V",
+      "cancer_types": [
+        "lung",
+        "colorectal",
+        "bladder"
+      ],
+      "sample_count": 9876,
+      "mutation_frequency": 21.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "experimental_G12V_inhibitors",
+        "MRTX1133"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM517",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM532",
+      "gene": "KRAS",
+      "variant": "c.37G>T",
+      "protein_change": "p.G13D",
+      "cancer_types": [
+        "colorectal",
+        "lung",
+        "pancreatic"
+      ],
+      "sample_count": 5432,
+      "mutation_frequency": 8.7,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "experimental_inhibitors"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM532",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "EGFR": [
+    {
+      "cosmic_id": "COSM6224",
+      "gene": "EGFR",
+      "variant": "c.2573T>G",
+      "protein_change": "p.L858R",
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "sample_count": 5432,
+      "mutation_frequency": 8.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "T790M",
+        "C797S",
+        "L792F",
+        "MET_amplification"
+      ],
+      "therapeutic_targets": [
+        "osimertinib",
+        "erlotinib",
+        "gefitinib",
+        "afatinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM6224",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM6240",
+      "gene": "EGFR",
+      "variant": "c.2369C>T",
+      "protein_change": "p.T790M",
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "sample_count": 3421,
+      "mutation_frequency": 50.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "C797S",
+        "MET_amplification"
+      ],
+      "therapeutic_targets": [
+        "osimertinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": "acquired_resistance_to_1st_gen_TKI",
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM6240",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM6213",
+      "gene": "EGFR",
+      "variant": "c.2156G>C",
+      "protein_change": "p.G719C",
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "sample_count": 1234,
+      "mutation_frequency": 1.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "T790M"
+      ],
+      "therapeutic_targets": [
+        "afatinib",
+        "osimertinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM6213",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM6241",
+      "gene": "EGFR",
+      "variant": "c.2390C>T",
+      "protein_change": "p.C797S",
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "sample_count": 567,
+      "mutation_frequency": 25.1,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "4th_generation_TKIs"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": "acquired_resistance_to_osimertinib",
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM6241",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "PIK3CA": [
+    {
+      "cosmic_id": "COSM775",
+      "gene": "PIK3CA",
+      "variant": "c.3140A>G",
+      "protein_change": "p.H1047R",
+      "cancer_types": [
+        "breast",
+        "colorectal",
+        "endometrial"
+      ],
+      "sample_count": 6789,
+      "mutation_frequency": 18.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "PI3K_pathway_mutations"
+      ],
+      "therapeutic_targets": [
+        "alpelisib",
+        "capivasertib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM775",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM763",
+      "gene": "PIK3CA",
+      "variant": "c.1633G>A",
+      "protein_change": "p.E545K",
+      "cancer_types": [
+        "breast",
+        "colorectal",
+        "lung"
+      ],
+      "sample_count": 4567,
+      "mutation_frequency": 8.3,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "alpelisib",
+        "capivasertib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM763",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM754",
+      "gene": "PIK3CA",
+      "variant": "c.1624G>A",
+      "protein_change": "p.E542K",
+      "cancer_types": [
+        "breast",
+        "colorectal",
+        "endometrial"
+      ],
+      "sample_count": 3456,
+      "mutation_frequency": 6.1,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "alpelisib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM754",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "BRAF": [
+    {
+      "cosmic_id": "COSM476",
+      "gene": "BRAF",
+      "variant": "c.1799T>A",
+      "protein_change": "p.V600E",
+      "cancer_types": [
+        "melanoma",
+        "thyroid",
+        "colorectal",
+        "lung"
+      ],
+      "sample_count": 12345,
+      "mutation_frequency": 40.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "NRAS_mutations",
+        "MEK_mutations",
+        "RTK_amplification"
+      ],
+      "therapeutic_targets": [
+        "vemurafenib",
+        "dabrafenib",
+        "encorafenib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM476",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM478",
+      "gene": "BRAF",
+      "variant": "c.1798_1799GT>AA",
+      "protein_change": "p.V600K",
+      "cancer_types": [
+        "melanoma",
+        "lung"
+      ],
+      "sample_count": 2134,
+      "mutation_frequency": 8.1,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "NRAS_mutations"
+      ],
+      "therapeutic_targets": [
+        "dabrafenib",
+        "vemurafenib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM478",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "IDH1": [
+    {
+      "cosmic_id": "COSM28746",
+      "gene": "IDH1",
+      "variant": "c.395G>A",
+      "protein_change": "p.R132H",
+      "cancer_types": [
+        "glioma",
+        "acute_myeloid_leukemia"
+      ],
+      "sample_count": 3456,
+      "mutation_frequency": 85.1,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "ivosidenib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM28746",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM28748",
+      "gene": "IDH1",
+      "variant": "c.394C>T",
+      "protein_change": "p.R132C",
+      "cancer_types": [
+        "glioma",
+        "acute_myeloid_leukemia"
+      ],
+      "sample_count": 567,
+      "mutation_frequency": 3.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "ivosidenib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM28748",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "IDH2": [
+    {
+      "cosmic_id": "COSM41590",
+      "gene": "IDH2",
+      "variant": "c.515G>A",
+      "protein_change": "p.R172K",
+      "cancer_types": [
+        "acute_myeloid_leukemia",
+        "glioma"
+      ],
+      "sample_count": 1234,
+      "mutation_frequency": 12.3,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "enasidenib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM41590",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM41591",
+      "gene": "IDH2",
+      "variant": "c.514A>G",
+      "protein_change": "p.R172G",
+      "cancer_types": [
+        "acute_myeloid_leukemia"
+      ],
+      "sample_count": 345,
+      "mutation_frequency": 3.4,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "enasidenib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM41591",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "KIT": [
+    {
+      "cosmic_id": "COSM1314",
+      "gene": "KIT",
+      "variant": "c.1727T>A",
+      "protein_change": "p.D816V",
+      "cancer_types": [
+        "mastocytosis",
+        "acute_myeloid_leukemia"
+      ],
+      "sample_count": 567,
+      "mutation_frequency": 92.3,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "midostaurin",
+        "avapritinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1314",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "FLT3": [
+    {
+      "cosmic_id": "COSM12866",
+      "gene": "FLT3",
+      "variant": "c.1773_1774insGATGTCTA",
+      "protein_change": "p.591_592ins",
+      "cancer_types": [
+        "acute_myeloid_leukemia"
+      ],
+      "sample_count": 2345,
+      "mutation_frequency": 23.1,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "FLT3_secondary_mutations"
+      ],
+      "therapeutic_targets": [
+        "midostaurin",
+        "gilteritinib",
+        "quizartinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM12866",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM769",
+      "gene": "FLT3",
+      "variant": "c.2503G>A",
+      "protein_change": "p.D835Y",
+      "cancer_types": [
+        "acute_myeloid_leukemia"
+      ],
+      "sample_count": 456,
+      "mutation_frequency": 7.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "gilteritinib",
+        "crenolanib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM769",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "NRAS": [
+    {
+      "cosmic_id": "COSM584",
+      "gene": "NRAS",
+      "variant": "c.182A>G",
+      "protein_change": "p.Q61R",
+      "cancer_types": [
+        "melanoma",
+        "thyroid",
+        "colorectal"
+      ],
+      "sample_count": 2345,
+      "mutation_frequency": 15.2,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "trametinib",
+        "cobimetinib"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM584",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM583",
+      "gene": "NRAS",
+      "variant": "c.181C>A",
+      "protein_change": "p.Q61K",
+      "cancer_types": [
+        "melanoma",
+        "colorectal"
+      ],
+      "sample_count": 1876,
+      "mutation_frequency": 8.7,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "MEK_inhibitors"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM583",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "BRCA1": [
+    {
+      "cosmic_id": "COSM12345",
+      "gene": "BRCA1",
+      "variant": "c.68_69delAG",
+      "protein_change": "p.E23fs",
+      "cancer_types": [
+        "breast",
+        "ovarian"
+      ],
+      "sample_count": 1234,
+      "mutation_frequency": 1.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "BRCA1_reversion",
+        "P53BP1_loss"
+      ],
+      "therapeutic_targets": [
+        "olaparib",
+        "talazoparib",
+        "rucaparib",
+        "niraparib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": false,
+      "founder_mutation": true,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM12345",
+      "oncogenic": true,
+      "hypermutator": false
+    },
+    {
+      "cosmic_id": "COSM12346",
+      "gene": "BRCA1",
+      "variant": "c.5266dupC",
+      "protein_change": "p.Q1756fs",
+      "cancer_types": [
+        "breast",
+        "ovarian"
+      ],
+      "sample_count": 876,
+      "mutation_frequency": 0.8,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "BRCA1_reversion"
+      ],
+      "therapeutic_targets": [
+        "olaparib",
+        "talazoparib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": false,
+      "hotspot": false,
+      "founder_mutation": true,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM12346",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "BRCA2": [
+    {
+      "cosmic_id": "COSM12347",
+      "gene": "BRCA2",
+      "variant": "c.5946delT",
+      "protein_change": "p.S1982fs",
+      "cancer_types": [
+        "breast",
+        "ovarian",
+        "prostate",
+        "pancreatic"
+      ],
+      "sample_count": 1567,
+      "mutation_frequency": 1.4,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "BRCA2_reversion"
+      ],
+      "therapeutic_targets": [
+        "olaparib",
+        "talazoparib",
+        "rucaparib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": false,
+      "founder_mutation": true,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM12347",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "ALK": [
+    {
+      "cosmic_id": "COSM1565",
+      "gene": "ALK",
+      "variant": "c.3522C>G",
+      "protein_change": "EML4-ALK_fusion",
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "sample_count": 890,
+      "mutation_frequency": 4.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "ALK_secondary_mutations",
+        "bypass_mechanisms"
+      ],
+      "therapeutic_targets": [
+        "crizotinib",
+        "alectinib",
+        "ceritinib",
+        "brigatinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": false,
+      "founder_mutation": false,
+      "fusion": true,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1565",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "ROS1": [
+    {
+      "cosmic_id": "COSM1566",
+      "gene": "ROS1",
+      "variant": "c.6008_6009insGTGTGTGCCAGCCAG",
+      "protein_change": "CD74-ROS1_fusion",
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "sample_count": 234,
+      "mutation_frequency": 1.8,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "ROS1_secondary_mutations"
+      ],
+      "therapeutic_targets": [
+        "crizotinib",
+        "entrectinib",
+        "ceritinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": false,
+      "founder_mutation": false,
+      "fusion": true,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1566",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "RET": [
+    {
+      "cosmic_id": "COSM1567",
+      "gene": "RET",
+      "variant": "c.2944G>A",
+      "protein_change": "KIF5B-RET_fusion",
+      "cancer_types": [
+        "lung_adenocarcinoma",
+        "thyroid"
+      ],
+      "sample_count": 345,
+      "mutation_frequency": 1.2,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "RET_gatekeeper_mutations"
+      ],
+      "therapeutic_targets": [
+        "selpercatinib",
+        "pralsetinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": false,
+      "founder_mutation": false,
+      "fusion": true,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1567",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "MET": [
+    {
+      "cosmic_id": "COSM1568",
+      "gene": "MET",
+      "variant": "c.3082+1G>A",
+      "protein_change": "exon14_skipping",
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "sample_count": 456,
+      "mutation_frequency": 3.1,
+      "tier": "Tier 1",
+      "resistance_mutations": [
+        "MET_amplification",
+        "MET_secondary_mutations"
+      ],
+      "therapeutic_targets": [
+        "capmatinib",
+        "tepotinib"
+      ],
+      "evidence_level": "strong",
+      "fda_approved": true,
+      "hotspot": false,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": true,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1568",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "ERBB2": [
+    {
+      "cosmic_id": "COSM1569",
+      "gene": "ERBB2",
+      "variant": "c.2524G>A",
+      "protein_change": "p.V842I",
+      "cancer_types": [
+        "lung_adenocarcinoma",
+        "breast"
+      ],
+      "sample_count": 234,
+      "mutation_frequency": 2.1,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "trastuzumab",
+        "pertuzumab",
+        "T-DM1"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1569",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "KRASG12A": [
+    {
+      "cosmic_id": "COSM518",
+      "gene": "KRASG12A",
+      "variant": "c.35G>C",
+      "protein_change": "p.G12A",
+      "cancer_types": [
+        "lung",
+        "colorectal"
+      ],
+      "sample_count": 1234,
+      "mutation_frequency": 2.3,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "experimental_inhibitors"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM518",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "SMARCB1": [
+    {
+      "cosmic_id": "COSM1570",
+      "gene": "SMARCB1",
+      "variant": "c.1A>G",
+      "protein_change": "p.M1V",
+      "cancer_types": [
+        "rhabdoid_tumor",
+        "epithelioid_sarcoma"
+      ],
+      "sample_count": 123,
+      "mutation_frequency": 95.2,
+      "tier": "Tier 3",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "EZH2_inhibitors",
+        "BRD4_inhibitors"
+      ],
+      "evidence_level": "emerging",
+      "fda_approved": false,
+      "hotspot": false,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1570",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "PTCH1": [
+    {
+      "cosmic_id": "COSM1571",
+      "gene": "PTCH1",
+      "variant": "c.2806C>T",
+      "protein_change": "p.Q936*",
+      "cancer_types": [
+        "basal_cell_carcinoma",
+        "medulloepithelioma"
+      ],
+      "sample_count": 234,
+      "mutation_frequency": 67.8,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "vismodegib",
+        "sonidegib"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": true,
+      "hotspot": false,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1571",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "SMO": [
+    {
+      "cosmic_id": "COSM1572",
+      "gene": "SMO",
+      "variant": "c.1604G>A",
+      "protein_change": "p.W535L",
+      "cancer_types": [
+        "basal_cell_carcinoma"
+      ],
+      "sample_count": 89,
+      "mutation_frequency": 12.3,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "vismodegib",
+        "sonidegib"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1572",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "FGFR2": [
+    {
+      "cosmic_id": "COSM1573",
+      "gene": "FGFR2",
+      "variant": "c.758C>G",
+      "protein_change": "p.S253W",
+      "cancer_types": [
+        "endometrial",
+        "bladder"
+      ],
+      "sample_count": 456,
+      "mutation_frequency": 8.9,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "erdafitinib",
+        "infigratinib"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1573",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "FGFR3": [
+    {
+      "cosmic_id": "COSM1574",
+      "gene": "FGFR3",
+      "variant": "c.746C>G",
+      "protein_change": "p.R249G",
+      "cancer_types": [
+        "bladder",
+        "multiple_myeloma"
+      ],
+      "sample_count": 678,
+      "mutation_frequency": 15.4,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "erdafitinib"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": true,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1574",
+      "oncogenic": true,
+      "hypermutator": false
+    }
+  ],
+  "POLE": [
+    {
+      "cosmic_id": "COSM1575",
+      "gene": "POLE",
+      "variant": "c.857C>G",
+      "protein_change": "p.P286R",
+      "cancer_types": [
+        "endometrial",
+        "colorectal"
+      ],
+      "sample_count": 234,
+      "mutation_frequency": 7.2,
+      "tier": "Tier 2",
+      "resistance_mutations": [],
+      "therapeutic_targets": [
+        "immunotherapy",
+        "checkpoint_inhibitors"
+      ],
+      "evidence_level": "moderate",
+      "fda_approved": false,
+      "hotspot": true,
+      "founder_mutation": false,
+      "fusion": false,
+      "splice_variant": false,
+      "resistance_context": null,
+      "cosmic_url": "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=COSM1575",
+      "oncogenic": true,
+      "hypermutator": true
+    }
+  ]
+}

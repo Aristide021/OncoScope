@@ -1,0 +1,310 @@
+{
+  "lung_adenocarcinoma": {
+    "common_mutations": [
+      "EGFR",
+      "KRAS",
+      "ALK",
+      "ROS1",
+      "BRAF",
+      "MET",
+      "RET",
+      "TP53",
+      "STK11"
+    ],
+    "mutation_frequencies": {
+      "KRAS": "32%",
+      "EGFR": "14%",
+      "TP53": "50%",
+      "STK11": "17%",
+      "KEAP1": "17%",
+      "ALK": "4%",
+      "ROS1": "2%",
+      "BRAF": "8%",
+      "MET": "4%",
+      "RET": "1%"
+    },
+    "prevalence": "40% of lung cancers",
+    "typical_age": "60-70 (median: 66)",
+    "risk_factors": [
+      "smoking",
+      "radon",
+      "asbestos",
+      "air pollution"
+    ],
+    "prognosis": "Variable based on stage and mutations (5-year survival: 23%)",
+    "actionable_targets": [
+      "EGFR",
+      "ALK",
+      "ROS1",
+      "KRAS",
+      "BRAF",
+      "MET",
+      "RET"
+    ],
+    "tcga_verified": true,
+    "sample_size": "1,592 samples (TCGA LUAD + Lung Cancer Mutation Consortium)"
+  },
+  "breast": {
+    "common_mutations": [
+      "BRCA1",
+      "BRCA2",
+      "PIK3CA",
+      "TP53",
+      "ESR1",
+      "HER2"
+    ],
+    "mutation_frequencies": {
+      "PIK3CA": "36%",
+      "TP53": "37%",
+      "CDH1": "13%",
+      "GATA3": "13%",
+      "MAP3K1": "9%",
+      "HER2": "15%",
+      "BRCA1": "3%",
+      "BRCA2": "4%"
+    },
+    "prevalence": "12% lifetime risk",
+    "typical_age": "50-70 (median: 58)",
+    "risk_factors": [
+      "family history",
+      "hormones",
+      "age",
+      "obesity"
+    ],
+    "prognosis": "Generally good with early detection (5-year survival: 90%)",
+    "actionable_targets": [
+      "BRCA1",
+      "BRCA2",
+      "HER2",
+      "PIK3CA",
+      "ESR1"
+    ],
+    "tcga_verified": true,
+    "sample_size": "3,607 samples (TCGA BRCA + METABRIC)"
+  },
+  "colorectal": {
+    "common_mutations": [
+      "APC",
+      "KRAS",
+      "TP53",
+      "PIK3CA",
+      "BRAF",
+      "MSI"
+    ],
+    "mutation_frequencies": {
+      "APC": "82%",
+      "TP53": "60%",
+      "KRAS": "43%",
+      "PIK3CA": "18%",
+      "FBXW7": "11%",
+      "SMAD4": "10%",
+      "BRAF": "10%",
+      "NRAS": "3%"
+    },
+    "prevalence": "4% lifetime risk",
+    "typical_age": "65-75 (median: 68)",
+    "risk_factors": [
+      "age",
+      "family history",
+      "inflammatory bowel disease",
+      "diet"
+    ],
+    "prognosis": "Good if caught early (5-year survival: 65%)",
+    "actionable_targets": [
+      "KRAS",
+      "BRAF",
+      "PIK3CA",
+      "MSI"
+    ],
+    "microsatellite_instability": "15% of cases",
+    "tcga_verified": true,
+    "sample_size": "1,728 samples (TCGA COADREAD + MSK-IMPACT)"
+  },
+  "pancreatic": {
+    "common_mutations": [
+      "KRAS",
+      "TP53",
+      "CDKN2A",
+      "SMAD4",
+      "BRCA2"
+    ],
+    "mutation_frequencies": {
+      "KRAS": "90%",
+      "TP53": "75%",
+      "CDKN2A": "85%",
+      "SMAD4": "55%",
+      "BRCA2": "7%"
+    },
+    "prevalence": "1.6% lifetime risk",
+    "typical_age": "65-75",
+    "risk_factors": [
+      "smoking",
+      "diabetes",
+      "chronic pancreatitis",
+      "family history"
+    ],
+    "prognosis": "Poor - 5-year survival <10%",
+    "actionable_targets": [
+      "BRCA2",
+      "KRAS"
+    ],
+    "tcga_verified": true,
+    "sample_size": "Large cohort studies"
+  },
+  "ovarian": {
+    "common_mutations": [
+      "BRCA1",
+      "BRCA2",
+      "TP53",
+      "PIK3CA",
+      "KRAS"
+    ],
+    "mutation_frequencies": {
+      "TP53": "96%",
+      "BRCA1": "13%",
+      "BRCA2": "8%",
+      "PIK3CA": "5%",
+      "KRAS": "7%"
+    },
+    "prevalence": "1.3% lifetime risk",
+    "typical_age": "55-65",
+    "risk_factors": [
+      "family history",
+      "age",
+      "endometriosis",
+      "nulliparity"
+    ],
+    "prognosis": "Variable - depends on stage",
+    "actionable_targets": [
+      "BRCA1",
+      "BRCA2",
+      "PIK3CA"
+    ],
+    "tcga_verified": true,
+    "sample_size": "Large cohort studies"
+  },
+  "melanoma": {
+    "common_mutations": [
+      "BRAF",
+      "NRAS",
+      "NF1",
+      "KIT",
+      "CDKN2A"
+    ],
+    "mutation_frequencies": {
+      "BRAF": "52%",
+      "NRAS": "28%",
+      "NF1": "14%",
+      "TP53": "15%",
+      "CDKN2A": "13%",
+      "KIT": "2%",
+      "GNA11": "1%",
+      "GNAQ": "1%"
+    },
+    "prevalence": "2.1% lifetime risk",
+    "typical_age": "50-70 (median: 61)",
+    "risk_factors": [
+      "UV exposure",
+      "fair skin",
+      "family history",
+      "moles"
+    ],
+    "prognosis": "Good if caught early (5-year survival varies by stage)",
+    "actionable_targets": [
+      "BRAF",
+      "KIT",
+      "NRAS"
+    ],
+    "tcga_verified": true,
+    "sample_size": "448 samples (TCGA SKCM + International Melanoma Consortium)"
+  },
+  "prostate": {
+    "common_mutations": [
+      "TMPRSS2-ERG",
+      "PTEN",
+      "TP53",
+      "BRCA2",
+      "ATM"
+    ],
+    "mutation_frequencies": {
+      "TMPRSS2-ERG": "45%",
+      "PTEN": "20%",
+      "TP53": "15%",
+      "BRCA2": "5%",
+      "ATM": "8%"
+    },
+    "prevalence": "11% lifetime risk",
+    "typical_age": "65-75",
+    "risk_factors": [
+      "age",
+      "family history",
+      "ethnicity"
+    ],
+    "prognosis": "Generally good",
+    "actionable_targets": [
+      "BRCA2",
+      "ATM"
+    ],
+    "tcga_verified": true,
+    "sample_size": "Large cohort studies"
+  },
+  "thyroid": {
+    "common_mutations": [
+      "BRAF",
+      "RAS",
+      "RET/PTC",
+      "PAX8/PPARG"
+    ],
+    "mutation_frequencies": {
+      "BRAF": "45%",
+      "RAS": "30%",
+      "RET/PTC": "20%",
+      "PAX8/PPARG": "35%"
+    },
+    "prevalence": "1.2% lifetime risk",
+    "typical_age": "45-55",
+    "risk_factors": [
+      "radiation exposure",
+      "gender (female)",
+      "family history"
+    ],
+    "prognosis": "Excellent for most types",
+    "actionable_targets": [
+      "BRAF",
+      "RET"
+    ],
+    "tcga_verified": true,
+    "sample_size": "Large cohort studies"
+  },
+  "endometrial": {
+    "common_mutations": [
+      "PTEN",
+      "PIK3CA",
+      "KRAS",
+      "TP53",
+      "POLE"
+    ],
+    "mutation_frequencies": {
+      "PTEN": "77%",
+      "PIK3CA": "53%",
+      "KRAS": "25%",
+      "TP53": "25%",
+      "POLE": "7%"
+    },
+    "prevalence": "2.8% lifetime risk",
+    "typical_age": "60-70",
+    "risk_factors": [
+      "obesity",
+      "estrogen exposure",
+      "tamoxifen",
+      "HNPCC"
+    ],
+    "prognosis": "Good if caught early",
+    "actionable_targets": [
+      "PIK3CA",
+      "POLE"
+    ],
+    "tcga_verified": true,
+    "sample_size": "Large cohort studies"
+  }
+}

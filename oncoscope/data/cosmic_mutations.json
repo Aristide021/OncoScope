@@ -1,0 +1,417 @@
+{
+  "TP53": {
+    "c.524G>A": {
+      "protein": "p.R175H",
+      "pathogenicity_score": 0.99,
+      "cancer_types": [
+        "breast",
+        "lung",
+        "colorectal",
+        "ovarian",
+        "sarcoma"
+      ],
+      "mechanism": "DNA binding domain hotspot - complete loss of transcriptional activity",
+      "functional_impact": "Dominant negative effect on wild-type p53",
+      "prognosis": "poor",
+      "targeted_therapies": [
+        "APR-246 (eprenetapopt)",
+        "PRIMA-1MET"
+      ],
+      "response_rate": "Variable",
+      "cosmic_id": "COSM10663",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "Established",
+      "frequency_data": {
+        "all_cancers": "5.4%",
+        "breast": "1.2%",
+        "lung": "2.1%",
+        "colorectal": "3.8%"
+      },
+      "structural_consequence": "Disrupts DNA binding loop L2",
+      "resistance_mechanisms": [],
+      "clinical_trials": [
+        "NCT03268382",
+        "NCT03072043"
+      ],
+      "literature_pmids": [
+        "25079317",
+        "23636126",
+        "22158963"
+      ]
+    },
+    "c.818G>A": {
+      "protein": "p.R273H",
+      "pathogenicity_score": 0.98,
+      "cancer_types": [
+        "breast",
+        "colorectal",
+        "lung",
+        "ovarian"
+      ],
+      "mechanism": "DNA binding domain mutation with gain-of-function properties",
+      "functional_impact": "Dominant negative + oncomorphic functions",
+      "prognosis": "poor",
+      "targeted_therapies": [
+        "APR-246",
+        "Statins (GOF inhibition)"
+      ],
+      "response_rate": "Variable",
+      "cosmic_id": "COSM10679",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "Established",
+      "frequency_data": {
+        "all_cancers": "3.2%",
+        "breast": "0.8%",
+        "colorectal": "2.1%",
+        "lung": "1.4%"
+      },
+      "structural_consequence": "Alters major groove DNA contacts",
+      "resistance_mechanisms": [
+        "Enhanced metastasis",
+        "Chemoresistance"
+      ],
+      "clinical_trials": [
+        "NCT03268382"
+      ],
+      "literature_pmids": [
+        "23636126",
+        "25079317"
+      ]
+    },
+    "c.733G>A": {
+      "protein": "p.G245S",
+      "pathogenicity_score": 0.96,
+      "cancer_types": [
+        "lung",
+        "colorectal",
+        "breast"
+      ],
+      "mechanism": "DNA binding domain structural disruption",
+      "functional_impact": "Loss of DNA binding specificity",
+      "prognosis": "poor",
+      "targeted_therapies": [],
+      "response_rate": "Variable",
+      "cosmic_id": "COSM10676",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "Established",
+      "frequency_data": {
+        "all_cancers": "1.8%",
+        "lung": "1.2%",
+        "colorectal": "0.9%"
+      },
+      "structural_consequence": "",
+      "resistance_mechanisms": [],
+      "clinical_trials": [],
+      "literature_pmids": []
+    }
+  },
+  "KRAS": {
+    "c.35G>A": {
+      "protein": "p.G12D",
+      "pathogenicity_score": 0.95,
+      "cancer_types": [
+        "pancreatic",
+        "colorectal",
+        "lung"
+      ],
+      "mechanism": "Impaired GTPase activity, constitutive activation",
+      "functional_impact": "Oncogenic activation of RAS pathway",
+      "prognosis": "poor_without_targeted_therapy",
+      "targeted_therapies": [
+        "MRTX1133 (investigational)"
+      ],
+      "response_rate": "Variable",
+      "cosmic_id": "COSM521",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "Established",
+      "frequency_data": {
+        "pancreatic": "47%",
+        "colorectal": "13%",
+        "lung": "4%"
+      },
+      "structural_consequence": "Disrupts GAP-mediated GTP hydrolysis",
+      "resistance_mechanisms": [
+        "PI3K activation",
+        "RTK feedback"
+      ],
+      "clinical_trials": [
+        "NCT05737706"
+      ],
+      "literature_pmids": [
+        "22589270",
+        "23455880"
+      ]
+    },
+    "c.34G>T": {
+      "protein": "p.G12C",
+      "pathogenicity_score": 0.94,
+      "cancer_types": [
+        "lung",
+        "colorectal",
+        "pancreatic"
+      ],
+      "mechanism": "Impaired GTPase activity, covalently targetable",
+      "functional_impact": "Oncogenic RAS signaling",
+      "prognosis": "moderate_with_therapy",
+      "targeted_therapies": [
+        "Sotorasib (FDA approved)",
+        "Adagrasib (FDA approved)"
+      ],
+      "response_rate": "Variable",
+      "cosmic_id": "COSM516",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "FDA_approved_target",
+      "frequency_data": {
+        "lung_adenocarcinoma": "13%",
+        "colorectal": "3%",
+        "pancreatic": "2%"
+      },
+      "structural_consequence": "Creates druggable cysteine pocket",
+      "resistance_mechanisms": [
+        "G12C reversion",
+        "RTK amplification",
+        "SHP2 mutations"
+      ],
+      "clinical_trials": [
+        "NCT03600883",
+        "NCT04330664"
+      ],
+      "literature_pmids": [
+        "33883589",
+        "34161619"
+      ],
+      "fda_approved_drugs": [
+        "sotorasib",
+        "adagrasib"
+      ]
+    },
+    "c.35G>T": {
+      "protein": "p.G12V",
+      "pathogenicity_score": 0.93,
+      "cancer_types": [
+        "colorectal",
+        "lung",
+        "pancreatic"
+      ],
+      "mechanism": "Constitutive GTP binding, impaired GTPase",
+      "functional_impact": "Strong oncogenic activation",
+      "prognosis": "poor",
+      "targeted_therapies": [
+        "Investigational G12V inhibitors"
+      ],
+      "response_rate": "Variable",
+      "cosmic_id": "COSM532",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "Established",
+      "frequency_data": {
+        "colorectal": "8%",
+        "lung": "3%",
+        "pancreatic": "21%"
+      },
+      "structural_consequence": "",
+      "resistance_mechanisms": [],
+      "clinical_trials": [],
+      "literature_pmids": []
+    }
+  },
+  "EGFR": {
+    "c.2573T>G": {
+      "protein": "p.L858R",
+      "pathogenicity_score": 0.96,
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "mechanism": "Constitutive tyrosine kinase activation",
+      "functional_impact": "Oncogenic EGFR signaling",
+      "prognosis": "excellent_with_targeted_therapy",
+      "targeted_therapies": [
+        "Erlotinib",
+        "Gefitinib",
+        "Osimertinib",
+        "Afatinib"
+      ],
+      "response_rate": "70-80%",
+      "cosmic_id": "COSM6224",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "FDA_approved_target",
+      "frequency_data": {
+        "lung_adenocarcinoma": "8%",
+        "nsclc_overall": "12%"
+      },
+      "structural_consequence": "Activates kinase domain",
+      "resistance_mechanisms": [
+        "T790M (50%)",
+        "MET amplification (15%)",
+        "PIK3CA mutations"
+      ],
+      "clinical_trials": [],
+      "literature_pmids": [
+        "15118073",
+        "21531810"
+      ],
+      "fda_approved_drugs": [
+        "erlotinib",
+        "gefitinib",
+        "osimertinib",
+        "afatinib"
+      ]
+    },
+    "c.2369C>T": {
+      "protein": "p.T790M",
+      "pathogenicity_score": 0.94,
+      "cancer_types": [
+        "lung_adenocarcinoma"
+      ],
+      "mechanism": "Gatekeeper mutation, increased ATP affinity",
+      "functional_impact": "Resistance to 1st/2nd generation TKIs",
+      "prognosis": "moderate_with_3rd_gen_TKI",
+      "targeted_therapies": [
+        "Osimertinib (FDA approved)"
+      ],
+      "response_rate": "71%",
+      "cosmic_id": "COSM6240",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "FDA_approved_target",
+      "frequency_data": {
+        "acquired_resistance": "50%",
+        "de_novo": "2%"
+      },
+      "structural_consequence": "Steric hindrance to TKI binding",
+      "resistance_mechanisms": [
+        "C797S",
+        "MET amplification",
+        "EGFR amplification"
+      ],
+      "clinical_trials": [],
+      "literature_pmids": [
+        "16849602",
+        "30531947"
+      ],
+      "fda_approved_drugs": [
+        "osimertinib"
+      ]
+    }
+  },
+  "BRAF": {
+    "c.1799T>A": {
+      "protein": "p.V600E",
+      "pathogenicity_score": 0.97,
+      "cancer_types": [
+        "melanoma",
+        "colorectal",
+        "thyroid",
+        "lung"
+      ],
+      "mechanism": "Constitutive kinase activation, mimics phosphorylation",
+      "functional_impact": "Oncogenic MAPK pathway activation",
+      "prognosis": "moderate_with_targeted_therapy",
+      "targeted_therapies": [
+        "Vemurafenib",
+        "Dabrafenib",
+        "Encorafenib"
+      ],
+      "response_rate": "50-60%",
+      "cosmic_id": "COSM476",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "FDA_approved_target",
+      "frequency_data": {
+        "melanoma": "40%",
+        "thyroid_papillary": "45%",
+        "colorectal": "8%",
+        "lung": "2%"
+      },
+      "structural_consequence": "Disrupts auto-inhibitory interactions",
+      "resistance_mechanisms": [
+        "NRAS mutations",
+        "MEK1 mutations",
+        "RTK upregulation"
+      ],
+      "clinical_trials": [],
+      "literature_pmids": [
+        "15035987",
+        "20179705"
+      ],
+      "fda_approved_drugs": [
+        "vemurafenib",
+        "dabrafenib",
+        "encorafenib"
+      ],
+      "combination_therapy": "BRAF + MEK inhibitors"
+    }
+  },
+  "PIK3CA": {
+    "c.3140A>G": {
+      "protein": "p.H1047R",
+      "pathogenicity_score": 0.92,
+      "cancer_types": [
+        "breast",
+        "colorectal",
+        "endometrial"
+      ],
+      "mechanism": "Kinase domain activation, enhanced lipid kinase activity",
+      "functional_impact": "Oncogenic PI3K/AKT pathway activation",
+      "prognosis": "moderate_with_targeted_therapy",
+      "targeted_therapies": [
+        "Alpelisib (FDA approved)"
+      ],
+      "response_rate": "26%",
+      "cosmic_id": "COSM775",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "FDA_approved_target",
+      "frequency_data": {
+        "breast": "18%",
+        "colorectal": "7%",
+        "endometrial": "24%"
+      },
+      "structural_consequence": "Disrupts auto-inhibitory contacts",
+      "resistance_mechanisms": [],
+      "clinical_trials": [],
+      "literature_pmids": [
+        "15016963",
+        "31091374"
+      ],
+      "fda_approved_drugs": [
+        "alpelisib"
+      ],
+      "combination_therapy": "PI3K inhibitor + fulvestrant"
+    },
+    "c.1624G>A": {
+      "protein": "p.E542K",
+      "pathogenicity_score": 0.89,
+      "cancer_types": [
+        "breast",
+        "colorectal",
+        "lung"
+      ],
+      "mechanism": "Helical domain mutation, enhanced membrane binding",
+      "functional_impact": "Oncogenic PI3K activation",
+      "prognosis": "moderate",
+      "targeted_therapies": [
+        "Alpelisib"
+      ],
+      "response_rate": "Variable",
+      "cosmic_id": "COSM763",
+      "cosmic_verified": true,
+      "evidence_level": "Strong",
+      "biomarker_status": "Targetable",
+      "frequency_data": {
+        "breast": "8%",
+        "colorectal": "4%"
+      },
+      "structural_consequence": "",
+      "resistance_mechanisms": [],
+      "clinical_trials": [],
+      "literature_pmids": []
+    }
+  }
+}

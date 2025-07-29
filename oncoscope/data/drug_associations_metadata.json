@@ -1,0 +1,24 @@
+{
+  "dataset_info": {
+    "name": "FDA-Verified Drug-Biomarker Associations",
+    "version": "2024.1",
+    "created_at": "2025-07-28T23:11:35.960292",
+    "total_drugs": 10,
+    "verification_level": "FDA_APPROVED_ONLY",
+    "data_quality": "GOLD_STANDARD"
+  },
+  "data_sources": [
+    "FDA Orange Book",
+    "FDA Drug Labels",
+    "TCGA Pan-Cancer Studies",
+    "MSK-IMPACT",
+    "Clinical Trial Results",
+    "FDA Companion Diagnostic Approvals"
+  ],
+  "quality_metrics": {
+    "fda_approved_drugs": 10,
+    "companion_diagnostics": 5,
+    "breakthrough_therapies": 1,
+    "first_in_class_drugs": 2
+  }
+}

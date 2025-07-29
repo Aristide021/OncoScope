@@ -1,0 +1,276 @@
+# OncoScope .gitignore
+
+# =================
+# Environment Files
+# =================
+.env
+.env.local
+.env.production
+.env.staging
+.env.*
+!.env.example
+
+# =================
+# Python
+# =================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# =================
+# Database Files
+# =================
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+oncoscope.db*
+
+# =================
+# Log Files
+# =================
+logs/
+*.log
+*.log.*
+
+# =================
+# AI Models & Data
+# =================
+models/
+*.model
+*.pkl
+*.joblib
+ollama_models/
+
+# Training data (exclude large datasets)
+training_data/*.json
+!training_data/README.md
+
+# Cache files
+cache/
+.cache/
+*.cache
+
+# =================
+# Local Development Secrets
+# =================
+config/secrets.json
+
+# =================
+# Frontend/Node.js
+# =================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.parcel-cache
+
+# Next.js build output
+.next
+out/
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# =================
+# IDE & Editor Files
+# =================
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# =================
+# OS Generated Files
+# =================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+*.tmp
+*.temp
+
+# =================
+# Backup Files
+# =================
+backup/
+backups/
+*.backup
+*.bak
+*.old
+
+# =================
+# Temporary Files
+# =================
+tmp/
+temp/
+.tmp/
+.temp/
+
+# =================
+# Docker
+# =================
+.dockerignore
+Dockerfile.backup
+
+# =================
+# Documentation
+# =================
+site/
+docs/_build/
+
+# =================
+# OncoScope Specific
+# =================
+# User uploads and results
+uploads/
+user_data/
+reports/
+outputs/
+results/
+
+# Analysis cache
+analysis_cache/
+mutation_cache/
+report_cache/
+
+# Large training files (keep core data)
+training_data/*.json
+!training_data/README.md
+
+# Repomix output
+repomix-output.xml
