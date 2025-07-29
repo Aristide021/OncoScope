@@ -184,7 +184,10 @@ function startBackend() {
   });
 
   backendProcess.stdout.on('data', (data) => {
-    console.log(`Backend: ${data}`);
+    // Log backend output to file instead of console in production
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Backend: ${data}`);
+    }
   });
 
   backendProcess.stderr.on('data', (data) => {
@@ -192,7 +195,10 @@ function startBackend() {
   });
 
   backendProcess.on('close', (code) => {
-    console.log(`Backend process exited with code ${code}`);
+    // Log process exit only in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Backend process exited with code ${code}`);
+    }
     if (code !== 0 && code !== null) {
       dialog.showErrorBox('Backend Error', 'The analysis backend failed to start. Please check your Python installation.');
     }

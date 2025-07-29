@@ -13,6 +13,25 @@ class OncoScopeApp {
         this.setupMenuHandlers();
     }
     
+    // Utility functions for string formatting
+    formatDisplayString(str) {
+        /**
+         * Format strings for display by replacing underscores with spaces
+         * and capitalizing each word
+         */
+        return str.replace(/_/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+    
+    formatUnderscoreString(str) {
+        /**
+         * Simple replacement of underscores with spaces
+         */
+        return str.replace(/_/g, ' ');
+    }
+    
     initializeElements() {
         // Get DOM elements
         this.elements = {
@@ -117,6 +136,9 @@ class OncoScopeApp {
         document.getElementById('save-results').addEventListener('click', () => {
             this.saveResults();
         });
+        
+        // Add keyboard navigation support
+        this.setupKeyboardNavigation();
         
         // New analysis button
         document.getElementById('new-analysis-button').addEventListener('click', () => {
@@ -261,7 +283,7 @@ class OncoScopeApp {
             this.currentAnalysis = result;
             
             // Complete progress
-            this.updateProgress(100, 'Analysis complete!');
+            this.updateProgress(100, 'Analysis complete! Generating clinical recommendations...');
             this.activateStep('report');
             
             // Show results after brief delay
@@ -288,16 +310,20 @@ class OncoScopeApp {
             
             if (progress >= 25 && currentStep === 0) {
                 this.activateStep(steps[0]);
-                this.updateProgress(25, 'Parsing mutations...');
+                this.updateProgress(25, 'Parsing and validating genetic mutations...');
                 currentStep = 1;
-            } else if (progress >= 50 && currentStep === 1) {
+            } else if (progress >= 40 && currentStep === 1) {
                 this.activateStep(steps[1]);
-                this.updateProgress(50, 'Searching mutation database...');
+                this.updateProgress(40, 'Searching COSMIC mutation database and ClinVar variants...');
                 currentStep = 2;
+            } else if (progress >= 60 && currentStep === 2) {
+                this.updateProgress(60, 'Loading FDA drug associations and therapeutic targets...');
             } else if (progress >= 75 && currentStep === 2) {
                 this.activateStep(steps[2]);
-                this.updateProgress(75, 'AI analysis in progress...');
+                this.updateProgress(75, 'Running AI pathogenicity analysis with Gemma model...');
                 currentStep = 3;
+            } else if (progress >= 90 && currentStep === 3) {
+                this.updateProgress(90, 'Calculating composite risk scores and clustering mutations...');
             }
             
             if (progress >= 90) {
@@ -419,10 +445,7 @@ class OncoScopeApp {
     
     formatCancerType(type) {
         // Format cancer type names for display
-        return type.replace(/_/g, ' ')
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+        return this.formatDisplayString(type);
     }
     
     displayMutationResults(mutations) {
@@ -448,7 +471,7 @@ class OncoScopeApp {
                 <div class="mutation-header">
                     <h4>${mutation.mutation_id}</h4>
                     <span class="pathogenicity-badge ${pathogenicityClass}">
-                        ${mutation.clinical_significance.replace(/_/g, ' ')}
+                        ${this.formatUnderscoreString(mutation.clinical_significance)}
                     </span>
                 </div>
                 
@@ -477,7 +500,7 @@ class OncoScopeApp {
                     
                     <div class="detail-row">
                         <span class="detail-label">Prognosis Impact:</span>
-                        <span class="detail-value">${mutation.prognosis_impact.replace(/_/g, ' ')}</span>
+                        <span class="detail-value">${this.formatUnderscoreString(mutation.prognosis_impact)}</span>
                     </div>
                     
                     <div class="detail-row">
@@ -549,7 +572,7 @@ class OncoScopeApp {
                 break;
             case 'progress':
                 this.elements.progressSection.classList.remove('hidden');
-                this.updateProgress(0, 'Initializing analysis...');
+                this.updateProgress(0, 'Initializing OncoScope cancer genomics analysis...');
                 break;
             case 'results':
                 this.elements.resultsSection.classList.remove('hidden');
@@ -731,8 +754,167 @@ class OncoScopeApp {
         return 'var(--success-color)';
     }
 
-    exportToPDF() {
-        window.print();
+    async exportToPDF() {
+        if (!this.currentAnalysis) {
+            this.showError('No analysis data available for export');
+            return;
+        }
+
+        try {
+            // Create a new window for PDF generation
+            const printWindow = window.open('', '_blank');
+            const pdfContent = this.generatePDFContent();
+            
+            printWindow.document.write(pdfContent);
+            printWindow.document.close();
+            
+            // Wait for content to load then print
+            printWindow.onload = () => {
+                setTimeout(() => {
+                    printWindow.print();
+                    printWindow.close();
+                }, 500);
+            };
+            
+        } catch (error) {
+            this.showError('Failed to generate PDF report: ' + error.message);
+        }
+    }
+    
+    generatePDFContent() {
+        const analysis = this.currentAnalysis;
+        const timestamp = new Date().toLocaleString();
+        
+        return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>OncoScope Analysis Report</title>
+            <style>
+                @media print {
+                    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                    .header { border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 30px; }
+                    .logo { color: #2563eb; font-size: 24px; font-weight: bold; }
+                    .timestamp { color: #666; font-size: 12px; margin-top: 10px; }
+                    .section { margin-bottom: 25px; page-break-inside: avoid; }
+                    .section-title { color: #2563eb; font-size: 18px; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
+                    .risk-summary { background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+                    .risk-score { font-size: 36px; font-weight: bold; color: #2563eb; }
+                    .mutation-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                    .mutation-table th, .mutation-table td { border: 1px solid #e5e7eb; padding: 10px; text-align: left; }
+                    .mutation-table th { background: #f8fafc; font-weight: bold; }
+                    .recommendations { background: #fef7cd; padding: 15px; border-left: 4px solid #f59e0b; margin: 10px 0; }
+                    .warning { background: #fef2f2; padding: 15px; border-left: 4px solid #ef4444; margin: 10px 0; }
+                    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; font-size: 12px; color: #666; }
+                    .page-break { page-break-before: always; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="logo">OncoScope</div>
+                <div style="font-size: 16px; color: #666;">Privacy-First Cancer Genomics Analysis Report</div>
+                <div class="timestamp">Generated: ${timestamp}</div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Overall Risk Assessment</h2>
+                <div class="risk-summary">
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div class="risk-score">${(analysis.overall_risk_score * 100).toFixed(1)}%</div>
+                        <div>
+                            <div style="font-size: 18px; font-weight: bold;">${analysis.risk_classification}</div>
+                            <div style="color: #666;">Overall Risk Level</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div>Confidence Score: ${(analysis.confidence_metrics?.overall_confidence * 100 || 'N/A')}%</div>
+                        <div>Actionable Mutations: ${analysis.actionable_mutations?.length || 0}</div>
+                        <div>Pathogenic Variants: ${analysis.individual_mutations?.filter(m => m.clinical_significance === 'PATHOGENIC').length || 0}</div>
+                        <div>Known Mutations: ${analysis.confidence_metrics?.known_mutations || 0}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Individual Mutation Analysis</h2>
+                <table class="mutation-table">
+                    <thead>
+                        <tr>
+                            <th>Gene</th>
+                            <th>Variant</th>
+                            <th>Protein Change</th>
+                            <th>Pathogenicity</th>
+                            <th>Clinical Significance</th>
+                            <th>Targeted Therapies</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${analysis.individual_mutations?.map(mutation => `
+                            <tr>
+                                <td>${mutation.gene}</td>
+                                <td>${mutation.variant}</td>
+                                <td>${mutation.protein_change || 'Unknown'}</td>
+                                <td>${(mutation.pathogenicity_score * 100).toFixed(1)}%</td>
+                                <td>${this.formatUnderscoreString(mutation.clinical_significance)}</td>
+                                <td>${mutation.targeted_therapies?.join(', ') || 'None'}</td>
+                            </tr>
+                        `).join('') || '<tr><td colspan="6">No mutation data available</td></tr>'}
+                    </tbody>
+                </table>
+            </div>
+            
+            ${analysis.estimated_tumor_types?.length ? `
+            <div class="section">
+                <h2 class="section-title">Predicted Cancer Types</h2>
+                <ul>
+                    ${analysis.estimated_tumor_types.map(tumor => `
+                        <li>${this.formatDisplayString(tumor.cancer_type)}: ${(tumor.likelihood * 100).toFixed(1)}% likelihood</li>
+                    `).join('')}
+                </ul>
+            </div>
+            ` : ''}
+            
+            ${analysis.clinical_recommendations?.length ? `
+            <div class="section">
+                <h2 class="section-title">Clinical Recommendations</h2>
+                ${analysis.clinical_recommendations.map(rec => `
+                    <div class="recommendations">${rec}</div>
+                `).join('')}
+            </div>
+            ` : ''}
+            
+            ${analysis.actionable_mutations?.length ? `
+            <div class="section">
+                <h2 class="section-title">Actionable Mutations</h2>
+                ${analysis.actionable_mutations.map(actionable => `
+                    <div style="margin-bottom: 15px; padding: 15px; background: #f0f9ff; border-radius: 8px;">
+                        <div style="font-weight: bold; color: #2563eb;">${actionable.gene} - ${actionable.mutation}</div>
+                        <div>Therapies: ${actionable.therapies?.join(', ') || 'None'}</div>
+                        <div>FDA Approved: ${actionable.fda_approved ? 'Yes' : 'No'}</div>
+                        <div>Clinical Trials Available: ${actionable.clinical_trials_available ? 'Yes' : 'No'}</div>
+                    </div>
+                `).join('')}
+            </div>
+            ` : ''}
+            
+            ${analysis.warnings?.length ? `
+            <div class="section">
+                <h2 class="section-title">Warnings & Considerations</h2>
+                ${analysis.warnings.map(warning => `
+                    <div class="warning">${warning}</div>
+                `).join('')}
+            </div>
+            ` : ''}
+            
+            <div class="footer">
+                <div><strong>Disclaimer:</strong> This analysis is for research purposes only and should not be used for clinical decision-making without consulting a qualified healthcare professional.</div>
+                <div style="margin-top: 10px;"><strong>Privacy Notice:</strong> All analysis performed locally. Your genetic data never leaves this device.</div>
+                <div style="margin-top: 10px;">Generated by OncoScope v1.0.0 - Privacy-First Cancer Genomics Analysis Platform</div>
+            </div>
+        </body>
+        </html>
+        `;
     }
     
     async exportToJSON() {
@@ -768,6 +950,95 @@ class OncoScopeApp {
             // Fallback for non-Electron environment
             this.exportToJSON();
         }
+    }
+    
+    setupKeyboardNavigation() {
+        // Global keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Skip if user is typing in an input field
+            if (e.target.matches('input, textarea, select')) {
+                return;
+            }
+            
+            switch (e.key) {
+                case 'Enter':
+                case ' ':
+                    // Activate focused button
+                    if (e.target.matches('button')) {
+                        e.preventDefault();
+                        e.target.click();
+                    }
+                    break;
+                    
+                case 'Tab':
+                    // Ensure proper tab order - browser handles this naturally
+                    break;
+                    
+                case 'Escape':
+                    // Close modals
+                    if (!document.getElementById('error-modal').classList.contains('hidden')) {
+                        closeErrorModal();
+                    }
+                    break;
+                    
+                case 'n':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.resetAnalysis();
+                    }
+                    break;
+                    
+                case 'o':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        this.elements.fileInput.click();
+                    }
+                    break;
+                    
+                case 'p':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        if (this.currentAnalysis) {
+                            this.exportToPDF();
+                        }
+                    }
+                    break;
+            }
+        });
+        
+        // Demo button keyboard navigation
+        document.querySelectorAll('.demo-button').forEach(button => {
+            button.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.loadDemoData(button.dataset.demo);
+                }
+            });
+        });
+        
+        // Ensure all interactive elements are focusable
+        this.ensureFocusableElements();
+    }
+    
+    ensureFocusableElements() {
+        // Make sure all clickable elements have proper tabindex
+        const clickableElements = document.querySelectorAll(
+            'button, [role="button"], .demo-button, .upload-area'
+        );
+        
+        clickableElements.forEach(element => {
+            if (!element.hasAttribute('tabindex')) {
+                element.setAttribute('tabindex', '0');
+            }
+        });
+        
+        // Add keyboard support for upload area
+        this.elements.uploadArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.elements.fileInput.click();
+            }
+        });
     }
 }
 

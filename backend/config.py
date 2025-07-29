@@ -44,8 +44,8 @@ class Settings(BaseSettings):
     data_dir: Path = Path(__file__).parent.parent / "data"
     upload_dir: Path = Path(__file__).parent.parent / "uploads"
     
-    # Data Processing (OncoScope Premium Features)
-    use_premium_clinvar: bool = True
+    # Data Processing (OncoScope Expert Features)
+    use_expert_clinvar: bool = True
     use_targeted_cosmic: bool = True
     use_fda_verified_drugs: bool = True
     min_pathogenicity_score: float = 0.7

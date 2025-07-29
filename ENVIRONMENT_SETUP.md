@@ -44,8 +44,8 @@ DATABASE_URL=sqlite:///./oncoscope.db  # Local SQLite file
 
 ### 🧬 OncoScope Data Features
 ```bash
-# Premium mutation analysis features
-USE_PREMIUM_CLINVAR=true     # Expert panel variants
+# Expert mutation analysis features
+USE_EXPERT_CLINVAR=true     # Expert panel variants
 USE_TARGETED_COSMIC=true     # Validated COSMIC mutations
 USE_FDA_VERIFIED_DRUGS=true  # FDA-approved therapies
 MIN_PATHOGENICITY_SCORE=0.7  # Quality threshold
@@ -65,7 +65,7 @@ OncoScope is designed for **offline evaluation** with:
 - ✅ **Local AI models** - Runs entirely on Ollama
 - ✅ **SQLite database** - No server setup needed
 - ✅ **Self-contained** - Works without internet
-- ✅ **Premium datasets** - 41 validated mutations, FDA drugs, expert panel data
+- ✅ **Expert datasets** - 41 validated mutations, FDA drugs, expert panel data
 
 ## Files Structure
 
@@ -122,5 +122,5 @@ API_PORT=8001
 - **No internet required** - All datasets are pre-bundled
 - **No API keys needed** - Completely self-contained
 - **Local evaluation** - Designed for competition judging environment
-- **Premium quality** - Uses expert-validated cancer genomics data
+- **Expert quality** - Uses expert-validated cancer genomics data
 

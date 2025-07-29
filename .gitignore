@@ -274,3 +274,36 @@ training_data/*.json
 
 # Repomix output
 repomix-output.xml
+
+# =================
+# Claude Code Files
+# =================
+.claude/
+
+# =================
+# Python Virtual Environments
+# =================
+# Virtual environment directories
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+oncoscope_env/
+
+# =================
+# AI/ML Specific
+# =================
+# Unsloth cache and compiled files
+unsloth_compiled_cache/
+ai/fine_tuning/unsloth_compiled_cache/
+
+# Model files and training outputs
+oncoscope_model/
+*.gguf
+*.safetensors
+
+# =================
+# Setup and Documentation
+# =================
+# Judge environment setup files

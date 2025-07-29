@@ -15,7 +15,7 @@ The fine-tuning system creates a specialized OncoScope model that excels at:
 
 | File | Purpose |
 |------|---------|
-| `prepare_dataset.py` | Creates premium training datasets from verified genomics data |
+| `prepare_dataset.py` | Creates expert training datasets from verified genomics data |
 | `train_cancer_model.py` | Fine-tunes and exports models for deployment |
 | `modelfile_template.txt` | Ollama Modelfile template for model deployment |
 | `cancer_training_data.json` | Generated training dataset (created by prepare_dataset.py) |
@@ -24,8 +24,8 @@ The fine-tuning system creates a specialized OncoScope model that excels at:
 
 ### 1. Prepare Training Dataset
 ```bash
-# Create premium dataset with expert panel + consensus + curated tiers
-python -m oncoscope.ai.fine_tuning.prepare_dataset --premium
+# Create expert-curated dataset with expert panel + consensus + curated tiers
+python -m oncoscope.ai.fine_tuning.prepare_dataset --expert-curated
 
 # Or create standard dataset  
 python -m oncoscope.ai.fine_tuning.prepare_dataset --num_examples 1000
@@ -34,7 +34,7 @@ python -m oncoscope.ai.fine_tuning.prepare_dataset --num_examples 1000
 ### 2. Fine-Tune Model (Future Implementation)
 ```bash
 # Will fine-tune Gemma model with OncoScope data
-python -m oncoscope.ai.fine_tuning.train_cancer_model --dataset premium_cancer_genomics_training_*.json
+python -m oncoscope.ai.fine_tuning.train_cancer_model --dataset expert_curated_cancer_genomics_*.json
 ```
 
 ### 3. Deploy to Ollama
@@ -45,7 +45,7 @@ ollama create oncoscope-cancer -f oncoscope-cancer.modelfile
 
 ## Training Dataset Features
 
-### Premium Quality Tiers
+### Expert Quality Tiers
 
 **Tier 1: Expert Panel (2,000 examples)**
 - 4-star rated variants from ClinGen expert panels
@@ -95,7 +95,7 @@ SYSTEM """You are OncoScope, an expert AI assistant specialized in cancer genomi
 
 ## Training Quality Metrics
 
-The premium dataset achieves:
+The expert dataset achieves:
 - **96-98% expected accuracy** (expert panel level)
 - **100% actionable mutations** (no uncertain classifications)
 - **73.2% Tier 1 actionable** (FDA-approved therapies available)
@@ -127,9 +127,9 @@ The premium dataset achieves:
 ```python
 from oncoscope.ai.fine_tuning.prepare_dataset import CancerGenomicsDatasetPreparator
 
-# Create premium dataset
-preparator = CancerGenomicsDatasetPreparator(use_premium_clinvar=True)
-dataset_file = preparator.create_premium_training_dataset()
+# Create expert dataset
+preparator = CancerGenomicsDatasetPreparator(use_expert_clinvar=True)
+dataset_file = preparator.create_expert_training_dataset()
 
 # Check quality metrics
 print(f"Dataset created: {dataset_file}")
@@ -145,7 +145,7 @@ from oncoscope.ai.fine_tuning.train_cancer_model import CancerModelTrainer
 # Initialize trainer
 trainer = CancerModelTrainer(
     base_model="google/gemma-3n-8b",
-    dataset_path="premium_cancer_genomics_training_*.json"
+    dataset_path="expert_curated_cancer_genomics_*.json"
 )
 
 # Fine-tune model
@@ -176,7 +176,7 @@ oncoscope/ai/fine_tuning/
 
 ## Next Steps
 
-1. **Generate Premium Dataset**: Run `prepare_dataset.py --premium`
+1. **Generate Expert Dataset**: Run `prepare_dataset.py --expert-curated`
 2. **Validate Data Quality**: Check expert panel percentages and verification
 3. **Model Training**: Implement Gemma 3N fine-tuning (future work)
 4. **Deployment**: Use generated .modelfile with Ollama

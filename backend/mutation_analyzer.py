@@ -508,7 +508,7 @@ class CancerMutationAnalyzer:
                     "therapies": analysis.targeted_therapies,
                     "therapy_class": self.get_therapy_classes(analysis.targeted_therapies),
                     "fda_approved": self.check_fda_approval(analysis.targeted_therapies),
-                    "clinical_trials_available": True  # Placeholder
+                    "clinical_trials_available": self.check_clinical_trials_availability(analysis.gene, analysis.targeted_therapies)
                 })
         
         return actionable
@@ -526,6 +526,36 @@ class CancerMutationAnalyzer:
         for therapy in therapies:
             if therapy in self.drug_db and self.drug_db[therapy].get('fda_approved', False):
                 return True
+        return False
+    
+    def check_clinical_trials_availability(self, gene: str, therapies: List[str]) -> bool:
+        """Check if clinical trials are likely available for this gene/therapy combination"""
+        # High-priority cancer genes typically have active clinical trials
+        high_priority_genes = {
+            'TP53', 'KRAS', 'EGFR', 'BRCA1', 'BRCA2', 'PIK3CA', 'PTEN', 
+            'APC', 'BRAF', 'MYC', 'RB1', 'VHL', 'MLH1', 'MSH2', 'MSH6',
+            'ERBB2', 'ALK', 'ROS1', 'MET', 'KIT', 'PDGFRA'
+        }
+        
+        # If gene is high priority, likely has trials
+        if gene in high_priority_genes:
+            return True
+        
+        # If any therapy is FDA approved, likely has ongoing trials for combinations
+        if self.check_fda_approval(therapies):
+            return True
+        
+        # Check if therapies are in clinical development
+        investigational_therapies = {
+            'APR-246', 'PRIMA-1MET', 'nutlin-3', 'adagrasib', 'alpelisib',
+            'talazoparib', 'rucaparib', 'niraparib', 'veliparib'
+        }
+        
+        for therapy in therapies:
+            if therapy.lower() in [t.lower() for t in investigational_therapies]:
+                return True
+        
+        # Default to false for unknown combinations
         return False
     
     def predict_tumor_types(self, analyses: List[MutationAnalysis]) -> List[Dict[str, float]]:

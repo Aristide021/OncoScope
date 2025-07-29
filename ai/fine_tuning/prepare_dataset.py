@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class CancerGenomicsDatasetPreparator:
     """Prepare high-quality training datasets for cancer genomics analysis"""
     
-    def __init__(self, output_dir: str = "./training_data", use_premium_clinvar: bool = True):
+    def __init__(self, output_dir: str = "./training_data", use_expert_clinvar: bool = True):
         """Initialize dataset preparator"""
         
         self.output_dir = Path(output_dir)
@@ -28,8 +28,8 @@ class CancerGenomicsDatasetPreparator:
         # Initialize prompt generator
         self.prompt_generator = GenomicAnalysisPrompts()
         
-        # Premium dataset configuration
-        self.use_premium_clinvar = use_premium_clinvar
+        # Expert-curated dataset configuration
+        self.use_expert_clinvar = use_expert_clinvar
         
         # Data directories
         self.data_dir = Path(__file__).parent.parent.parent / "data"
@@ -204,7 +204,7 @@ class CancerGenomicsDatasetPreparator:
         """Load high-confidence mutations for training"""
         
         # Try to load from targeted ClinVar data first
-        if self.use_premium_clinvar:
+        if self.use_expert_clinvar:
             clinvar_data = self._load_targeted_clinvar_data()
             if clinvar_data:
                 logger.info(f"🎯 Loaded {len(clinvar_data)} genes from targeted ClinVar lookup")
@@ -475,8 +475,8 @@ class CancerGenomicsDatasetPreparator:
         
         return significance_map.get(clinical_significance, 0.50)
     
-    def create_premium_training_dataset(self, size_config: str = "6k") -> str:
-        """Create premium training dataset - DUAL SIZE SYSTEM"""
+    def create_expert_curated_training_dataset(self, size_config: str = "6k") -> str:
+        """Create expert-curated training dataset - DUAL SIZE SYSTEM"""
         
         # Set quality tiers based on size configuration
         if size_config == "6k":
@@ -495,7 +495,7 @@ class CancerGenomicsDatasetPreparator:
         all_training_examples = []
         quality_metrics = {}
         
-        if self.use_premium_clinvar:
+        if self.use_expert_clinvar:
             # Tier 1: Expert Panel Gold Standard
             logger.info(f"🥇 Tier 1: Extracting expert panel reviewed variants ({self.quality_tiers['expert_panel']['target_examples']} examples)...")
             expert_examples = self._create_expert_panel_examples(
@@ -514,7 +514,7 @@ class CancerGenomicsDatasetPreparator:
         
         # Tier 3: Specialized Curated Scenarios
         logger.info(f"🥉 Tier 3: Creating specialized clinical scenarios ({self.quality_tiers['curated']['target_examples']} examples)...")
-        curated_examples = self._create_curated_premium_examples(
+        curated_examples = self._create_curated_expert_examples(
             self.quality_tiers['curated']['target_examples']
         )
         all_training_examples.extend(curated_examples)
@@ -531,9 +531,9 @@ class CancerGenomicsDatasetPreparator:
         # Shuffle while preserving quality metadata
         random.shuffle(all_training_examples)
         
-        # Save premium dataset with size indicator
+        # Save expert-curated dataset with size indicator
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        output_file = self.output_dir / f"premium_cancer_genomics_{size_config}_{timestamp}.json"
+        output_file = self.output_dir / f"expert_curated_cancer_genomics_{size_config}_{timestamp}.json"
         
         with open(output_file, 'w') as f:
             json.dump(all_training_examples, f, indent=2)
@@ -543,10 +543,10 @@ class CancerGenomicsDatasetPreparator:
         with open(canonical_file, 'w') as f:
             json.dump(all_training_examples, f, indent=2)
         
-        # Create premium metadata
-        premium_metadata = {
+        # Create expert-curated metadata
+        expert_curated_metadata = {
             'dataset_info': {
-                'name': f'OncoScope Premium Cancer Genomics Dataset ({size_config.upper()})',
+                'name': f'OncoScope Expert-Curated Cancer Genomics Dataset ({size_config.upper()})',
                 'version': '3.0_DUAL_CONFIG',
                 'strategy': strategy_name,
                 'size_configuration': size_config,
@@ -584,11 +584,11 @@ class CancerGenomicsDatasetPreparator:
             ]
         }
         
-        metadata_file = self.output_dir / f"premium_metadata_{size_config}_{timestamp}.json"
+        metadata_file = self.output_dir / f"expert_curated_metadata_{size_config}_{timestamp}.json"
         with open(metadata_file, 'w') as f:
-            json.dump(premium_metadata, f, indent=2)
+            json.dump(expert_curated_metadata, f, indent=2)
         
-        logger.info(f"🏆 Premium dataset created: {output_file}")
+        logger.info(f"🏆 Expert-curated dataset created: {output_file}")
         logger.info(f"📊 Total examples: {len(all_training_examples)}")
         logger.info(f"🥇 Expert panel: {quality_metrics.get('expert_panel', 0)}")
         logger.info(f"🥈 Consensus: {quality_metrics.get('consensus', 0)}")
@@ -1114,7 +1114,7 @@ Provide comprehensive analysis integrating all available information sources.
         examples = []
         
         # Use real ClinVar data if available, filtered for expert panel reviewed variants
-        if self.use_premium_clinvar and hasattr(self, 'training_mutations'):
+        if self.use_expert_clinvar and hasattr(self, 'training_mutations'):
             expert_panel_variants = self._filter_expert_panel_variants(self.training_mutations)
             if expert_panel_variants:
                 logger.info(f"🥇 Using {len(expert_panel_variants)} real expert panel variants from ClinVar")
@@ -1183,7 +1183,7 @@ Provide comprehensive clinical analysis of this expert-validated cancer variant 
                             "submitter_count": len(data.get('submitters', [])),
                             "evidence_level": data.get('evidence_level'),
                             "competition_tier": "gold_standard",
-                            "data_source": "real_clinvar" if self.use_premium_clinvar else "simulated",
+                            "data_source": "real_clinvar" if self.use_expert_clinvar else "simulated",
                             "augmented": True,
                             "patient_demographics": demo,
                             "clinical_context": context
@@ -1486,13 +1486,13 @@ Analyze this multi-laboratory consensus validated cancer variant in the given cl
         logger.info(f"🥈 Created {len(examples)} consensus examples with massive augmentation")
         return examples[:target_examples]
     
-    def _create_curated_premium_examples(self, target_examples: int) -> List[Dict[str, Any]]:
+    def _create_curated_expert_examples(self, target_examples: int) -> List[Dict[str, Any]]:
         """Create Tier 3: Specialized curated scenarios (highest complexity) with SCALING"""
         
         examples = []
         
-        # Expanded premium scenarios for scaling to 800 examples
-        premium_scenarios = [
+        # Expanded expert-curated scenarios for scaling to 800 examples
+        expert_curated_scenarios = [
             {"type": "complex_family_pedigree", "title": "Multi-generational BRCA1 family with variable penetrance", "complexity": "very_high", "clinical_value": "demonstrates_penetrance_variability"},
             {"type": "therapeutic_resistance_evolution", "title": "EGFR mutation evolution under TKI pressure", "complexity": "very_high", "clinical_value": "resistance_mechanism_education"},
             {"type": "tumor_heterogeneity_analysis", "title": "Spatial TP53 mutation heterogeneity in tumor samples", "complexity": "very_high", "clinical_value": "precision_medicine_complexity"},
@@ -1506,10 +1506,10 @@ Analyze this multi-laboratory consensus validated cancer variant in the given cl
         ]
         
         # Calculate how many times to repeat each scenario type
-        scenarios_per_type = max(1, target_examples // len(premium_scenarios))
-        logger.info(f"🥉 Curated tier: {len(premium_scenarios)} scenario types × {scenarios_per_type} augmentations = {target_examples} target examples")
+        scenarios_per_type = max(1, target_examples // len(expert_curated_scenarios))
+        logger.info(f"🥉 Curated tier: {len(expert_curated_scenarios)} scenario types × {scenarios_per_type} augmentations = {target_examples} target examples")
         
-        for scenario in premium_scenarios:
+        for scenario in expert_curated_scenarios:
             # Create multiple augmented examples per scenario type
             for aug_idx in range(min(scenarios_per_type, target_examples - len(examples))):
                 if len(examples) >= target_examples:
@@ -1522,7 +1522,7 @@ Analyze this multi-laboratory consensus validated cancer variant in the given cl
                 presentation = random.choice(self.augmentation_templates['clinical_presentations'])
                 
                 input_prompt = f"""
-PREMIUM CLINICAL SCENARIO ANALYSIS
+EXPERT-CURATED CLINICAL SCENARIO ANALYSIS
 
 Patient: {demo['age']}-year-old {demo['ethnicity']} {demo['sex']}
 Clinical Context: {context}
@@ -1538,12 +1538,12 @@ This is a specialized clinical scenario requiring expert-level cancer genomics a
 Provide comprehensive interpretation suitable for precision oncology applications in this clinical context.
 """
                 
-                output_data = self._generate_premium_scenario_output_augmented(scenario, demo, context, family_hist, presentation)
+                output_data = self._generate_expert_curated_scenario_output_augmented(scenario, demo, context, family_hist, presentation)
                 
                 examples.append({
                     "input": input_prompt,
                     "output": json.dumps(output_data, indent=2),
-                    "mutation_type": "premium_clinical_scenario",
+                    "mutation_type": "expert_curated_clinical_scenario",
                     "quality_tier": "curated",
                     "quality_weight": 1.0,
                     "confidence_score": 0.95,
@@ -1559,7 +1559,7 @@ Provide comprehensive interpretation suitable for precision oncology application
                     }
                 })
         
-        logger.info(f"🥉 Created {len(examples)} curated premium examples with massive scaling")
+        logger.info(f"🥉 Created {len(examples)} curated expert examples with massive scaling")
         return examples[:target_examples]
     
     # Helper methods for generating outputs
@@ -1902,11 +1902,11 @@ PROGNOSIS:
         else:
             return ['Standard clinical follow-up', 'Genetic counseling coordination']
     
-    def _generate_premium_scenario_output_augmented(self, scenario: Dict, demographics: Dict, context: str, family_history: List, presentation: str) -> Dict[str, Any]:
-        """Generate output for premium curated scenarios with augmented context"""
+    def _generate_expert_curated_scenario_output_augmented(self, scenario: Dict, demographics: Dict, context: str, family_history: List, presentation: str) -> Dict[str, Any]:
+        """Generate output for expert-curated scenarios with augmented context"""
         scenario_type = scenario.get('type', 'unknown')
         
-        base_output = self._generate_premium_scenario_output(scenario)
+        base_output = self._generate_expert_curated_scenario_output(scenario)
         
         # Add patient context to the analysis
         base_output["patient_context"] = {
@@ -1943,13 +1943,13 @@ PROGNOSIS:
         }
         return priorities.get(context, 'comprehensive genomic analysis')
     
-    def _generate_premium_scenario_output(self, scenario: Dict) -> Dict[str, Any]:
-        """Generate output for premium curated scenarios"""
+    def _generate_expert_curated_scenario_output(self, scenario: Dict) -> Dict[str, Any]:
+        """Generate output for expert-curated scenarios"""
         scenario_type = scenario.get('type', 'unknown')
         
         if scenario_type == 'complex_family_pedigree':
             return {
-                "premium_pedigree_analysis": {
+                "expert_curated_pedigree_analysis": {
                     "family_structure": {
                         "affected_generations": 3,
                         "penetrance_pattern": "Variable penetrance observed",
@@ -1991,7 +1991,7 @@ PROGNOSIS:
         
         else:
             return {
-                "premium_scenario_analysis": {
+                "expert_curated_scenario_analysis": {
                     "complexity_level": scenario.get('complexity', 'high'),
                     "clinical_value": scenario.get('clinical_value'),
                     "expert_interpretation": "Requires specialized genomics expertise",
@@ -2005,21 +2005,21 @@ def main():
     
     parser = argparse.ArgumentParser(description="Prepare cancer genomics training dataset - DUAL CONFIGURATION")
     parser.add_argument("--output_dir", default="./training_data", help="Output directory")
-    parser.add_argument("--premium", action="store_true", default=True, help="Create premium quality dataset")
+    parser.add_argument("--expert-curated", action="store_true", default=True, help="Create expert-curated quality dataset")
     parser.add_argument("--size", choices=["6k", "2k5", "both"], default="6k", 
                         help="Dataset size: 6k (AMBITIOUS 6,000), 2k5 (SAFE 2,500), both (generate both)")
-    parser.add_argument("--num_examples", type=int, default=1000, help="Number of training examples (if not premium)")
+    parser.add_argument("--num_examples", type=int, default=1000, help="Number of training examples (if not expert-curated)")
     parser.add_argument("--include_negative", action="store_true", help="Include negative examples")
     
     args = parser.parse_args()
     
-    # Initialize preparator
+    # Initialize dataset preparator
     preparator = CancerGenomicsDatasetPreparator(
         output_dir=args.output_dir,
-        use_premium_clinvar=args.premium
+        use_expert_clinvar=getattr(args, 'expert_curated', True)  # Handle new argument name
     )
     
-    if args.premium:
+    if getattr(args, 'expert_curated', True):  # Use expert_curated for high-quality datasets
         if args.size == "both":
             # Generate BOTH configurations
             print("🚀💪 Creating BOTH AMBITIOUS (6K) AND SAFE (2.5K) datasets!")
@@ -2027,13 +2027,13 @@ def main():
             
             # Create AMBITIOUS 6,000-example dataset
             print("🚀 FIRST: AMBITIOUS 6,000-Example Dataset")
-            dataset_6k = preparator.create_premium_training_dataset("6k")
+            dataset_6k = preparator.create_expert_curated_training_dataset("6k")
             
             print("\n" + "=" * 80)
             
             # Create SAFE 2,500-example dataset
             print("🛡️ SECOND: SAFE 2,500-Example Backup Dataset")  
-            dataset_2k5 = preparator.create_premium_training_dataset("2k5")
+            dataset_2k5 = preparator.create_expert_curated_training_dataset("2k5")
             
             print("\n" + "=" * 80)
             print("🏆 DUAL CONFIGURATION COMPLETE!")
@@ -2050,7 +2050,7 @@ def main():
                 print("🛡️ Creating SAFE 2,500-example backup dataset...")
                 print("📊 Quality Tiers: Expert Panel (800) + Consensus (1.2K) + Curated (400) + Negative (100)")
             
-            dataset_file = preparator.create_premium_training_dataset(args.size)
+            dataset_file = preparator.create_expert_curated_training_dataset(args.size)
             print(f"✅ Training dataset created: {dataset_file}")
     else:
         # Create standard dataset

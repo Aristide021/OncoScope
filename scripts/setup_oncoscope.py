@@ -111,7 +111,7 @@ def main():
         """)
     
     print("📋 Next Steps:")
-    print("• Run the premium dataset preparation: python -m oncoscope.ai.fine_tuning.prepare_dataset --premium")
+    print("• Run the expert-curated dataset preparation: python -m oncoscope.ai.fine_tuning.prepare_dataset --expert-curated")
     print("• Start the OncoScope analysis server: python -m oncoscope.main")
     print("• View generated data: ls -la ../data/")
 

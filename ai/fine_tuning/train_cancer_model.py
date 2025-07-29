@@ -11,6 +11,12 @@ from typing import Dict, List, Optional, Tuple
 from datetime import datetime
 from pathlib import Path
 
+# Fix Windows multiprocessing issues
+if os.name == 'nt':  # Windows
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    import multiprocessing
+    multiprocessing.set_start_method('spawn', force=True)
+
 # Import fine-tuning libraries
 try:
     from unsloth import FastModel  # Updated for Gemma 3N multimodal
@@ -21,6 +27,9 @@ try:
     UNSLOTH_AVAILABLE = True
 except ImportError:
     print("Unsloth not available - using fallback training approach")
+    from datasets import Dataset
+    from transformers import TrainingArguments, TextStreamer
+    from trl import SFTTrainer
     UNSLOTH_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
@@ -34,7 +43,7 @@ class CancerGenomicsFineTuner:
         max_seq_length: int = 2048,
         output_dir: str = "./oncoscope_model",
         use_4bit: bool = True,
-        multimodal: bool = False  # Enable for multimodal cancer data
+        multimodal: bool = False  # Disabled - text-only cancer genomics
     ):
         """Initialize the cancer genomics fine-tuner"""
         
@@ -57,7 +66,7 @@ class CancerGenomicsFineTuner:
             "max_steps": 60,  # Can set to None for full training
             "logging_steps": 1,
             "save_steps": 100,
-            "evaluation_strategy": "no",  # Simplified for demo
+            # "evaluation_strategy": "no",  # Removed - not supported in current TRL version
             "optim": "paged_adamw_8bit",  # Optimized for 4-bit
             "weight_decay": 0.01,
             "lr_scheduler_type": "linear",
@@ -86,27 +95,29 @@ class CancerGenomicsFineTuner:
         if UNSLOTH_AVAILABLE:
             logger.info(f"Loading {self.model_name} with Unsloth optimization...")
             
-            # Use FastModel for Gemma 3N multimodal support
+            # Use FastModel for Gemma 3N multimodal support with aggressive memory settings
             self.model, self.tokenizer = FastModel.from_pretrained(
                 model_name=self.model_name,
                 max_seq_length=self.max_seq_length,
                 dtype=None,  # Auto detection
                 load_in_4bit=self.use_4bit,
                 full_finetuning=False,  # Use LoRA
+                device_map={"": 0},  # Force single GPU
+                low_cpu_mem_usage=True,
             )
             
-            # Configure for fine-tuning with LoRA - Gemma 3N optimized
+            # Configure for fine-tuning with LoRA - Text-only cancer genomics
             self.model = FastModel.get_peft_model(
                 self.model,
-                finetune_vision_layers=self.multimodal,     # Enable for multimodal
-                finetune_language_layers=True,              # Always on for text
-                finetune_attention_modules=True,            # Good for GRPO
-                finetune_mlp_modules=True,                   # Always on
-                r=8,                                         # Smaller for stability
-                lora_alpha=8,                                # Match r value
-                lora_dropout=0,                              # No dropout
+                finetune_vision_layers=False,                # Disabled for text-only
+                finetune_language_layers=True,               # Always on for text
+                finetune_attention_modules=True,             # Good for GRPO
+                finetune_mlp_modules=True,                    # Always on
+                r=8,                                          # Smaller for stability
+                lora_alpha=8,                                 # Match r value
+                lora_dropout=0,                               # No dropout
                 bias="none",
-                random_state=3407,                           # Unsloth recommended
+                random_state=3407,                            # Unsloth recommended
             )
             
             # Setup chat template for Gemma 3
@@ -205,7 +216,7 @@ class CancerGenomicsFineTuner:
                 ]
                 return {"text": texts}
             
-            dataset = dataset.map(formatting_prompts_func, batched=True)
+            dataset = dataset.map(formatting_prompts_func, batched=True, num_proc=1)
         else:
             # Fallback formatting
             def simple_formatting(examples):
@@ -245,7 +256,7 @@ class CancerGenomicsFineTuner:
                 eval_dataset=eval_dataset,
                 dataset_text_field="text",
                 max_seq_length=self.max_seq_length,
-                dataset_num_proc=2,
+                dataset_num_proc=1,  # Windows compatibility with Unsloth
                 args=training_args,
             )
             
@@ -450,7 +461,7 @@ def main():
     parser.add_argument("--training_data", 
                         default=str(Path(__file__).parent / "cancer_training_data.json"),
                         help="Path to training data JSON file (default: cancer_training_data.json)")
-    parser.add_argument("--model_name", default="unsloth/gemma-2-2b-it-bnb-4bit", help="Base model name")
+    parser.add_argument("--model_name", default="unsloth/gemma-3n-E4B-it-unsloth-bnb-4bit", help="Base model name")
     parser.add_argument("--output_dir", default="./oncoscope_model", help="Output directory")
     parser.add_argument("--max_seq_length", type=int, default=2048, help="Maximum sequence length")
     parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs")
@@ -473,5 +484,8 @@ def main():
     print(f"Training completed! Model saved to {args.output_dir}")
 
 if __name__ == "__main__":
+    # Windows multiprocessing compatibility
+    import multiprocessing
+    multiprocessing.freeze_support()
     main()
 
