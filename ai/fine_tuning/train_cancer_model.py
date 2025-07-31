@@ -62,11 +62,28 @@ class CancerGenomicsFineTuner:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
         # Training configuration optimized for Gemma 3N
+        # Auto-detect GPU and adjust batch size
+        if torch.cuda.is_available():
+            gpu_name = torch.cuda.get_device_name(0)
+            vram_gb = torch.cuda.get_device_properties(0).total_memory / 1e9
+            
+            if "3090" in gpu_name or vram_gb > 20:
+                # RTX 3090 or better - use larger batch size
+                batch_size = 2
+                grad_accum = 2
+            else:
+                # T4 or smaller GPU
+                batch_size = 1
+                grad_accum = 4
+        else:
+            batch_size = 1
+            grad_accum = 4
+            
         self.training_config = {
             "learning_rate": 2e-4,
             "num_train_epochs": 3,  # Optimal for 6k specialized dataset
-            "per_device_train_batch_size": 1,  # Gemma 3N recommendation
-            "gradient_accumulation_steps": 4,
+            "per_device_train_batch_size": batch_size,  # Auto-adjusted
+            "gradient_accumulation_steps": grad_accum,
             "warmup_steps": 5,
             "max_steps": -1,  # Full training (all epochs)
             "logging_steps": 1,
@@ -112,7 +129,7 @@ class CancerGenomicsFineTuner:
                 load_in_4bit=self.use_4bit,
                 full_finetuning=False,  # Use LoRA for efficiency
                 device_map="auto",  # Enable automatic device mapping
-                max_memory={0: "6GB", "cpu": "20GB"},  # Limit GPU usage, offload to CPU
+                max_memory={0: "22GB", "cpu": "20GB"},  # Use full 3090 VRAM
                 llm_int8_enable_fp32_cpu_offload=True,  # Enable CPU offloading for 4-bit
             )
             
@@ -123,8 +140,8 @@ class CancerGenomicsFineTuner:
                 finetune_language_layers=True,     # Keep language processing only
                 finetune_attention_modules=True,   # Good for specialized tasks
                 finetune_mlp_modules=True,         # Keep for best performance
-                r=8,                               # Lower rank to save memory
-                lora_alpha=8,                      # Match r value
+                r=16,                              # Higher rank for 3090
+                lora_alpha=32,                     # 2x r for better learning
                 lora_dropout=0,                    # No dropout
                 bias="none",
                 random_state=3407,                 # Unsloth recommended

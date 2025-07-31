@@ -40,6 +40,25 @@ class OllamaClient:
             logger.error(f"AI analysis failed for {gene}:{variant}: {e}")
             return self._fallback_analysis(gene, variant)
     
+    async def analyze_multi_mutations(self, prompt: str) -> Dict:
+        """Analyze multiple mutations with clustering context using fine-tuned Gemma 3n"""
+        
+        try:
+            async with aiohttp.ClientSession(timeout=self.timeout) as session:
+                response = await self._generate(session, prompt)
+                
+                if response:
+                    return self._parse_multi_mutation_response(response)
+                else:
+                    return self._fallback_multi_mutation_analysis()
+                    
+        except asyncio.TimeoutError:
+            logger.error("Timeout analyzing multiple mutations")
+            return self._fallback_multi_mutation_analysis()
+        except Exception as e:
+            logger.error(f"AI multi-mutation analysis failed: {e}")
+            return self._fallback_multi_mutation_analysis()
+    
     def _create_mutation_analysis_prompt(self, gene: str, variant: str) -> str:
         """Create structured prompt for mutation analysis"""
         return f"""Analyze the cancer mutation {gene}:{variant} and provide structured clinical assessment.
@@ -191,3 +210,90 @@ Focus on established clinical knowledge and cancer genomics databases. If the mu
         except Exception as e:
             logger.error(f"Failed to pull model: {e}")
             return False
+    
+    def _parse_multi_mutation_response(self, response: str) -> Dict:
+        """Parse AI response for multi-mutation analysis"""
+        try:
+            # Try to parse as JSON first
+            if response.strip().startswith('{'):
+                return json.loads(response)
+            
+            # Otherwise, structure the response
+            return {
+                "individual_analyses": self._extract_individual_analyses(response),
+                "multi_mutation_insights": self._extract_multi_mutation_insights(response),
+                "pathway_interactions": self._extract_pathway_interactions(response),
+                "composite_risk": self._extract_composite_risk(response),
+                "therapeutic_strategy": self._extract_therapeutic_strategy(response)
+            }
+        except Exception as e:
+            logger.error(f"Failed to parse multi-mutation response: {e}")
+            return self._fallback_multi_mutation_analysis()
+    
+    def _extract_individual_analyses(self, response: str) -> Dict:
+        """Extract individual mutation analyses from response"""
+        # This would parse the response to extract individual mutation info
+        # For now, return empty dict - would be implemented based on response format
+        return {}
+    
+    def _extract_multi_mutation_insights(self, response: str) -> List[str]:
+        """Extract multi-mutation insights from response"""
+        insights = []
+        
+        # Look for interaction patterns
+        if "synergistic" in response.lower():
+            insights.append("Synergistic pathogenic effects identified between mutations")
+        if "pathway convergence" in response.lower():
+            insights.append("Multiple mutations converge on common pathways")
+        if "synthetic lethality" in response.lower():
+            insights.append("Potential synthetic lethality opportunities identified")
+        
+        return insights
+    
+    def _extract_pathway_interactions(self, response: str) -> Dict:
+        """Extract pathway interaction information from response"""
+        return {
+            "converging_pathways": [],
+            "interaction_type": "unknown",
+            "therapeutic_implications": []
+        }
+    
+    def _extract_composite_risk(self, response: str) -> str:
+        """Extract composite risk assessment from response"""
+        if "high risk" in response.lower():
+            return "high"
+        elif "moderate risk" in response.lower():
+            return "moderate"
+        elif "low risk" in response.lower():
+            return "low"
+        else:
+            return "uncertain"
+    
+    def _extract_therapeutic_strategy(self, response: str) -> Dict:
+        """Extract therapeutic strategy from response"""
+        return {
+            "primary_targets": [],
+            "combination_approaches": [],
+            "clinical_trials": []
+        }
+    
+    def _fallback_multi_mutation_analysis(self) -> Dict:
+        """Fallback analysis for multiple mutations"""
+        return {
+            "individual_analyses": {},
+            "multi_mutation_insights": [
+                "Multiple mutations detected - consider molecular tumor board review",
+                "Comprehensive genomic profiling recommended"
+            ],
+            "pathway_interactions": {
+                "converging_pathways": [],
+                "interaction_type": "unknown",
+                "therapeutic_implications": ["Multi-target approach may be beneficial"]
+            },
+            "composite_risk": "uncertain",
+            "therapeutic_strategy": {
+                "primary_targets": [],
+                "combination_approaches": ["Consider combination targeted therapy"],
+                "clinical_trials": ["Search for trials targeting multiple pathways"]
+            }
+        }

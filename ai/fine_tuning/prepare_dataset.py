@@ -1839,22 +1839,104 @@ PROGNOSIS:
         return management.get(gene, ['Standard enhanced surveillance'])
     
     def _get_therapeutic_implications(self, gene: str, variant: str) -> Dict[str, Any]:
-        """Get therapeutic implications for consensus variants"""
-        implications = {
+        """Get therapeutic implications for consensus variants - VARIANT SPECIFIC"""
+        
+        # Map variants to their therapeutic implications
+        variant_specific_implications = {
             'KRAS': {
-                'targeted_therapies': ['Sotorasib (G12C)', 'Adagrasib (G12C)'],
-                'resistance_mechanisms': ['EGFR amplification', 'PIK3CA activation'],
-                'combination_strategies': ['MEK inhibitors', 'Immunotherapy combinations'],
-                'biomarker_significance': 'Predictive for anti-EGFR resistance in CRC'
+                # G12C - FDA approved targeted therapies
+                'c.34G>T': {  # p.G12C
+                    'targeted_therapies': ['Sotorasib (Lumakras)', 'Adagrasib (Krazati)'],
+                    'resistance_mechanisms': ['EGFR amplification', 'PIK3CA activation', 'NRAS mutations'],
+                    'combination_strategies': ['MEK inhibitors', 'Anti-PD-1/PD-L1 immunotherapy'],
+                    'biomarker_significance': 'Predictive for KRAS G12C inhibitors; anti-EGFR resistance in CRC',
+                    'fda_approved': True
+                },
+                # G12D - Investigational therapies
+                'c.35G>A': {  # p.G12D
+                    'targeted_therapies': ['MRTX1133 (investigational)', 'Pan-KRAS inhibitors (trials)'],
+                    'resistance_mechanisms': ['RTK feedback activation', 'YAP1 activation'],
+                    'combination_strategies': ['SHP2 inhibitors', 'ERK inhibitors'],
+                    'biomarker_significance': 'Most common KRAS mutation; anti-EGFR resistance in CRC',
+                    'fda_approved': False
+                },
+                # G12V - Limited options
+                'c.35G>T': {  # p.G12V
+                    'targeted_therapies': ['Pan-KRAS inhibitors (early trials)'],
+                    'resistance_mechanisms': ['Bypass pathway activation'],
+                    'combination_strategies': ['MEK/RAF inhibitors', 'CDK4/6 inhibitors'],
+                    'biomarker_significance': 'Anti-EGFR resistance; poor prognosis marker',
+                    'fda_approved': False
+                },
+                # G13D - Different biology
+                'c.38G>A': {  # p.G13D
+                    'targeted_therapies': ['Limited direct inhibitors available'],
+                    'resistance_mechanisms': ['Alternative signaling pathways'],
+                    'combination_strategies': ['MEK inhibitors', 'Downstream pathway blockade'],
+                    'biomarker_significance': 'May have different sensitivity profile than G12 mutations',
+                    'fda_approved': False
+                },
+                # Default for other KRAS variants
+                'default': {
+                    'targeted_therapies': [],
+                    'resistance_mechanisms': ['General RAS pathway activation'],
+                    'combination_strategies': ['Downstream pathway inhibition'],
+                    'biomarker_significance': 'Anti-EGFR resistance in CRC',
+                    'fda_approved': False
+                }
             },
             'EGFR': {
-                'targeted_therapies': ['Osimertinib', 'Erlotinib', 'Gefitinib', 'Afatinib'],
-                'resistance_monitoring': 'T790M, C797S mutations',
-                'treatment_sequencing': 'First-line osimertinib preferred',
-                'response_biomarkers': 'ctDNA clearance, imaging response'
+                # Exon 19 deletions
+                'c.2235_2249del': {  # Common Ex19del
+                    'targeted_therapies': ['Osimertinib (1st line)', 'Erlotinib', 'Gefitinib', 'Afatinib'],
+                    'resistance_monitoring': 'T790M (50%), C797S (osimertinib resistance)',
+                    'treatment_sequencing': 'First-line osimertinib preferred',
+                    'response_biomarkers': 'ctDNA clearance at 6 weeks predictive'
+                },
+                # L858R
+                'c.2573T>G': {  # p.L858R
+                    'targeted_therapies': ['Osimertinib (1st line)', 'Erlotinib', 'Gefitinib', 'Afatinib'],
+                    'resistance_monitoring': 'T790M, C797S, MET amplification',
+                    'treatment_sequencing': 'First-line osimertinib preferred',
+                    'response_biomarkers': 'Response rates ~80% with osimertinib'
+                },
+                # T790M
+                'c.2369C>T': {  # p.T790M
+                    'targeted_therapies': ['Osimertinib', 'Mobocertinib (Ex20ins)'],
+                    'resistance_monitoring': 'C797S, triple mutations',
+                    'treatment_sequencing': 'Third-generation TKI required',
+                    'response_biomarkers': 'Resistance mechanism to 1st/2nd gen TKIs'
+                },
+                'default': {
+                    'targeted_therapies': ['EGFR TKI evaluation needed'],
+                    'resistance_monitoring': 'Standard EGFR resistance panel',
+                    'treatment_sequencing': 'Mutation-specific approach',
+                    'response_biomarkers': 'ctDNA monitoring recommended'
+                }
             }
         }
-        return implications.get(gene, {'targeted_therapies': [], 'notes': 'Limited targeted options'})
+        
+        # Get variant-specific implications
+        if gene in variant_specific_implications:
+            gene_implications = variant_specific_implications[gene]
+            # Try exact variant match first
+            if variant in gene_implications:
+                return gene_implications[variant]
+            # Check if it's a protein change and try to find corresponding coding change
+            elif variant.startswith('p.'):
+                # For protein changes, use default for now (could expand mapping)
+                return gene_implications.get('default', {})
+            else:
+                return gene_implications.get('default', {})
+        
+        # Default for genes not in database
+        return {
+            'targeted_therapies': [],
+            'resistance_mechanisms': [],
+            'combination_strategies': [],
+            'biomarker_significance': 'Clinical significance under investigation',
+            'notes': 'Limited targeted therapy options currently available'
+        }
     
     def _get_expert_cancer_risk_contextualized(self, gene: str, demographics: Dict, family_history: List) -> Dict[str, Any]:
         """Get expert-level cancer risk assessment with patient context"""

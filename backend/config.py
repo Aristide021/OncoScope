@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     # AI Model Parameters
     model_temperature: float = 0.1
     model_top_p: float = 0.9
-    model_max_tokens: int = 512
+    model_max_tokens: int = 1024
     
     # Paths
     data_dir: Path = Path(__file__).parent.parent / "data"

@@ -1,7 +1,7 @@
 """
 OncoScope API Server
 """
-from fastapi import FastAPI, HTTPException, UploadFile, File, status
+from fastapi import FastAPI, HTTPException, UploadFile, File, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import List, Optional
@@ -17,7 +17,7 @@ import aiohttp
 from .config import settings
 from .models import (
     AnalysisRequest, AnalysisResponse, HealthCheckResponse,
-    ErrorResponse, MutationInput
+    ErrorResponse, MutationInput, RiskLevel
 )
 from .mutation_analyzer import CancerMutationAnalyzer
 from .database import init_db, get_analysis_history
@@ -127,19 +127,28 @@ async def analyze_mutations(request: AnalysisRequest):
         
         # Perform analysis
         start = time.time()
+        
+        # Add analysis_id to patient context
+        patient_context = request.patient_context or {}
+        patient_context["analysis_id"] = analysis_id
+        
         analysis_result = await analyzer.analyze_mutation_list(
             mutations=request.mutations,
             include_drug_interactions=request.include_drug_interactions,
-            patient_context=request.patient_context
+            patient_context=patient_context
         )
         analysis_time = time.time() - start
         
         logger.info(f"Analysis {analysis_id} completed in {analysis_time:.2f}s")
         
+        # Use the analysis_id from the result if it exists (database saved)
+        # Otherwise use the generated one
+        final_analysis_id = analysis_result.get("analysis_id", analysis_id)
+        
         # Build response
         return AnalysisResponse(
             success=True,
-            analysis_id=analysis_id,
+            analysis_id=final_analysis_id,
             timestamp=datetime.now(),
             **analysis_result
         )
@@ -204,6 +213,110 @@ async def get_history(limit: int = 10, offset: int = 0):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to retrieve analysis history"
+        )
+
+@app.get("/analysis/{analysis_id}/report")
+async def get_analysis_report(
+    analysis_id: str,
+    report_type: str = "standard",
+    format: str = "json"
+):
+    """Generate clinical report for a specific analysis"""
+    try:
+        from .database import get_analysis_by_id
+        from .report_generator import ClinicalReportGenerator, export_report_to_pdf, export_report_to_csv
+        from .risk_calculator import AdvancedRiskCalculator, PatientProfile, CancerRiskAssessment, RiskFactors
+        
+        # Retrieve analysis from database
+        analysis_data = await get_analysis_by_id(analysis_id)
+        
+        if not analysis_data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Analysis {analysis_id} not found"
+            )
+        
+        # Extract full results
+        full_results = analysis_data["full_results"]
+        
+        # Convert individual mutations back to MutationAnalysis objects
+        from .models import MutationAnalysis, ClinicalSignificance, Prognosis
+        mutations = []
+        for mut_dict in full_results.get("individual_mutations", []):
+            mutation = MutationAnalysis(
+                gene=mut_dict["gene"],
+                variant=mut_dict["variant"],
+                mutation_type=mut_dict.get("mutation_type", "unknown"),
+                pathogenicity_score=mut_dict.get("pathogenicity_score", 0.5),
+                cancer_types=mut_dict.get("cancer_types", []),
+                clinical_significance=ClinicalSignificance[mut_dict.get("clinical_significance", "UNCERTAIN")],
+                targeted_therapies=mut_dict.get("targeted_therapies", []),
+                prognosis=Prognosis[mut_dict.get("prognosis", "UNCERTAIN")],
+                confidence_score=mut_dict.get("confidence_score", 0.5)
+            )
+            mutations.append(mutation)
+        
+        # Create mock risk assessment from stored data
+        # Create simplified risk factors
+        risk_factors = RiskFactors(
+            mutation_risk=full_results.get("overall_risk_score", 0.5),
+            age_risk=0.3,  # Default values since we don't store these
+            family_history_risk=0.2,
+            lifestyle_risk=0.1,
+            environmental_risk=0.05,
+            protective_factors=0.05
+        )
+        
+        risk_assessment = CancerRiskAssessment(
+            overall_risk_score=full_results.get("overall_risk_score", 0.5),
+            risk_level=RiskLevel[full_results.get("risk_classification", "MEDIUM")],
+            lifetime_risk_percentage=full_results.get("overall_risk_score", 0.5) * 100,
+            five_year_risk_percentage=full_results.get("overall_risk_score", 0.5) * 20,
+            risk_factors=risk_factors,
+            cancer_type_risks=full_results.get("estimated_tumor_types", {}),
+            recommendations=full_results.get("clinical_recommendations", []),
+            confidence_interval=(0.4, 0.6),
+            risk_explanation="Based on mutation analysis",
+            next_screening_date=None
+        )
+        
+        # Generate report
+        report_generator = ClinicalReportGenerator()
+        report = report_generator.generate_clinical_report(
+            mutations=mutations,
+            risk_assessment=risk_assessment,
+            patient_profile=None,  # Could be retrieved from patient context
+            clustering_analysis=full_results.get("clustering_analysis"),
+            report_type=report_type,
+            include_raw_data=(format == "json")
+        )
+        
+        # Format response based on requested format
+        if format == "pdf":
+            pdf_content = export_report_to_pdf(report)
+            return Response(
+                content=pdf_content,
+                media_type="application/pdf",
+                headers={"Content-Disposition": f"attachment; filename=oncoscope_report_{analysis_id}.pdf"}
+            )
+        elif format == "csv":
+            csv_content = export_report_to_csv(report)
+            return Response(
+                content=csv_content,
+                media_type="text/csv",
+                headers={"Content-Disposition": f"attachment; filename=oncoscope_report_{analysis_id}.csv"}
+            )
+        else:
+            # Return JSON report
+            return {"success": True, "report": report}
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Report generation failed: {traceback.format_exc()}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Report generation failed: {str(e)}"
         )
 
 @app.exception_handler(HTTPException)

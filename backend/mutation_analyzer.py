@@ -229,15 +229,41 @@ class CancerMutationAnalyzer:
             return "UNKNOWN", mutation
     
     async def analyze_single_mutation(self, mutation: str) -> MutationAnalysis:
-        """Analyze individual mutation for clinical significance"""
+        """Analyze individual mutation for clinical significance with caching"""
         gene, variant = self.parse_mutation_notation(mutation)
+        mutation_id = f"{gene}:{variant}"
+        
+        # Check cache first
+        try:
+            from .database import get_cached_mutation, cache_mutation_analysis
+            cached_data = await get_cached_mutation(mutation_id)
+            
+            if cached_data:
+                logger.info(f"Found cached analysis for {mutation_id}")
+                # Convert cached data to MutationAnalysis object
+                return MutationAnalysis(
+                    mutation_id=mutation_id,
+                    gene=cached_data.get('gene', gene),
+                    variant=cached_data.get('variant', variant),
+                    protein_change=cached_data.get('protein_change', ''),
+                    pathogenicity_score=cached_data.get('pathogenicity_score', 0.5),
+                    cancer_types=cached_data.get('cancer_types', []),
+                    clinical_significance=ClinicalSignificance[cached_data.get('clinical_significance', 'UNCERTAIN')],
+                    targeted_therapies=cached_data.get('targeted_therapies', []),
+                    prognosis_impact=Prognosis[cached_data.get('prognosis_impact', 'UNCERTAIN')],
+                    mechanism=cached_data.get('mechanism', 'Unknown mechanism'),
+                    confidence_score=cached_data.get('confidence_score', 0.5),
+                    references=cached_data.get('references', [])
+                )
+        except Exception as e:
+            logger.warning(f"Cache lookup failed for {mutation_id}: {e}")
         
         # Look up in database
         if gene in self.mutation_db and variant in self.mutation_db[gene]:
             data = self.mutation_db[gene][variant]
             
-            return MutationAnalysis(
-                mutation_id=f"{gene}:{variant}",
+            analysis = MutationAnalysis(
+                mutation_id=mutation_id,
                 gene=gene,
                 variant=variant,
                 protein_change=data.get('protein', ''),
@@ -252,7 +278,21 @@ class CancerMutationAnalyzer:
             )
         else:
             # Unknown mutation - use AI analysis
-            return await self.ai_analyze_mutation(gene, variant)
+            analysis = await self.ai_analyze_mutation(gene, variant)
+        
+        # Cache the result
+        try:
+            await cache_mutation_analysis(
+                mutation_id=mutation_id,
+                gene=gene,
+                variant=variant,
+                analysis_data=asdict(analysis)
+            )
+            logger.info(f"Cached analysis for {mutation_id}")
+        except Exception as e:
+            logger.warning(f"Failed to cache analysis for {mutation_id}: {e}")
+        
+        return analysis
     
     async def ai_analyze_mutation(self, gene: str, variant: str) -> MutationAnalysis:
         """Use AI model for unknown mutations"""
@@ -316,21 +356,93 @@ class CancerMutationAnalyzer:
         patient_context: Optional[Dict[str, Any]] = None,
         include_clustering: bool = True
     ) -> Dict[str, Any]:
-        """Analyze list of mutations and calculate overall risk with clustering"""
-        # Analyze individual mutations
-        tasks = [self.analyze_single_mutation(mutation) for mutation in mutations]
-        analyses = await asyncio.gather(*tasks)
+        """Analyze list of mutations with CLUSTER-FIRST approach for integrated AI analysis"""
+        
+        # STEP 1: Parse mutations to get basic info for clustering
+        parsed_mutations = []
+        for mutation in mutations:
+            gene, variant = self._parse_mutation_string(mutation)
+            if gene and variant:
+                # Get basic mutation info from database
+                basic_info = self._get_basic_mutation_info(gene, variant)
+                parsed_mutations.append({
+                    "gene": gene,
+                    "variant": variant,
+                    "mutation_string": mutation,
+                    **basic_info
+                })
+        
+        # STEP 2: CLUSTER FIRST if we have enough mutations
+        clustering_results = {}
+        cluster_context = None
+        
+        if include_clustering and len(parsed_mutations) >= 3:
+            try:
+                # Create minimal MutationAnalysis objects for clustering
+                minimal_analyses = [
+                    MutationAnalysis(
+                        gene=mut["gene"],
+                        variant=mut["variant"],
+                        mutation_type=mut.get("mutation_type", "unknown"),
+                        pathogenicity_score=mut.get("pathogenicity_score", 0.5),
+                        cancer_types=[],  # Will be filled by AI
+                        clinical_significance=ClinicalSignificance.UNCERTAIN,
+                        prognosis=Prognosis.UNCERTAIN,
+                        therapy_recommendations=[],
+                        clinical_trials=[],
+                        evidence_level="preliminary"
+                    )
+                    for mut in parsed_mutations
+                ]
+                
+                clusters, cluster_analysis = self.clustering_engine.cluster_mutations(minimal_analyses)
+                clustering_results = {
+                    "clusters_identified": len(clusters),
+                    "cluster_analysis": cluster_analysis,
+                    "clustering_insights": self.generate_clustering_insights(cluster_analysis)
+                }
+                
+                # Prepare cluster context for AI
+                cluster_context = {
+                    "pathway_convergence": cluster_analysis.get("pathway_convergence", {}),
+                    "functional_groups": cluster_analysis.get("functional_clusters", {}),
+                    "interaction_patterns": cluster_analysis.get("interaction_patterns", {}),
+                    "clustering_summary": clustering_results["clustering_insights"]
+                }
+                
+            except Exception as e:
+                logger.error(f"Clustering analysis failed: {e}")
+                cluster_context = None
+        
+        # STEP 3: Make SINGLE AI call with clustering context
+        if len(parsed_mutations) >= 2:  # Use multi-mutation analysis for 2+ mutations
+            ai_analysis = await self._analyze_mutations_with_ai(
+                parsed_mutations, 
+                patient_context,
+                cluster_context
+            )
+            
+            # Parse AI response into individual analyses
+            analyses = self._parse_multi_mutation_ai_response(ai_analysis, parsed_mutations)
+        else:
+            # Fallback to single mutation analysis
+            tasks = [self.analyze_single_mutation(mutation) for mutation in mutations]
+            analyses = await asyncio.gather(*tasks)
         
         # Convert to dict format
         analyses_dict = [asdict(analysis) for analysis in analyses]
         
-        # Calculate composite risk score
+        # Calculate composite risk score (enhanced with AI insights)
         overall_risk = self.calculate_composite_risk(analyses)
         
-        # Generate clinical recommendations
+        # Generate clinical recommendations (now AI-informed)
         recommendations = self.generate_recommendations(
             analyses, overall_risk, patient_context
         )
+        
+        # If we have AI-generated multi-mutation insights, add them
+        if len(parsed_mutations) >= 2 and "multi_mutation_insights" in ai_analysis:
+            recommendations.extend(ai_analysis["multi_mutation_insights"])
         
         # Identify actionable mutations
         actionable = self.identify_actionable_mutations(analyses)
@@ -340,27 +452,6 @@ class CancerMutationAnalyzer:
         
         # Calculate confidence metrics
         confidence_metrics = self.calculate_confidence_metrics(analyses)
-        
-        # Perform clustering analysis if requested and sufficient mutations
-        clustering_results = {}
-        if include_clustering and len(analyses) >= 3:
-            try:
-                clusters, cluster_analysis = self.clustering_engine.cluster_mutations(analyses)
-                clustering_results = {
-                    "clusters_identified": len(clusters),
-                    "cluster_analysis": cluster_analysis,
-                    "clustering_insights": self.generate_clustering_insights(cluster_analysis)
-                }
-                
-                # Enhance recommendations with clustering insights
-                recommendations.extend(self.generate_clustering_recommendations(cluster_analysis))
-                
-            except Exception as e:
-                logger.error(f"Clustering analysis failed: {e}")
-                clustering_results = {
-                    "clusters_identified": 0,
-                    "error": "Clustering analysis unavailable"
-                }
         
         result = {
             "individual_mutations": analyses_dict,
@@ -376,6 +467,34 @@ class CancerMutationAnalyzer:
         # Add clustering results if available
         if clustering_results:
             result["clustering_analysis"] = clustering_results
+        
+        # Save analysis to database
+        try:
+            from .database import save_analysis
+            import uuid
+            
+            # Use provided analysis_id or generate new one
+            analysis_id = (patient_context.get("analysis_id") if patient_context else None) or str(uuid.uuid4())
+            
+            # Add analysis ID and metadata for database storage
+            analysis_data = {
+                **result,
+                "analysis_id": analysis_id,
+                "mutations": mutations,
+                "user_session": patient_context.get("session_id", "anonymous") if patient_context else "anonymous"
+            }
+            
+            # Save to database asynchronously
+            await save_analysis(analysis_data)
+            logger.info(f"Analysis saved to database with ID: {analysis_id}")
+            
+            # Add the analysis_id to the result
+            result["analysis_id"] = analysis_id
+            
+        except Exception as e:
+            logger.error(f"Failed to save analysis to database: {e}")
+            # Don't fail the analysis if database save fails
+            result["database_save_error"] = str(e)
         
         return result
     
@@ -715,5 +834,193 @@ class CancerMutationAnalyzer:
             recommendations.append(
                 "RAS/RAF pathway activation - consider combination targeted therapy with MEK/ERK inhibitors"
             )
+        
+        return recommendations
+    
+    def _get_basic_mutation_info(self, gene: str, variant: str) -> Dict[str, Any]:
+        """Get basic mutation information from database for clustering"""
+        # Check if mutation exists in database
+        if gene in self.mutation_db and variant in self.mutation_db[gene]:
+            mut_data = self.mutation_db[gene][variant]
+            return {
+                "mutation_type": mut_data.get("mutation_type", "unknown"),
+                "pathogenicity_score": mut_data.get("pathogenicity_score", 0.5),
+                "known_mutation": True
+            }
+        else:
+            # Return defaults for unknown mutations
+            return {
+                "mutation_type": "unknown",
+                "pathogenicity_score": 0.5,
+                "known_mutation": False
+            }
+    
+    async def _analyze_mutations_with_ai(
+        self,
+        mutations: List[Dict[str, Any]],
+        patient_context: Optional[Dict[str, Any]],
+        cluster_context: Optional[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Make single AI call with clustering context for multi-mutation analysis"""
+        
+        # Import prompt generator
+        from ..ai.inference.prompts import GenomicAnalysisPrompts
+        prompt_gen = GenomicAnalysisPrompts()
+        
+        # Prepare mutations for prompt
+        mutation_list = [{"gene": m["gene"], "variant": m["variant"]} for m in mutations]
+        
+        # Create comprehensive prompt with clustering context
+        if cluster_context:
+            # Enhance patient context with clustering insights
+            enhanced_context = patient_context or {}
+            enhanced_context["clustering_analysis"] = cluster_context
+            
+            prompt = prompt_gen.create_multi_mutation_analysis_prompt(
+                mutations=mutation_list,
+                patient_context=enhanced_context
+            )
+        else:
+            prompt = prompt_gen.create_multi_mutation_analysis_prompt(
+                mutations=mutation_list,
+                patient_context=patient_context
+            )
+        
+        # Make AI call
+        try:
+            response = await self.ollama_client.analyze_multi_mutations(prompt)
+            return response
+        except Exception as e:
+            logger.error(f"AI multi-mutation analysis failed: {e}")
+            # Return fallback structure
+            return {
+                "individual_analyses": {},
+                "multi_mutation_insights": [],
+                "pathway_interactions": {},
+                "composite_risk": "uncertain"
+            }
+    
+    def _parse_multi_mutation_ai_response(
+        self,
+        ai_response: Dict[str, Any],
+        parsed_mutations: List[Dict[str, Any]]
+    ) -> List[MutationAnalysis]:
+        """Parse AI response into individual MutationAnalysis objects and cache results"""
+        analyses = []
+        
+        # Import cache function
+        from .database import cache_mutation_analysis
+        
+        # Get individual analyses from AI response
+        individual_analyses = ai_response.get("individual_analyses", {})
+        
+        for mutation in parsed_mutations:
+            mutation_key = f"{mutation['gene']}:{mutation['variant']}"
+            
+            # Check if AI provided analysis for this mutation
+            if mutation_key in individual_analyses:
+                ai_data = individual_analyses[mutation_key]
+                
+                # Create MutationAnalysis from AI response
+                analysis = MutationAnalysis(
+                    gene=mutation["gene"],
+                    variant=mutation["variant"],
+                    mutation_type=ai_data.get("mutation_type", mutation.get("mutation_type", "unknown")),
+                    pathogenicity_score=ai_data.get("pathogenicity_score", 0.5),
+                    cancer_types=ai_data.get("cancer_associations", []),
+                    clinical_significance=self._parse_significance(
+                        ai_data.get("clinical_significance", "uncertain")
+                    ),
+                    prognosis=self._parse_prognosis(ai_data.get("prognosis", "uncertain")),
+                    therapy_recommendations=self._parse_therapy_recommendations(
+                        ai_data.get("therapeutic_implications", {})
+                    ),
+                    clinical_trials=ai_data.get("clinical_trials", []),
+                    evidence_level=ai_data.get("evidence_level", "computational"),
+                    confidence_score=ai_data.get("confidence_score", 0.7),
+                    protein_impact=ai_data.get("protein_impact", ""),
+                    hotspot_region=ai_data.get("hotspot_region", False),
+                    resistance_mutations=ai_data.get("resistance_mutations", []),
+                    companion_diagnostics=ai_data.get("companion_diagnostics", [])
+                )
+            else:
+                # Fallback to basic analysis if AI didn't provide specific analysis
+                analysis = MutationAnalysis(
+                    gene=mutation["gene"],
+                    variant=mutation["variant"],
+                    mutation_type=mutation.get("mutation_type", "unknown"),
+                    pathogenicity_score=mutation.get("pathogenicity_score", 0.5),
+                    cancer_types=[],
+                    clinical_significance=ClinicalSignificance.UNCERTAIN,
+                    prognosis=Prognosis.UNCERTAIN,
+                    therapy_recommendations=[],
+                    clinical_trials=[],
+                    evidence_level="limited"
+                )
+            
+            analyses.append(analysis)
+            
+            # Cache the analysis
+            try:
+                asyncio.create_task(cache_mutation_analysis(
+                    mutation_id=mutation_key,
+                    gene=mutation["gene"],
+                    variant=mutation["variant"],
+                    analysis_data=asdict(analysis)
+                ))
+                logger.debug(f"Queued {mutation_key} for caching")
+            except Exception as e:
+                logger.warning(f"Failed to queue {mutation_key} for caching: {e}")
+        
+        return analyses
+    
+    def _parse_significance(self, significance_str: str) -> ClinicalSignificance:
+        """Parse clinical significance from string"""
+        sig_map = {
+            "pathogenic": ClinicalSignificance.PATHOGENIC,
+            "likely_pathogenic": ClinicalSignificance.LIKELY_PATHOGENIC,
+            "uncertain": ClinicalSignificance.UNCERTAIN,
+            "likely_benign": ClinicalSignificance.LIKELY_BENIGN,
+            "benign": ClinicalSignificance.BENIGN
+        }
+        return sig_map.get(significance_str.lower(), ClinicalSignificance.UNCERTAIN)
+    
+    def _parse_prognosis(self, prognosis_str: str) -> Prognosis:
+        """Parse prognosis from string"""
+        prog_map = {
+            "favorable": Prognosis.FAVORABLE,
+            "intermediate": Prognosis.INTERMEDIATE,
+            "poor": Prognosis.POOR,
+            "uncertain": Prognosis.UNCERTAIN
+        }
+        return prog_map.get(prognosis_str.lower(), Prognosis.UNCERTAIN)
+    
+    def _parse_therapy_recommendations(self, therapy_data: Dict[str, Any]) -> List[TherapyRecommendation]:
+        """Parse therapy recommendations from AI response"""
+        recommendations = []
+        
+        # Parse FDA-approved therapies
+        for therapy in therapy_data.get("fda_approved", []):
+            recommendations.append(TherapyRecommendation(
+                drug_name=therapy.get("drug", ""),
+                drug_class=therapy.get("class", ""),
+                evidence_level=therapy.get("evidence", "FDA approved"),
+                response_rate=therapy.get("response_rate", ""),
+                fda_approved=True,
+                combination_therapy=therapy.get("combination", False),
+                biomarker_required=therapy.get("biomarker_required", True)
+            ))
+        
+        # Parse investigational therapies
+        for therapy in therapy_data.get("investigational", []):
+            recommendations.append(TherapyRecommendation(
+                drug_name=therapy.get("drug", ""),
+                drug_class=therapy.get("class", ""),
+                evidence_level=therapy.get("evidence", "Investigational"),
+                response_rate=therapy.get("response_rate", ""),
+                fda_approved=False,
+                combination_therapy=therapy.get("combination", False),
+                biomarker_required=therapy.get("biomarker_required", True)
+            ))
         
         return recommendations
