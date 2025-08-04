@@ -203,7 +203,9 @@ IMPORTANT GUIDELINES:
 - Include confidence intervals where appropriate
 - Address ethnic/population-specific considerations
 - Consider variant-level evidence over gene-level generalizations
-- Maintain clinical conservatism while being informative"""
+- Maintain clinical conservatism while being informative
+
+IMPORTANT: Your entire response must be only the JSON object, starting with '{{' and ending with '}}'. Do not include any introductory text, explanations, or markdown formatting outside of the JSON."""
 
         return prompt
     
@@ -326,7 +328,9 @@ RESPONSE FORMAT:
   "comprehensive_interpretation": "<detailed clinical interpretation integrating all findings>"
 }}
 
-Focus on clinically actionable insights and provide clear rationale for all recommendations."""
+Focus on clinically actionable insights and provide clear rationale for all recommendations.
+
+IMPORTANT: Your entire response must be only the JSON object, starting with '{{' and ending with '}}'. Do not include any introductory text, explanations, or markdown formatting outside of the JSON."""
         
         return prompt
     
@@ -462,7 +466,9 @@ PROVIDE DETAILED RISK ASSESSMENT:
   }}
 }}
 
-Ensure recommendations are evidence-based and clinically actionable."""
+Ensure recommendations are evidence-based and clinically actionable.
+
+IMPORTANT: Your entire response must be only the JSON object, starting with '{{' and ending with '}}'. Do not include any introductory text, explanations, or markdown formatting outside of the JSON."""
         
         return prompt
     
@@ -576,7 +582,9 @@ THERAPEUTIC RECOMMENDATIONS:
   }}
 }}
 
-Focus on evidence-based recommendations with clear rationale and practical implementation guidance."""
+Focus on evidence-based recommendations with clear rationale and practical implementation guidance.
+
+IMPORTANT: Your entire response must be only the JSON object, starting with '{{' and ending with '}}'. Do not include any introductory text, explanations, or markdown formatting outside of the JSON."""
         
         return prompt
     
@@ -605,7 +613,7 @@ Focus on evidence-based recommendations with clear rationale and practical imple
             return "Pathway involvement: Variable/Unknown"
     
     def _build_patient_context(self, patient_context: Dict) -> str:
-        """Build patient context section"""
+        """Build patient context section including clustering analysis"""
         context_lines = ["PATIENT CONTEXT:"]
         
         if patient_context.get('age'):
@@ -622,6 +630,23 @@ Focus on evidence-based recommendations with clear rationale and practical imple
         
         if patient_context.get('ethnicity'):
             context_lines.append(f"Ethnicity: {patient_context['ethnicity']}")
+        
+        # Include clustering analysis if present
+        if patient_context.get('clustering_analysis'):
+            cluster_data = patient_context['clustering_analysis']
+            context_lines.append("\nCLUSTERING ANALYSIS RESULTS:")
+            
+            if cluster_data.get('pathway_convergence'):
+                context_lines.append(f"Pathway Convergence: {cluster_data['pathway_convergence']}")
+            
+            if cluster_data.get('functional_groups'):
+                context_lines.append(f"Functional Groups: {cluster_data['functional_groups']}")
+            
+            if cluster_data.get('interaction_patterns'):
+                context_lines.append(f"Interaction Patterns: {cluster_data['interaction_patterns']}")
+            
+            if cluster_data.get('clustering_summary'):
+                context_lines.append(f"Clustering Insights: {', '.join(cluster_data['clustering_summary'])}")
         
         return "\n".join(context_lines) + "\n"
     

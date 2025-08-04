@@ -4,6 +4,7 @@ OncoScope API Server
 from fastapi import FastAPI, HTTPException, UploadFile, File, status, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from typing import List, Optional
 import json
 import uvicorn
@@ -36,15 +37,17 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
+    allow_origins=["*"],  # Allow all origins in development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Global variables
 start_time = time.time()
 analyzer = None
+analysis_status = {}  # Track analysis progress
 
 @app.on_event("startup")
 async def startup_event():
@@ -122,6 +125,15 @@ async def analyze_mutations(request: AnalysisRequest):
         # Generate analysis ID
         analysis_id = str(uuid.uuid4())
         
+        # Initialize status tracking
+        analysis_status[analysis_id] = {
+            "status": "started",
+            "progress": 0,
+            "message": "Initializing analysis...",
+            "started_at": datetime.now().isoformat(),
+            "mutations_count": len(request.mutations)
+        }
+        
         # Log request
         logger.info(f"Starting analysis {analysis_id} for {len(request.mutations)} mutations")
         
@@ -139,22 +151,36 @@ async def analyze_mutations(request: AnalysisRequest):
         )
         analysis_time = time.time() - start
         
-        logger.info(f"Analysis {analysis_id} completed in {analysis_time:.2f}s")
+        # Update status to complete
+        if analysis_id in analysis_status:
+            analysis_status[analysis_id].update({
+                "status": "completed",
+                "progress": 100,
+                "message": "Analysis complete",
+                "completed_at": datetime.now().isoformat(),
+                "duration_seconds": analysis_time
+            })
         
-        # Use the analysis_id from the result if it exists (database saved)
-        # Otherwise use the generated one
-        final_analysis_id = analysis_result.get("analysis_id", analysis_id)
+        logger.info(f"Analysis {analysis_id} completed in {analysis_time:.2f}s")
         
         # Build response
         return AnalysisResponse(
             success=True,
-            analysis_id=final_analysis_id,
             timestamp=datetime.now(),
             **analysis_result
         )
         
     except Exception as e:
         logger.error(f"Analysis failed: {traceback.format_exc()}")
+        
+        # Update status to failed
+        if analysis_id in analysis_status:
+            analysis_status[analysis_id].update({
+                "status": "failed",
+                "error": str(e),
+                "failed_at": datetime.now().isoformat()
+            })
+        
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Analysis failed: {str(e)}"
@@ -201,6 +227,21 @@ async def analyze_file(file: UploadFile = File(...)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"File analysis failed: {str(e)}"
         )
+
+@app.get("/analysis/{analysis_id}/status")
+async def get_analysis_status(analysis_id: str):
+    """Get analysis progress status"""
+    if analysis_id not in analysis_status:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Analysis {analysis_id} not found"
+        )
+    
+    return {
+        "success": True,
+        "analysis_id": analysis_id,
+        **analysis_status[analysis_id]
+    }
 
 @app.get("/analysis/history")
 async def get_history(limit: int = 10, offset: int = 0):
@@ -324,10 +365,10 @@ async def http_exception_handler(request, exc):
     """Custom HTTP exception handler"""
     return JSONResponse(
         status_code=exc.status_code,
-        content=ErrorResponse(
+        content=jsonable_encoder(ErrorResponse(
             error=exc.detail,
             error_code=f"HTTP_{exc.status_code}"
-        ).dict()
+        ).dict())
     )
 
 @app.exception_handler(Exception)
@@ -336,11 +377,11 @@ async def general_exception_handler(request, exc):
     logger.error(f"Unhandled exception: {traceback.format_exc()}")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content=ErrorResponse(
+        content=jsonable_encoder(ErrorResponse(
             error="Internal server error",
             detail=str(exc) if settings.debug_mode else None,
             error_code="INTERNAL_ERROR"
-        ).dict()
+        ).dict())
     )
 
 async def check_ollama_connection() -> bool:

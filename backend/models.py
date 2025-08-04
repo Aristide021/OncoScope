@@ -28,6 +28,7 @@ class Prognosis(str, Enum):
     MODERATE = "moderate"
     GOOD = "good"
     EXCELLENT_WITH_THERAPY = "excellent_with_therapy"
+    MODERATE_WITH_TARGETED_THERAPY = "moderate_with_targeted_therapy"
     UNCERTAIN = "uncertain"
 
 class MutationInput(BaseModel):
@@ -72,7 +73,7 @@ class AnalysisResponse(BaseModel):
     risk_classification: RiskLevel
     clinical_recommendations: List[str]
     actionable_mutations: List[Dict[str, Any]]
-    estimated_tumor_types: List[Dict[str, float]]
+    estimated_tumor_types: List[Dict[str, Any]]
     confidence_metrics: Dict[str, float]
     warnings: List[str] = []
 

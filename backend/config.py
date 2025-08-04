@@ -26,14 +26,14 @@ class Settings(BaseSettings):
     # Ollama Configuration
     ollama_base_url: str = "http://localhost:11434"
     ollama_model_name: str = "oncoscope-cancer"
-    ollama_timeout: int = 120
+    ollama_timeout: int = 300  # Increased to 5 minutes for complex analyses
     
     # Database
     database_url: str = "sqlite:///./oncoscope.db"
     
     # Security
     secret_key: str = "development-secret-key-change-in-production"
-    cors_origins: List[str] = ["http://localhost:3000", "file://"]
+    cors_origins: List[str] = ["http://localhost:3000", "file://", "http://localhost", "*"]
     
     # AI Model Parameters
     model_temperature: float = 0.1

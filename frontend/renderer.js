@@ -46,6 +46,12 @@ class OncoScopeApp {
             mutationInput: document.getElementById('mutation-input'),
             analyzeButton: document.getElementById('analyze-button'),
             
+            // Patient information elements
+            patientAge: document.getElementById('patient-age'),
+            patientGender: document.getElementById('patient-gender'),
+            cancerType: document.getElementById('cancer-type'),
+            cancerTypeOther: document.getElementById('cancer-type-other'),
+            
             // Progress elements
             progressFill: document.getElementById('progress-fill'),
             progressText: document.getElementById('progress-text'),
@@ -144,6 +150,17 @@ class OncoScopeApp {
         document.getElementById('new-analysis-button').addEventListener('click', () => {
             this.resetAnalysis();
         });
+        
+        // Cancer type dropdown change handler
+        this.elements.cancerType.addEventListener('change', (e) => {
+            if (e.target.value === 'other') {
+                this.elements.cancerTypeOther.classList.remove('hidden');
+                this.elements.cancerTypeOther.focus();
+            } else {
+                this.elements.cancerTypeOther.classList.add('hidden');
+                this.elements.cancerTypeOther.value = '';
+            }
+        });
     }
     
     setupMenuHandlers() {
@@ -166,14 +183,31 @@ class OncoScopeApp {
     }
     
     async checkSystemStatus() {
+        console.log('Checking system status at:', `${this.apiBase}/health`);
         try {
-            const response = await fetch(`${this.apiBase}/health`);
+            const response = await fetch(`${this.apiBase}/health`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+                mode: 'cors',
+                signal: AbortSignal.timeout(10000) // 10 second timeout for health check
+            });
+            
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const status = await response.json();
+            console.log('System status:', status);
             
             this.updateConnectionStatus(status);
             
         } catch (error) {
             console.error('System status check failed:', error);
+            console.error('Error details:', error.message, error.stack);
             this.updateConnectionStatus({ status: 'error', message: 'Connection failed' });
         }
     }
@@ -228,30 +262,66 @@ class OncoScopeApp {
     }
     
     loadDemoData(demoType) {
-        const demoMutations = {
-            high_risk: [
-                'TP53:c.524G>A',
-                'KRAS:c.35G>A',
-                'EGFR:c.2369C>T',
-                'PIK3CA:c.3140A>G',
-                'BRAF:c.1799T>A'
-            ],
-            targetable: [
-                'EGFR:c.2573T>G',
-                'ALK:c.3522C>A',
-                'BRCA1:c.68_69delAG',
-                'PIK3CA:c.1633G>A'
-            ],
-            low_risk: [
-                'TP53:c.215C>G',
-                'EGFR:c.2361G>A',
-                'MLH1:c.655A>G'
-            ]
+        const demoData = {
+            high_risk: {
+                mutations: [
+                    'TP53:c.524G>A',
+                    'KRAS:c.35G>A',
+                    'EGFR:c.2369C>T',
+                    'PIK3CA:c.3140A>G',
+                    'BRAF:c.1799T>A'
+                ],
+                patient: {
+                    age: 68,
+                    gender: 'male',
+                    cancerType: 'lung_adenocarcinoma'
+                }
+            },
+            targetable: {
+                mutations: [
+                    'EGFR:c.2573T>G',
+                    'ALK:c.3522C>A',
+                    'BRCA1:c.68_69delAG',
+                    'PIK3CA:c.1633G>A'
+                ],
+                patient: {
+                    age: 52,
+                    gender: 'female',
+                    cancerType: 'breast_adenocarcinoma'
+                }
+            },
+            low_risk: {
+                mutations: [
+                    'TP53:c.215C>G',
+                    'EGFR:c.2361G>A',
+                    'MLH1:c.655A>G'
+                ],
+                patient: {
+                    age: 45,
+                    gender: 'female',
+                    cancerType: 'colorectal_adenocarcinoma'
+                }
+            }
         };
         
-        const mutations = demoMutations[demoType] || [];
-        this.elements.mutationInput.value = mutations.join('\n');
-        this.elements.analyzeButton.disabled = false;
+        const demo = demoData[demoType];
+        if (demo) {
+            // Load mutations
+            this.elements.mutationInput.value = demo.mutations.join('\n');
+            this.elements.analyzeButton.disabled = false;
+            
+            // Load patient information
+            if (demo.patient) {
+                this.elements.patientAge.value = demo.patient.age || '';
+                this.elements.patientGender.value = demo.patient.gender || '';
+                this.elements.cancerType.value = demo.patient.cancerType || '';
+                // Hide the other input if we're setting a predefined cancer type
+                if (demo.patient.cancerType && demo.patient.cancerType !== 'other') {
+                    this.elements.cancerTypeOther.classList.add('hidden');
+                    this.elements.cancerTypeOther.value = '';
+                }
+            }
+        }
     }
     
     async analyzeMutations() {
@@ -262,74 +332,148 @@ class OncoScopeApp {
             .map(m => m.trim())
             .filter(m => m.length > 0);
         
+        // Gather patient context
+        const patientContext = {};
+        
+        // Add patient information if provided
+        const age = this.elements.patientAge.value;
+        if (age) {
+            patientContext.age = parseInt(age);
+        }
+        
+        const gender = this.elements.patientGender.value;
+        if (gender) {
+            patientContext.sex = gender;
+        }
+        
+        const cancerTypeValue = this.elements.cancerType.value;
+        if (cancerTypeValue === 'other') {
+            const otherValue = this.elements.cancerTypeOther.value.trim();
+            if (otherValue) {
+                patientContext.cancer_type = otherValue;
+            }
+        } else if (cancerTypeValue) {
+            patientContext.cancer_type = cancerTypeValue;
+        }
+        
+        // Build request payload
+        const requestPayload = {
+            mutations: mutations
+        };
+        
+        // Only add patient_context if we have any data
+        if (Object.keys(patientContext).length > 0) {
+            requestPayload.patient_context = patientContext;
+        }
+        
         // Show progress
         this.showSection('progress');
         this.startProgress();
         
+        let analysisId = null;
+        let statusPollInterval = null;
+        
         try {
+            console.log('Sending analysis request:', requestPayload);
+            
+            // Start the analysis
             const response = await fetch(`${this.apiBase}/analyze/mutations`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ mutations })
+                body: JSON.stringify(requestPayload),
+                signal: AbortSignal.timeout(600000) // 10 minute timeout for complex analyses
             });
             
             if (!response.ok) {
                 throw new Error(`Analysis failed: ${response.statusText}`);
             }
             
+            console.log('Analysis response received, parsing...');
             const result = await response.json();
+            console.log('Analysis result:', result);
             this.currentAnalysis = result;
+            
+            // Extract analysis ID if available
+            analysisId = result.analysis_id;
+            
+            // Start polling for status if we have an analysis ID
+            if (analysisId) {
+                statusPollInterval = setInterval(async () => {
+                    try {
+                        const statusResponse = await fetch(`${this.apiBase}/analysis/${analysisId}/status`);
+                        if (statusResponse.ok) {
+                            const status = await statusResponse.json();
+                            if (status.progress !== undefined && status.message) {
+                                this.updateProgress(status.progress, status.message);
+                                
+                                // Update steps based on progress
+                                if (status.progress >= 25) this.activateStep('parsing');
+                                if (status.progress >= 50) this.activateStep('database');
+                                if (status.progress >= 75) this.activateStep('ai');
+                                if (status.progress >= 90) this.activateStep('report');
+                            }
+                            
+                            // Check if analysis failed
+                            if (status.status === 'failed') {
+                                clearInterval(statusPollInterval);
+                                throw new Error(status.error || 'Analysis failed');
+                            }
+                        }
+                    } catch (err) {
+                        console.log('Status poll error:', err);
+                    }
+                }, 2000); // Poll every 2 seconds to reduce load
+            }
             
             // Complete progress
             this.updateProgress(100, 'Analysis complete! Generating clinical recommendations...');
             this.activateStep('report');
             
+            // Clear status polling since analysis is complete
+            if (statusPollInterval) {
+                clearInterval(statusPollInterval);
+                statusPollInterval = null;
+            }
+            
             // Show results after brief delay
             setTimeout(() => {
-                this.displayResults(result.analysis);
-                this.showSection('results');
+                console.log('Displaying results...');
+                if (result && result.analysis) {
+                    this.displayResults(result.analysis);
+                    this.showSection('results');
+                } else if (result) {
+                    // Try using result directly if analysis is not nested
+                    console.log('Using result directly:', result);
+                    this.displayResults(result);
+                    this.showSection('results');
+                } else {
+                    console.error('No analysis data in result');
+                    this.showError('No analysis data received');
+                }
             }, 1000);
             
         } catch (error) {
             console.error('Analysis failed:', error);
             this.showError(`Analysis failed: ${error.message}`);
             this.showSection('upload');
+        } finally {
+            // Clean up status polling
+            if (statusPollInterval) {
+                clearInterval(statusPollInterval);
+            }
         }
     }
     
     startProgress() {
-        let progress = 0;
-        const steps = ['parsing', 'database', 'ai', 'report'];
-        let currentStep = 0;
+        // Initialize progress display
+        this.updateProgress(0, 'Initializing OncoScope cancer genomics analysis...');
         
-        // Simulate progress
-        const interval = setInterval(() => {
-            progress += Math.random() * 15 + 5;
-            
-            if (progress >= 25 && currentStep === 0) {
-                this.activateStep(steps[0]);
-                this.updateProgress(25, 'Parsing and validating genetic mutations...');
-                currentStep = 1;
-            } else if (progress >= 40 && currentStep === 1) {
-                this.activateStep(steps[1]);
-                this.updateProgress(40, 'Searching COSMIC mutation database and ClinVar variants...');
-                currentStep = 2;
-            } else if (progress >= 60 && currentStep === 2) {
-                this.updateProgress(60, 'Loading FDA drug associations and therapeutic targets...');
-            } else if (progress >= 75 && currentStep === 2) {
-                this.activateStep(steps[2]);
-                this.updateProgress(75, 'Running AI pathogenicity analysis with Gemma model...');
-                currentStep = 3;
-            } else if (progress >= 90 && currentStep === 3) {
-                this.updateProgress(90, 'Calculating composite risk scores and clustering mutations...');
-            }
-            
-            if (progress >= 90) {
-                clearInterval(interval);
-            }
-        }, 500);
+        // Clear all step states
+        Object.values(this.elements.steps).forEach(step => {
+            step.classList.remove('active');
+        });
     }
     
     updateProgress(percent, message) {
@@ -344,8 +488,17 @@ class OncoScopeApp {
     }
     
     displayResults(analysis) {
+        console.log('displayResults called with:', analysis);
+        
+        if (!analysis) {
+            console.error('No analysis data provided to displayResults');
+            this.showError('No analysis data to display');
+            return;
+        }
+        
         // Update overall risk score with animation
-        const riskScore = analysis.overall_risk_score;
+        const riskScore = analysis.overall_risk_score || 0;
+        console.log('Risk score:', riskScore);
         this.animateRiskScore(riskScore);
         
         // Update risk classification
@@ -585,6 +738,14 @@ class OncoScopeApp {
         this.elements.mutationInput.value = '';
         this.elements.analyzeButton.disabled = true;
         this.elements.warningsSection.classList.add('hidden');
+        
+        // Clear patient information
+        this.elements.patientAge.value = '';
+        this.elements.patientGender.value = '';
+        this.elements.cancerType.value = '';
+        this.elements.cancerTypeOther.value = '';
+        this.elements.cancerTypeOther.classList.add('hidden');
+        
         this.showSection('upload');
     }
     
@@ -1049,5 +1210,9 @@ function closeErrorModal() {
 
 // Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new OncoScopeApp();
+    console.log('DOM loaded, initializing OncoScope app...');
+    // Add a small delay to ensure everything is ready
+    setTimeout(() => {
+        new OncoScopeApp();
+    }, 500);
 });

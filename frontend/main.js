@@ -175,12 +175,12 @@ function createPreferencesWindow() {
 
 function startBackend() {
   // Start the FastAPI backend
-  const backendPath = path.join(__dirname, '..', 'backend');
+  const projectRoot = path.join(__dirname, '..');
   const pythonPath = process.platform === 'win32' ? 'python' : 'python3';
   
-  backendProcess = spawn(pythonPath, ['-m', 'uvicorn', 'main:app', '--host', '127.0.0.1', '--port', '8000'], {
-    cwd: backendPath,
-    env: { ...process.env, PYTHONPATH: path.join(__dirname, '..') }
+  backendProcess = spawn(pythonPath, ['-m', 'backend.main'], {
+    cwd: projectRoot,
+    env: { ...process.env, PYTHONPATH: projectRoot }
   });
 
   backendProcess.stdout.on('data', (data) => {
@@ -207,13 +207,17 @@ function startBackend() {
 
 // App event handlers
 app.whenReady().then(() => {
-  // Start backend first
-  startBackend();
-  
-  // Give backend time to start
-  setTimeout(() => {
+  // Start backend first (skip if already running)
+  if (process.env.SKIP_BACKEND !== 'true') {
+    startBackend();
+    // Give backend time to start
+    setTimeout(() => {
+      createWindow();
+    }, 2000);
+  } else {
+    // Backend already running, create window immediately
     createWindow();
-  }, 2000);
+  }
 });
 
 app.on('window-all-closed', () => {

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoScope Preferences</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 15px;
+        }
+
+        .preference-item {
+            margin-bottom: 20px;
+        }
+
+        .preference-item label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        .preference-item input[type="text"],
+        .preference-item input[type="number"],
+        .preference-item select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .preference-item input:focus,
+        .preference-item select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .description {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 20px 30px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 25px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>OncoScope Preferences</h1>
+        </div>
+
+        <div class="content">
+            <!-- General Preferences -->
+            <div class="section">
+                <h2>General</h2>
+                
+                <div class="preference-item">
+                    <label for="default-cancer-type">Default Cancer Type</label>
+                    <select id="default-cancer-type">
+                        <option value="">Not specified</option>
+                        <option value="breast">Breast Cancer</option>
+                        <option value="lung">Lung Cancer</option>
+                        <option value="colorectal">Colorectal Cancer</option>
+                        <option value="prostate">Prostate Cancer</option>
+                        <option value="melanoma">Melanoma</option>
+                        <option value="leukemia">Leukemia</option>
+                        <option value="lymphoma">Lymphoma</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <p class="description">Pre-select this cancer type for new analyses</p>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="auto-save-results" checked>
+                    <label for="auto-save-results">Automatically save analysis results</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="show-demo-buttons" checked>
+                    <label for="show-demo-buttons">Show demo data buttons</label>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Analysis Settings -->
+            <div class="section">
+                <h2>Analysis Settings</h2>
+                
+                <div class="preference-item">
+                    <label for="confidence-threshold">Minimum Confidence Threshold (%)</label>
+                    <input type="number" id="confidence-threshold" min="0" max="100" value="70">
+                    <p class="description">Only show mutations above this confidence level</p>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="include-benign" checked>
+                    <label for="include-benign">Include benign variants in results</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="show-clustering" checked>
+                    <label for="show-clustering">Show mutation clustering analysis</label>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Privacy & Security -->
+            <div class="section">
+                <h2>Privacy & Security</h2>
+                
+                <div class="checkbox-item">
+                    <input type="checkbox" id="local-only" checked disabled>
+                    <label for="local-only">Keep all data local (always enabled)</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="clear-on-exit">
+                    <label for="clear-on-exit">Clear analysis data when closing app</label>
+                </div>
+
+                <div class="preference-item">
+                    <label for="data-retention">Data retention period</label>
+                    <select id="data-retention">
+                        <option value="session">This session only</option>
+                        <option value="day">24 hours</option>
+                        <option value="week" selected>7 days</option>
+                        <option value="month">30 days</option>
+                        <option value="forever">Keep forever</option>
+                    </select>
+                    <p class="description">How long to keep analysis history</p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Advanced -->
+            <div class="section">
+                <h2>Advanced</h2>
+                
+                <div class="preference-item">
+                    <label for="api-endpoint">API Endpoint</label>
+                    <input type="text" id="api-endpoint" value="http://localhost:8000" placeholder="http://localhost:8000">
+                    <p class="description">OncoScope backend server address</p>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="debug-mode">
+                    <label for="debug-mode">Enable debug mode</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-secondary" onclick="cancelPreferences()">Cancel</button>
+            <button class="btn-primary" onclick="savePreferences()">Save Preferences</button>
+        </div>
+    </div>
+
+    <script>
+        // Load saved preferences
+        async function loadPreferences() {
+            if (window.api) {
+                // Load each preference
+                const preferences = [
+                    'default-cancer-type',
+                    'auto-save-results',
+                    'show-demo-buttons',
+                    'confidence-threshold',
+                    'include-benign',
+                    'show-clustering',
+                    'clear-on-exit',
+                    'data-retention',
+                    'api-endpoint',
+                    'debug-mode'
+                ];
+
+                for (const pref of preferences) {
+                    const value = await window.api.getPreference(pref);
+                    if (value !== undefined) {
+                        const element = document.getElementById(pref);
+                        if (element) {
+                            if (element.type === 'checkbox') {
+                                element.checked = value;
+                            } else {
+                                element.value = value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Save preferences
+        async function savePreferences() {
+            if (window.api) {
+                // Get all form elements
+                const inputs = document.querySelectorAll('input, select');
+                
+                for (const input of inputs) {
+                    const value = input.type === 'checkbox' ? input.checked : input.value;
+                    await window.api.setPreference(input.id, value);
+                }
+
+                // Close the window
+                window.close();
+            }
+        }
+
+        // Cancel and close
+        function cancelPreferences() {
+            window.close();
+        }
+
+        // Load preferences when window opens
+        document.addEventListener('DOMContentLoaded', loadPreferences);
+
+        // Handle Enter key to save
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.target.matches('textarea')) {
+                savePreferences();
+            } else if (e.key === 'Escape') {
+                cancelPreferences();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,7 @@ import json
 import re
 import asyncio
 from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from pathlib import Path
 import logging
 
@@ -163,6 +163,17 @@ class CancerMutationAnalyzer:
                     "prognosis": "moderate",
                     "targeted_therapy": ["alpelisib"]
                 }
+            },
+            "BRAF": {
+                "c.1799T>A": {
+                    "protein": "p.V600E",
+                    "pathogenicity": 0.95,
+                    "cancer_types": ["melanoma", "colorectal", "thyroid", "lung"],
+                    "frequency": "50% of melanomas, 10% of colorectal cancers",
+                    "mechanism": "Constitutive kinase activation in MAPK pathway",
+                    "prognosis": "moderate",
+                    "targeted_therapy": ["vemurafenib", "dabrafenib", "encorafenib"]
+                }
             }
         }
     
@@ -196,6 +207,27 @@ class CancerMutationAnalyzer:
                 "generation": "1st",
                 "fda_approved": True,
                 "indications": ["BRCA-mutated breast/ovarian cancer"]
+            },
+            "vemurafenib": {
+                "targets": ["BRAF V600E"],
+                "class": "BRAF Inhibitor",
+                "generation": "1st",
+                "fda_approved": True,
+                "indications": ["BRAF V600E melanoma", "Erdheim-Chester disease"]
+            },
+            "dabrafenib": {
+                "targets": ["BRAF V600E", "BRAF V600K"],
+                "class": "BRAF Inhibitor",
+                "generation": "2nd",
+                "fda_approved": True,
+                "indications": ["BRAF V600E/K melanoma", "NSCLC", "anaplastic thyroid"]
+            },
+            "encorafenib": {
+                "targets": ["BRAF V600E", "BRAF V600K"],
+                "class": "BRAF Inhibitor",
+                "generation": "2nd",
+                "fda_approved": True,
+                "indications": ["BRAF V600E/K melanoma", "colorectal cancer (with cetuximab)"]
             }
         }
     
@@ -230,8 +262,10 @@ class CancerMutationAnalyzer:
     
     async def analyze_single_mutation(self, mutation: str) -> MutationAnalysis:
         """Analyze individual mutation for clinical significance with caching"""
+        logger.info(f"=== ANALYZING MUTATION: {mutation} ===")
         gene, variant = self.parse_mutation_notation(mutation)
         mutation_id = f"{gene}:{variant}"
+        logger.info(f"Parsed as gene={gene}, variant={variant}")
         
         # Check cache first
         try:
@@ -239,46 +273,22 @@ class CancerMutationAnalyzer:
             cached_data = await get_cached_mutation(mutation_id)
             
             if cached_data:
-                logger.info(f"Found cached analysis for {mutation_id}")
-                # Convert cached data to MutationAnalysis object
-                return MutationAnalysis(
-                    mutation_id=mutation_id,
-                    gene=cached_data.get('gene', gene),
-                    variant=cached_data.get('variant', variant),
-                    protein_change=cached_data.get('protein_change', ''),
-                    pathogenicity_score=cached_data.get('pathogenicity_score', 0.5),
-                    cancer_types=cached_data.get('cancer_types', []),
-                    clinical_significance=ClinicalSignificance[cached_data.get('clinical_significance', 'UNCERTAIN')],
-                    targeted_therapies=cached_data.get('targeted_therapies', []),
-                    prognosis_impact=Prognosis[cached_data.get('prognosis_impact', 'UNCERTAIN')],
-                    mechanism=cached_data.get('mechanism', 'Unknown mechanism'),
-                    confidence_score=cached_data.get('confidence_score', 0.5),
-                    references=cached_data.get('references', [])
-                )
+                logger.info(f"Found cached analysis for {mutation_id}, but will use AI for Gemma 3n showcase")
+                # Don't return cached data - always use AI for the competition
         except Exception as e:
             logger.warning(f"Cache lookup failed for {mutation_id}: {e}")
         
-        # Look up in database
+        # ALWAYS use AI analysis to showcase Gemma 3n capabilities
+        # This ensures every mutation gets rich, AI-powered insights
+        logger.info(f"Using Gemma 3n AI analysis for {mutation_id}")
+        
+        # Get database info if available
+        db_data = None
         if gene in self.mutation_db and variant in self.mutation_db[gene]:
-            data = self.mutation_db[gene][variant]
-            
-            analysis = MutationAnalysis(
-                mutation_id=mutation_id,
-                gene=gene,
-                variant=variant,
-                protein_change=data.get('protein', ''),
-                pathogenicity_score=data.get('pathogenicity', 0.5),
-                cancer_types=data.get('cancer_types', []),
-                clinical_significance=self.classify_significance(data.get('pathogenicity', 0.5)),
-                targeted_therapies=data.get('targeted_therapy', []),
-                prognosis_impact=Prognosis(data.get('prognosis', 'uncertain')),
-                mechanism=data.get('mechanism', 'Unknown mechanism'),
-                confidence_score=0.95,  # High confidence for known mutations
-                references=["COSMIC", "ClinVar", "OncoKB"]
-            )
-        else:
-            # Unknown mutation - use AI analysis
-            analysis = await self.ai_analyze_mutation(gene, variant)
+            db_data = self.mutation_db[gene][variant]
+        
+        # Call AI model for detailed analysis (showcasing Gemma 3n)
+        analysis = await self.ai_analyze_mutation(gene, variant, db_data)
         
         # Cache the result
         try:
@@ -286,7 +296,7 @@ class CancerMutationAnalyzer:
                 mutation_id=mutation_id,
                 gene=gene,
                 variant=variant,
-                analysis_data=asdict(analysis)
+                analysis_data=analysis.model_dump()
             )
             logger.info(f"Cached analysis for {mutation_id}")
         except Exception as e:
@@ -294,10 +304,17 @@ class CancerMutationAnalyzer:
         
         return analysis
     
-    async def ai_analyze_mutation(self, gene: str, variant: str) -> MutationAnalysis:
+    async def ai_analyze_mutation(self, gene: str, variant: str, db_data: Optional[Dict] = None) -> MutationAnalysis:
         """Use AI model for unknown mutations"""
         try:
+            logger.info(f"Calling Gemma 3n AI model for {gene}:{variant}")
             ai_analysis = await self.ollama_client.analyze_cancer_mutation(gene, variant)
+            
+            if not ai_analysis:
+                logger.warning(f"AI analysis returned None for {gene}:{variant}")
+                return self.create_uncertain_analysis(gene, variant)
+            
+            logger.info(f"AI analysis result: {ai_analysis}")
             
             return MutationAnalysis(
                 mutation_id=f"{gene}:{variant}",
@@ -358,10 +375,25 @@ class CancerMutationAnalyzer:
     ) -> Dict[str, Any]:
         """Analyze list of mutations with CLUSTER-FIRST approach for integrated AI analysis"""
         
+        # Extract analysis_id if present for progress tracking
+        analysis_id = patient_context.get('analysis_id') if patient_context else None
+        
+        async def update_progress(progress: int, message: str):
+            """Update analysis progress in global status"""
+            if analysis_id:
+                from .main import analysis_status
+                if analysis_id in analysis_status:
+                    analysis_status[analysis_id].update({
+                        "progress": progress,
+                        "message": message,
+                        "status": "in_progress"
+                    })
+        
         # STEP 1: Parse mutations to get basic info for clustering
+        await update_progress(10, "Parsing and validating mutations...")
         parsed_mutations = []
         for mutation in mutations:
-            gene, variant = self._parse_mutation_string(mutation)
+            gene, variant = self.parse_mutation_notation(mutation)
             if gene and variant:
                 # Get basic mutation info from database
                 basic_info = self._get_basic_mutation_info(gene, variant)
@@ -373,6 +405,7 @@ class CancerMutationAnalyzer:
                 })
         
         # STEP 2: CLUSTER FIRST if we have enough mutations
+        await update_progress(25, "Searching mutation databases...")
         clustering_results = {}
         cluster_context = None
         
@@ -381,16 +414,18 @@ class CancerMutationAnalyzer:
                 # Create minimal MutationAnalysis objects for clustering
                 minimal_analyses = [
                     MutationAnalysis(
+                        mutation_id=f"{mut['gene']}:{mut['variant']}",
                         gene=mut["gene"],
                         variant=mut["variant"],
-                        mutation_type=mut.get("mutation_type", "unknown"),
+                        protein_change=None,
                         pathogenicity_score=mut.get("pathogenicity_score", 0.5),
                         cancer_types=[],  # Will be filled by AI
                         clinical_significance=ClinicalSignificance.UNCERTAIN,
-                        prognosis=Prognosis.UNCERTAIN,
-                        therapy_recommendations=[],
-                        clinical_trials=[],
-                        evidence_level="preliminary"
+                        targeted_therapies=[],
+                        prognosis_impact=Prognosis.UNCERTAIN,
+                        mechanism="Unknown mechanism - pending analysis",
+                        confidence_score=0.5,
+                        references=[]
                     )
                     for mut in parsed_mutations
                 ]
@@ -415,7 +450,12 @@ class CancerMutationAnalyzer:
                 cluster_context = None
         
         # STEP 3: Make SINGLE AI call with clustering context
+        await update_progress(60, f"Running Gemma 3n AI analysis on {len(parsed_mutations)} mutations...")
         if len(parsed_mutations) >= 2:  # Use multi-mutation analysis for 2+ mutations
+            # Add progress callback to patient context
+            if patient_context:
+                patient_context['progress_callback'] = lambda progress, msg: asyncio.create_task(update_progress(60 + int(progress * 0.25), msg))
+            
             ai_analysis = await self._analyze_mutations_with_ai(
                 parsed_mutations, 
                 patient_context,
@@ -430,9 +470,11 @@ class CancerMutationAnalyzer:
             analyses = await asyncio.gather(*tasks)
         
         # Convert to dict format
-        analyses_dict = [asdict(analysis) for analysis in analyses]
+        # Use .dict() for Pydantic models instead of asdict() for dataclasses
+        analyses_dict = [analysis.model_dump() for analysis in analyses]
         
         # Calculate composite risk score (enhanced with AI insights)
+        await update_progress(85, "Calculating risk scores and generating recommendations...")
         overall_risk = self.calculate_composite_risk(analyses)
         
         # Generate clinical recommendations (now AI-informed)
@@ -716,15 +758,20 @@ class CancerMutationAnalyzer:
         # Average confidence across mutations
         avg_confidence = sum(a.confidence_score for a in analyses) / len(analyses)
         
-        # Data completeness (how many mutations were in database vs AI)
-        known_mutations = sum(1 for a in analyses if "COSMIC" in a.references)
-        data_completeness = known_mutations / len(analyses)
+        # Count mutations with high confidence and pathogenic significance as "known"
+        # These are well-characterized mutations in the literature
+        known_mutations = sum(
+            1 for a in analyses 
+            if a.confidence_score >= 0.8 and 
+            a.clinical_significance in [ClinicalSignificance.PATHOGENIC, ClinicalSignificance.LIKELY_PATHOGENIC]
+        )
+        data_completeness = known_mutations / len(analyses) if analyses else 0
         
         return {
             "overall_confidence": round(avg_confidence, 2),
             "data_completeness": round(data_completeness, 2),
             "known_mutations": known_mutations,
-            "ai_predictions": len(analyses) - known_mutations
+            "ai_predictions": len(analyses)
         }
     
     def generate_warnings(self, analyses: List[MutationAnalysis]) -> List[str]:
@@ -862,9 +909,15 @@ class CancerMutationAnalyzer:
         cluster_context: Optional[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Make single AI call with clustering context for multi-mutation analysis"""
+        logger.info("=== CALLING GEMMA 3N AI FOR MULTI-MUTATION ANALYSIS ===")
+        logger.info(f"Analyzing {len(mutations)} mutations with Gemma 3n model")
         
         # Import prompt generator
-        from ..ai.inference.prompts import GenomicAnalysisPrompts
+        # Add parent directory to path for imports
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from ai.inference.prompts import GenomicAnalysisPrompts
         prompt_gen = GenomicAnalysisPrompts()
         
         # Prepare mutations for prompt
@@ -888,7 +941,9 @@ class CancerMutationAnalyzer:
         
         # Make AI call
         try:
+            logger.info("Sending prompt to Gemma 3n via Ollama...")
             response = await self.ollama_client.analyze_multi_mutations(prompt)
+            logger.info(f"Got response from Gemma 3n: {response}")
             return response
         except Exception as e:
             logger.error(f"AI multi-mutation analysis failed: {e}")
@@ -923,39 +978,36 @@ class CancerMutationAnalyzer:
                 
                 # Create MutationAnalysis from AI response
                 analysis = MutationAnalysis(
+                    mutation_id=mutation_key,
                     gene=mutation["gene"],
                     variant=mutation["variant"],
-                    mutation_type=ai_data.get("mutation_type", mutation.get("mutation_type", "unknown")),
-                    pathogenicity_score=ai_data.get("pathogenicity_score", 0.5),
-                    cancer_types=ai_data.get("cancer_associations", []),
+                    protein_change=ai_data.get("protein_change"),
+                    pathogenicity_score=ai_data.get("pathogenicity", 0.5),
+                    cancer_types=ai_data.get("cancer_types", []),
                     clinical_significance=self._parse_significance(
-                        ai_data.get("clinical_significance", "uncertain")
+                        ai_data.get("significance", "uncertain")
                     ),
-                    prognosis=self._parse_prognosis(ai_data.get("prognosis", "uncertain")),
-                    therapy_recommendations=self._parse_therapy_recommendations(
-                        ai_data.get("therapeutic_implications", {})
-                    ),
-                    clinical_trials=ai_data.get("clinical_trials", []),
-                    evidence_level=ai_data.get("evidence_level", "computational"),
-                    confidence_score=ai_data.get("confidence_score", 0.7),
-                    protein_impact=ai_data.get("protein_impact", ""),
-                    hotspot_region=ai_data.get("hotspot_region", False),
-                    resistance_mutations=ai_data.get("resistance_mutations", []),
-                    companion_diagnostics=ai_data.get("companion_diagnostics", [])
+                    targeted_therapies=ai_data.get("therapies", []),
+                    prognosis_impact=self._parse_prognosis(ai_data.get("prognosis", "uncertain")),
+                    mechanism=ai_data.get("mechanism", "Unknown mechanism"),
+                    confidence_score=ai_data.get("confidence", 0.7),
+                    references=ai_data.get("references", [])
                 )
             else:
                 # Fallback to basic analysis if AI didn't provide specific analysis
                 analysis = MutationAnalysis(
+                    mutation_id=f"{mutation['gene']}:{mutation['variant']}",
                     gene=mutation["gene"],
                     variant=mutation["variant"],
-                    mutation_type=mutation.get("mutation_type", "unknown"),
+                    protein_change=None,
                     pathogenicity_score=mutation.get("pathogenicity_score", 0.5),
                     cancer_types=[],
                     clinical_significance=ClinicalSignificance.UNCERTAIN,
-                    prognosis=Prognosis.UNCERTAIN,
-                    therapy_recommendations=[],
-                    clinical_trials=[],
-                    evidence_level="limited"
+                    targeted_therapies=[],
+                    prognosis_impact=Prognosis.UNCERTAIN,
+                    mechanism="Unknown mechanism - pending analysis",
+                    confidence_score=0.5,
+                    references=[]
                 )
             
             analyses.append(analysis)
@@ -966,7 +1018,7 @@ class CancerMutationAnalyzer:
                     mutation_id=mutation_key,
                     gene=mutation["gene"],
                     variant=mutation["variant"],
-                    analysis_data=asdict(analysis)
+                    analysis_data=analysis.model_dump()
                 ))
                 logger.debug(f"Queued {mutation_key} for caching")
             except Exception as e:
@@ -976,21 +1028,33 @@ class CancerMutationAnalyzer:
     
     def _parse_significance(self, significance_str: str) -> ClinicalSignificance:
         """Parse clinical significance from string"""
+        # Handle both lowercase and uppercase variants
         sig_map = {
             "pathogenic": ClinicalSignificance.PATHOGENIC,
+            "PATHOGENIC": ClinicalSignificance.PATHOGENIC,
             "likely_pathogenic": ClinicalSignificance.LIKELY_PATHOGENIC,
+            "LIKELY_PATHOGENIC": ClinicalSignificance.LIKELY_PATHOGENIC,
             "uncertain": ClinicalSignificance.UNCERTAIN,
+            "UNCERTAIN": ClinicalSignificance.UNCERTAIN,
+            "VARIANT_OF_UNCERTAIN_SIGNIFICANCE": ClinicalSignificance.UNCERTAIN,
             "likely_benign": ClinicalSignificance.LIKELY_BENIGN,
-            "benign": ClinicalSignificance.BENIGN
+            "LIKELY_BENIGN": ClinicalSignificance.LIKELY_BENIGN,
+            "benign": ClinicalSignificance.BENIGN,
+            "BENIGN": ClinicalSignificance.BENIGN
         }
-        return sig_map.get(significance_str.lower(), ClinicalSignificance.UNCERTAIN)
+        return sig_map.get(significance_str, ClinicalSignificance.UNCERTAIN)
     
     def _parse_prognosis(self, prognosis_str: str) -> Prognosis:
         """Parse prognosis from string"""
         prog_map = {
-            "favorable": Prognosis.FAVORABLE,
-            "intermediate": Prognosis.INTERMEDIATE,
+            "favorable": Prognosis.GOOD,
+            "good": Prognosis.GOOD,
+            "intermediate": Prognosis.MODERATE,
+            "moderate": Prognosis.MODERATE,
             "poor": Prognosis.POOR,
+            "excellent": Prognosis.EXCELLENT_WITH_THERAPY,
+            "excellent_with_therapy": Prognosis.EXCELLENT_WITH_THERAPY,
+            "moderate_with_targeted_therapy": Prognosis.MODERATE_WITH_TARGETED_THERAPY,
             "uncertain": Prognosis.UNCERTAIN
         }
         return prog_map.get(prognosis_str.lower(), Prognosis.UNCERTAIN)

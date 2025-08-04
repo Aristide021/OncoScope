@@ -1,0 +1,14 @@
+# Optimized Modelfile for OncoScope with full GPU offloading
+FROM oncoscope-cancer:latest
+
+# Force full GPU offloading for M3 Max
+PARAMETER num_gpu 999
+
+# Keep existing parameters
+PARAMETER temperature 1
+PARAMETER top_k 64
+PARAMETER top_p 0.95
+PARAMETER num_ctx 4096
+PARAMETER num_predict 512
+PARAMETER repeat_penalty 1
+PARAMETER stop <end_of_turn>

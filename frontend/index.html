@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OncoScope - Cancer Genomics Analysis</title>
     <link rel="stylesheet" href="styles.css">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:8000 http://127.0.0.1:8000; connect-src 'self' http://localhost:8000 http://127.0.0.1:8000 ws://localhost:8000 ws://127.0.0.1:8000; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;">
 </head>
 <body>
     <div id="app">
@@ -22,6 +22,7 @@
                 <div>
                     <h1>OncoScope</h1>
                     <p class="tagline">Privacy-First Cancer Genomics Analysis</p>
+                    <p class="powered-by">Powered by Google Gemma 3n</p>
                 </div>
             </div>
             
@@ -48,6 +49,49 @@
                         <p class="upload-hint">Supports: VCF, CSV, TXT formats</p>
                     </div>
                     <input type="file" id="file-input" accept=".vcf,.csv,.txt,.json" hidden>
+                </div>
+                
+                <!-- Patient Information -->
+                <div class="patient-info-section">
+                    <h3>Patient Information (Optional)</h3>
+                    <div class="patient-info-grid">
+                        <div class="form-group">
+                            <label for="patient-age">Age</label>
+                            <input type="number" id="patient-age" min="0" max="120" placeholder="e.g., 65">
+                        </div>
+                        <div class="form-group">
+                            <label for="patient-gender">Gender</label>
+                            <select id="patient-gender">
+                                <option value="">Select...</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cancer-type">Diagnosed Cancer Type (if known)</label>
+                            <select id="cancer-type">
+                                <option value="">Unknown/Not specified</option>
+                                <option value="breast_adenocarcinoma">Breast - Adenocarcinoma</option>
+                                <option value="breast_tnbc">Breast - Triple Negative (TNBC)</option>
+                                <option value="lung_adenocarcinoma">Lung - Adenocarcinoma</option>
+                                <option value="lung_squamous">Lung - Squamous Cell</option>
+                                <option value="lung_sclc">Lung - Small Cell (SCLC)</option>
+                                <option value="colorectal_adenocarcinoma">Colorectal - Adenocarcinoma</option>
+                                <option value="prostate_adenocarcinoma">Prostate - Adenocarcinoma</option>
+                                <option value="melanoma">Melanoma</option>
+                                <option value="pancreatic_adenocarcinoma">Pancreatic - Adenocarcinoma</option>
+                                <option value="ovarian_serous">Ovarian - Serous Carcinoma</option>
+                                <option value="aml">Leukemia - AML</option>
+                                <option value="cll">Leukemia - CLL</option>
+                                <option value="dlbcl">Lymphoma - DLBCL</option>
+                                <option value="glioblastoma">Brain - Glioblastoma</option>
+                                <option value="other">Other...</option>
+                            </select>
+                            <input type="text" id="cancer-type-other" class="hidden" placeholder="Please specify cancer type">
+                        </div>
+                    </div>
+                    <p class="info-note">Providing patient information enables more personalized risk assessment and treatment recommendations.</p>
                 </div>
                 
                 <!-- Manual Input -->
