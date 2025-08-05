@@ -16,6 +16,8 @@ class OllamaClient:
     
     def __init__(self, model_name: Optional[str] = None, base_url: Optional[str] = None):
         self.model_name = model_name or settings.ollama_model_name
+        self.single_model = settings.ollama_single_model
+        self.multi_model = settings.ollama_multi_model
         self.base_url = base_url or settings.ollama_base_url
         self.timeout = aiohttp.ClientTimeout(total=settings.ollama_timeout)
     
@@ -46,17 +48,38 @@ class OllamaClient:
     
     async def analyze_multi_mutations(self, prompt: str) -> Dict:
         """Analyze multiple mutations with clustering context using fine-tuned Gemma 3n"""
-        logger.info("Gemma 3n analyzing multiple mutations...")
+        logger.info("=" * 80)
+        logger.info("MULTI-MUTATION ANALYSIS DEBUG")
+        logger.info("=" * 80)
+        logger.info(f"[DEBUG] Full prompt being sent:\n{prompt}")
+        logger.info(f"[DEBUG] Prompt length: {len(prompt)} chars")
+        logger.info(f"[DEBUG] Selected model will be: {self._select_model_for_prompt(prompt)}")
         
         try:
             async with aiohttp.ClientSession(timeout=self.timeout) as session:
+                logger.info("[DEBUG] Calling _generate method...")
                 response = await self._generate(session, prompt)
                 
                 if response:
-                    logger.info(f"Gemma 3n raw response (first 500 chars): {response[:500]}")
-                    logger.info(f"Full response length: {len(response)} chars")
-                    # Log last 200 chars to see where it cuts off
-                    logger.info(f"Response end (last 200 chars): {response[-200:]}")
+                    logger.info(f"[DEBUG] Got response from Ollama")
+                    logger.info(f"[DEBUG] Response type: {type(response)}")
+                    logger.info(f"[DEBUG] Full response length: {len(response)} chars")
+                    logger.info(f"[DEBUG] First 200 chars: {response[:200]}")
+                    logger.info(f"[DEBUG] Last 200 chars: {response[-200:]}")
+                    
+                    # Check for empty response
+                    if response.strip() == "{}":
+                        logger.error("[DEBUG] Ollama returned empty JSON object {}")
+                        return self._fallback_multi_mutation_analysis()
+                    
+                    # Check if response is valid JSON
+                    if response.strip().startswith('{') and response.strip().endswith('}'):
+                        logger.info("[DEBUG] Response appears to be valid JSON format")
+                    else:
+                        logger.warning(f"[DEBUG] Response doesn't look like JSON")
+                        logger.warning(f"[DEBUG] First 10 chars: '{response[:10]}'")
+                        logger.warning(f"[DEBUG] Last 10 chars: '{response[-10:]}'")
+                    
                     parsed = self._parse_multi_mutation_response(response)
                     
                     # If we didn't get individual analyses, extract mutations and analyze them
@@ -67,6 +90,7 @@ class OllamaClient:
                     
                     return parsed
                 else:
+                    logger.error("[DEBUG] No response from _generate method")
                     return self._fallback_multi_mutation_analysis()
                     
         except asyncio.TimeoutError:
@@ -74,6 +98,7 @@ class OllamaClient:
             return self._fallback_multi_mutation_analysis()
         except Exception as e:
             logger.error(f"AI multi-mutation analysis failed: {e}")
+            logger.exception(e)  # Full traceback
             return self._fallback_multi_mutation_analysis()
     
     def _create_mutation_analysis_prompt(self, gene: str, variant: str) -> str:
@@ -105,10 +130,43 @@ Provide your analysis in the following JSON format:
 
 IMPORTANT: Your entire response must be only the JSON object, starting with {{ and ending with }}. Do not include any text before or after the JSON."""
     
+    def _select_model_for_prompt(self, prompt: str) -> str:
+        """Select appropriate model based on prompt content"""
+        prompt_lower = prompt.lower()
+        
+        # Multi-mutation indicators
+        multi_indicators = [
+            'computational genomicist',
+            'multi-mutation',
+            'multiple mutations',
+            'mutation profile:',
+            'pathway convergence',
+            'comprehensive multi-mutation analysis'
+        ]
+        
+        # Check for multi-mutation prompt
+        if any(indicator in prompt_lower for indicator in multi_indicators):
+            logger.info(f"Selected multi-mutation model: {self.multi_model}")
+            return self.multi_model
+        
+        # Count mutations
+        mutation_count = prompt.count("- ") if "- " in prompt else 0
+        if mutation_count >= 2:
+            logger.info(f"Detected {mutation_count} mutations, using multi-mutation model")
+            return self.multi_model
+        
+        # Default to single mutation model
+        logger.info(f"Selected single mutation model: {self.single_model}")
+        return self.single_model
+    
     async def _generate(self, session: aiohttp.ClientSession, prompt: str, retry_count: int = 0) -> Optional[str]:
         """Generate response from Ollama with retry logic"""
+        
+        # Select appropriate model based on prompt
+        model_to_use = self._select_model_for_prompt(prompt)
+        
         payload = {
-            "model": self.model_name,
+            "model": model_to_use,
             "prompt": prompt,
             "stream": False,
             "format": "json",  # Force JSON mode to prevent conversational text
@@ -120,14 +178,30 @@ IMPORTANT: Your entire response must be only the JSON object, starting with {{ a
             }
         }
         
+        logger.info(f"[DEBUG] _generate called with prompt length: {len(prompt)}")
+        logger.info(f"[DEBUG] Ollama payload: model={model_to_use}, format=json")
+        logger.info(f"[DEBUG] Options: temperature={settings.model_temperature}, top_p={settings.model_top_p}, num_predict={settings.model_max_tokens}")
+        logger.info(f"[DEBUG] Ollama API URL: {self.base_url}/api/generate")
+        
         try:
             async with session.post(
                 f"{self.base_url}/api/generate",
                 json=payload,
                 timeout=aiohttp.ClientTimeout(total=300)  # 5 minute timeout for complex requests
             ) as response:
+                logger.info(f"[DEBUG] Ollama response status: {response.status}")
+                
                 if response.status == 200:
                     result = await response.json()
+                    logger.info(f"[DEBUG] Result keys: {list(result.keys())}")
+                    
+                    # Log the actual response
+                    raw_response = result.get('response', '')
+                    logger.info(f"[DEBUG] Raw response from Ollama: {raw_response[:500]}...")
+                    
+                    # Check if response is empty JSON
+                    if raw_response.strip() == "{}":
+                        logger.error("[DEBUG] Ollama returned empty JSON object: {}")
                     
                     # Log performance metrics
                     if 'eval_count' in result and 'eval_duration' in result:
@@ -136,20 +210,27 @@ IMPORTANT: Your entire response must be only the JSON object, starting with {{ a
                         tokens_per_sec = tokens / duration_sec if duration_sec > 0 else 0
                         logger.info(f"Ollama performance: {tokens} tokens in {duration_sec:.2f}s = {tokens_per_sec:.1f} tok/s")
                     
-                    return result.get('response', '')
+                    # Log if response was truncated
+                    if 'truncated' in result:
+                        logger.warning(f"[DEBUG] Response truncated: {result['truncated']}")
+                    
+                    return raw_response
                 elif response.status == 500 and retry_count < 2:
                     # Retry on server errors
-                    logger.warning(f"Ollama returned 500, retrying... (attempt {retry_count + 2}/3)")
+                    error_text = await response.text()
+                    logger.warning(f"Ollama returned 500, error: {error_text}, retrying... (attempt {retry_count + 2}/3)")
                     await asyncio.sleep(2)  # Wait 2 seconds before retry
                     return await self._generate(session, prompt, retry_count + 1)
                 else:
-                    logger.error(f"Ollama API returned status {response.status}")
+                    error_text = await response.text()
+                    logger.error(f"Ollama API returned status {response.status}, error: {error_text}")
                     return None
         except asyncio.TimeoutError:
-            logger.error("Ollama request timed out after 180 seconds")
+            logger.error("Ollama request timed out after 300 seconds")
             return None
         except Exception as e:
             logger.error(f"Ollama generation failed: {e}")
+            logger.exception(e)
             return None
     
     def _parse_ai_response(self, ai_text: str, gene: str, variant: str) -> Dict:
@@ -264,11 +345,55 @@ IMPORTANT: Your entire response must be only the JSON object, starting with {{ a
     def _parse_multi_mutation_response(self, response: str) -> Dict:
         """Parse AI response for multi-mutation analysis"""
         try:
+            logger.info("[DEBUG] Attempting to parse multi-mutation response")
+            
+            # Clean up the response
+            cleaned_response = response.strip()
+            
+            # Check if response is empty or just {}
+            if not cleaned_response or cleaned_response == "{}":
+                logger.warning("[DEBUG] Response is empty or empty JSON object, using fallback")
+                return self._fallback_multi_mutation_analysis()
+            
             # Try to parse as JSON first
-            if response.strip().startswith('{'):
-                return json.loads(response)
+            if cleaned_response.startswith('{') and cleaned_response.endswith('}'):
+                try:
+                    parsed_json = json.loads(cleaned_response)
+                    logger.info(f"[DEBUG] Successfully parsed JSON. Keys: {list(parsed_json.keys())}")
+                    
+                    # Check if it has the expected structure
+                    expected_keys = ["mutation_profile", "composite_risk"]
+                    has_expected_structure = any(key in parsed_json for key in expected_keys)
+                    
+                    if has_expected_structure:
+                        logger.info("[DEBUG] JSON has expected multi-mutation structure")
+                        return parsed_json
+                    else:
+                        logger.warning(f"[DEBUG] JSON missing expected keys. Found: {list(parsed_json.keys())}")
+                        # Still return it if it has some content
+                        if len(parsed_json) > 0:
+                            return parsed_json
+                        else:
+                            return self._fallback_multi_mutation_analysis()
+                    
+                except json.JSONDecodeError as e:
+                    logger.error(f"[DEBUG] JSON decode error: {e}")
+                    logger.error(f"[DEBUG] Failed JSON string: {cleaned_response[:200]}...")
+            
+            # If not valid JSON, try to extract JSON from the response
+            import re
+            json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', response, re.DOTALL)
+            if json_match:
+                try:
+                    extracted_json = json.loads(json_match.group(0))
+                    logger.info(f"[DEBUG] Extracted JSON from response. Keys: {list(extracted_json.keys())}")
+                    if len(extracted_json) > 0:
+                        return extracted_json
+                except:
+                    logger.error("[DEBUG] Failed to parse extracted JSON")
             
             # Otherwise, structure the response
+            logger.info("[DEBUG] No valid JSON found, structuring response manually")
             return {
                 "individual_analyses": self._extract_individual_analyses(response),
                 "multi_mutation_insights": self._extract_multi_mutation_insights(response),
@@ -277,7 +402,8 @@ IMPORTANT: Your entire response must be only the JSON object, starting with {{ a
                 "therapeutic_strategy": self._extract_therapeutic_strategy(response)
             }
         except Exception as e:
-            logger.error(f"Failed to parse multi-mutation response: {e}")
+            logger.error(f"[DEBUG] Failed to parse multi-mutation response: {e}")
+            logger.exception(e)
             return self._fallback_multi_mutation_analysis()
     
     def _extract_mutations_from_prompt(self, prompt: str) -> List[Tuple[str, str]]:

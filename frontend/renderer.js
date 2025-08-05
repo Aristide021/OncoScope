@@ -534,6 +534,47 @@ class OncoScopeApp {
             this.displayClusteringResults(analysis.clustering_analysis);
         }
         
+        // Display multi-mutation analysis if available
+        console.log('Checking for multi-mutation analysis:', {
+            hasMultiMutationAnalysis: !!analysis.multi_mutation_analysis,
+            mutationCount: analysis.individual_mutations?.length,
+            multiMutationData: analysis.multi_mutation_analysis
+        });
+        
+        if (analysis.multi_mutation_analysis && analysis.individual_mutations.length > 1) {
+            console.log('Displaying multi-mutation analysis section');
+            this.displayMultiMutationAnalysis(analysis.multi_mutation_analysis);
+        } else if (analysis.individual_mutations && analysis.individual_mutations.length > 1) {
+            // Show section with mock data if we have multiple mutations but no proper analysis
+            console.log('Showing multi-mutation section with placeholder data');
+            console.log('Full analysis object:', analysis);
+            this.displayMultiMutationAnalysis({
+                mutation_profile: {
+                    total_mutations: analysis.individual_mutations.length,
+                    pathogenic_count: analysis.individual_mutations.filter(m => 
+                        m.clinical_significance === 'PATHOGENIC' || 
+                        m.clinical_significance === 'LIKELY_PATHOGENIC'
+                    ).length,
+                    dominant_pathways: ["Analysis pending..."],
+                    interaction_pattern: "pending"
+                },
+                composite_risk: {
+                    overall_pathogenicity: analysis.overall_risk_score || 0.5,
+                    risk_modification: "pending",
+                    penetrance_estimate: "pending"
+                },
+                therapeutic_strategy: {
+                    precision_medicine_score: 0.5,
+                    combination_therapies: []
+                },
+                comprehensive_interpretation: "Multi-mutation interaction analysis is pending. The AI model is currently analyzing the complex interactions between these mutations."
+            });
+        } else {
+            console.log('Not displaying multi-mutation analysis:', {
+                reason: !analysis.multi_mutation_analysis ? 'No multi_mutation_analysis data' : 'Not enough mutations'
+            });
+        }
+        
         // Display warnings if any
         if (analysis.warnings && analysis.warnings.length > 0) {
             this.displayWarnings(analysis.warnings);
@@ -913,6 +954,150 @@ class OncoScopeApp {
         if (riskScore >= 0.7) return 'var(--danger-color)';
         if (riskScore >= 0.5) return 'var(--warning-color)';
         return 'var(--success-color)';
+    }
+    
+    displayMultiMutationAnalysis(multiMutationData) {
+        console.log('Displaying multi-mutation analysis:', multiMutationData);
+        
+        // Show the multi-mutation section
+        const multiMutationSection = document.getElementById('multi-mutation-section');
+        multiMutationSection.classList.remove('hidden');
+        
+        // Display interaction pattern
+        const interactionPattern = multiMutationData.mutation_profile?.interaction_pattern || 'Unknown';
+        document.getElementById('interaction-pattern').textContent = 
+            this.formatDisplayString(interactionPattern);
+        
+        // Display composite risk
+        const compositeRisk = multiMutationData.composite_risk?.overall_pathogenicity || 0;
+        const riskPercentage = (compositeRisk * 100).toFixed(0);
+        document.getElementById('composite-risk').textContent = `${riskPercentage}%`;
+        document.getElementById('composite-risk').style.color = this.getRiskColor(compositeRisk);
+        
+        // Display precision medicine score
+        const precisionScore = multiMutationData.therapeutic_strategy?.precision_medicine_score || 0;
+        document.getElementById('precision-score').textContent = `${(precisionScore * 100).toFixed(0)}%`;
+        
+        // Display pathway convergence
+        this.displayPathwayConvergence(multiMutationData.pathway_analysis);
+        
+        // Display therapeutic strategies
+        this.displayTherapeuticStrategies(multiMutationData.therapeutic_strategy);
+        
+        // Display clinical interpretation
+        this.displayClinicalInterpretation(multiMutationData.comprehensive_interpretation);
+    }
+    
+    displayPathwayConvergence(pathwayAnalysis) {
+        if (!pathwayAnalysis) return;
+        
+        const pathwayNetwork = document.getElementById('pathway-network');
+        const pathwayDetails = document.getElementById('pathway-details');
+        
+        // Clear previous content
+        pathwayNetwork.innerHTML = '';
+        pathwayDetails.innerHTML = '';
+        
+        // Display pathway nodes
+        const disruptedPathways = pathwayAnalysis.disrupted_pathways || [];
+        const dominantPathways = pathwayAnalysis.dominant_pathways || [];
+        
+        // Create pathway visualization
+        if (dominantPathways.length > 0) {
+            dominantPathways.forEach((pathway, index) => {
+                const node = document.createElement('div');
+                node.className = 'pathway-node';
+                if (index === 0) node.classList.add('convergent'); // Highlight main convergent pathway
+                node.textContent = this.formatDisplayString(pathway);
+                pathwayNetwork.appendChild(node);
+            });
+        }
+        
+        // Display detailed pathway information
+        disruptedPathways.forEach(pathway => {
+            const detailItem = document.createElement('div');
+            detailItem.className = 'pathway-detail-item';
+            if (pathway.disruption_severity === 'complete') {
+                detailItem.classList.add('high-impact');
+            }
+            
+            detailItem.innerHTML = `
+                <div class="pathway-name">${this.formatDisplayString(pathway.pathway)}</div>
+                <div class="pathway-genes">Affected genes: ${pathway.genes_affected.join(', ')}</div>
+                <div class="pathway-impact">
+                    ${pathway.disruption_severity} disruption - ${pathway.functional_impact}
+                </div>
+            `;
+            
+            pathwayDetails.appendChild(detailItem);
+        });
+        
+        // Add pathway interactions if available
+        if (pathwayAnalysis.pathway_interactions) {
+            const interactionDiv = document.createElement('div');
+            interactionDiv.className = 'pathway-detail-item';
+            interactionDiv.innerHTML = `
+                <div class="pathway-name">Pathway Interactions</div>
+                <div class="pathway-impact">${pathwayAnalysis.pathway_interactions}</div>
+            `;
+            pathwayDetails.appendChild(interactionDiv);
+        }
+    }
+    
+    displayTherapeuticStrategies(therapeuticStrategy) {
+        if (!therapeuticStrategy) return;
+        
+        const combinationTherapies = document.getElementById('combination-therapies');
+        combinationTherapies.innerHTML = '';
+        
+        const combinations = therapeuticStrategy.combination_therapies || [];
+        
+        combinations.forEach(combo => {
+            const therapyDiv = document.createElement('div');
+            therapyDiv.className = 'therapy-combination';
+            
+            const efficacyClass = combo.expected_efficacy?.toLowerCase() || 'moderate';
+            
+            therapyDiv.innerHTML = `
+                <div class="combination-header">
+                    <div class="combination-targets">
+                        ${combo.target_combination.map(target => 
+                            `<span class="target-pill">${target}</span>`
+                        ).join('')}
+                    </div>
+                    <span class="efficacy-badge efficacy-${efficacyClass}">
+                        ${combo.expected_efficacy} efficacy
+                    </span>
+                </div>
+                <div class="combination-rationale">${combo.rationale}</div>
+            `;
+            
+            combinationTherapies.appendChild(therapyDiv);
+        });
+        
+        // Add resistance mitigation strategies if available
+        if (therapeuticStrategy.resistance_mitigation && therapeuticStrategy.resistance_mitigation.length > 0) {
+            const resistanceDiv = document.createElement('div');
+            resistanceDiv.className = 'therapy-combination';
+            resistanceDiv.innerHTML = `
+                <div class="combination-header">
+                    <div class="combination-targets">
+                        <span class="target-pill">Resistance Prevention</span>
+                    </div>
+                </div>
+                <div class="combination-rationale">
+                    ${therapeuticStrategy.resistance_mitigation.join('; ')}
+                </div>
+            `;
+            combinationTherapies.appendChild(resistanceDiv);
+        }
+    }
+    
+    displayClinicalInterpretation(interpretation) {
+        if (!interpretation) return;
+        
+        const interpretationText = document.getElementById('interpretation-text');
+        interpretationText.textContent = interpretation;
     }
 
     async exportToPDF() {

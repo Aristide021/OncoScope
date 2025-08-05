@@ -25,7 +25,9 @@ class Settings(BaseSettings):
     
     # Ollama Configuration
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model_name: str = "oncoscope-cancer"
+    ollama_model_name: str = "oncoscope-cancer"  # Default/fallback
+    ollama_single_model: str = "oncoscope-cancer"  # Single mutation (fallback to main model)
+    ollama_multi_model: str = "oncoscope-cancer"   # Multi-mutation (fallback to main model)
     ollama_timeout: int = 300  # Increased to 5 minutes for complex analyses
     
     # Database
@@ -38,7 +40,7 @@ class Settings(BaseSettings):
     # AI Model Parameters
     model_temperature: float = 0.1
     model_top_p: float = 0.9
-    model_max_tokens: int = 1024
+    model_max_tokens: int = 4096  # Increased for complex multi-mutation responses
     
     # Paths
     data_dir: Path = Path(__file__).parent.parent / "data"

@@ -314,6 +314,10 @@ class CancerMutationAnalyzer:
                 logger.warning(f"AI analysis returned None for {gene}:{variant}")
                 return self.create_uncertain_analysis(gene, variant)
             
+            # Fix encoding issues for Electron app
+            from .fix_encoding import clean_json_response
+            ai_analysis = clean_json_response(ai_analysis)
+            
             logger.info(f"AI analysis result: {ai_analysis}")
             
             return MutationAnalysis(
@@ -509,6 +513,35 @@ class CancerMutationAnalyzer:
         # Add clustering results if available
         if clustering_results:
             result["clustering_analysis"] = clustering_results
+        
+        # Add multi-mutation analysis results if available
+        logger.info(f"DEBUG: len(parsed_mutations)={len(parsed_mutations)}, ai_analysis exists={ai_analysis is not None}")
+        if len(parsed_mutations) >= 2 and ai_analysis:
+            logger.info(f"DEBUG: Adding multi_mutation_analysis to result, ai_analysis keys: {list(ai_analysis.keys())}")
+            # Extract the multi-mutation specific data from ai_analysis
+            result["multi_mutation_analysis"] = {
+                "mutation_profile": ai_analysis.get("mutation_profile"),
+                "composite_risk": ai_analysis.get("composite_risk"),
+                "pathway_analysis": ai_analysis.get("pathway_analysis"),
+                "therapeutic_strategy": ai_analysis.get("therapeutic_strategy"),
+                "clinical_implications": ai_analysis.get("clinical_implications"),
+                "research_opportunities": ai_analysis.get("research_opportunities"),
+                "confidence_assessment": ai_analysis.get("confidence_assessment"),
+                "comprehensive_interpretation": ai_analysis.get("comprehensive_interpretation")
+            }
+        
+        # Fix encoding issues for Electron app before returning
+        from .fix_encoding import clean_json_response, clean_text_encoding
+        
+        # Clean all text fields that might have encoding issues
+        if "clinical_recommendations" in result:
+            result["clinical_recommendations"] = [
+                clean_text_encoding(rec) if isinstance(rec, str) else rec
+                for rec in result["clinical_recommendations"]
+            ]
+        
+        # Clean the entire result to catch any other encoding issues
+        result = clean_json_response(result)
         
         # Save analysis to database
         try:
@@ -944,6 +977,13 @@ class CancerMutationAnalyzer:
             logger.info("Sending prompt to Gemma 3n via Ollama...")
             response = await self.ollama_client.analyze_multi_mutations(prompt)
             logger.info(f"Got response from Gemma 3n: {response}")
+            
+            # Fix encoding issues for Electron app
+            if response:
+                from .fix_encoding import clean_json_response
+                response = clean_json_response(response)
+                logger.info("Applied encoding fixes for Electron compatibility")
+            
             return response
         except Exception as e:
             logger.error(f"AI multi-mutation analysis failed: {e}")

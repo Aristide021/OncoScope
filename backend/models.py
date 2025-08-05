@@ -76,6 +76,8 @@ class AnalysisResponse(BaseModel):
     estimated_tumor_types: List[Dict[str, Any]]
     confidence_metrics: Dict[str, float]
     warnings: List[str] = []
+    multi_mutation_analysis: Optional[Dict[str, Any]] = None
+    clustering_analysis: Optional[Dict[str, Any]] = None
 
 class HealthCheckResponse(BaseModel):
     """Health check response"""

@@ -197,6 +197,65 @@
                     </div>
                 </div>
 
+                <!-- Multi-Mutation Interaction Analysis -->
+                <div id="multi-mutation-section" class="multi-mutation-analysis hidden">
+                    <h3>Multi-Mutation Interaction Analysis</h3>
+                    
+                    <!-- Interaction Overview -->
+                    <div class="interaction-overview">
+                        <div class="interaction-summary">
+                            <div class="summary-item">
+                                <span class="summary-icon">🧬</span>
+                                <div>
+                                    <div class="summary-value" id="interaction-pattern">-</div>
+                                    <div class="summary-label">Interaction Pattern</div>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-icon">⚠️</span>
+                                <div>
+                                    <div class="summary-value" id="composite-risk">-</div>
+                                    <div class="summary-label">Composite Risk</div>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-icon">🎯</span>
+                                <div>
+                                    <div class="summary-value" id="precision-score">-</div>
+                                    <div class="summary-label">Precision Medicine Score</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pathway Convergence -->
+                    <div class="pathway-convergence">
+                        <h4>Pathway Convergence Analysis</h4>
+                        <div id="pathway-network" class="pathway-network">
+                            <!-- Pathway visualization will go here -->
+                        </div>
+                        <div id="pathway-details" class="pathway-details">
+                            <!-- Pathway details will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Therapeutic Strategy -->
+                    <div class="therapeutic-strategy">
+                        <h4>Optimized Therapeutic Strategy</h4>
+                        <div id="combination-therapies" class="combination-therapies">
+                            <!-- Combination therapies will be listed here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Clinical Interpretation -->
+                    <div class="clinical-interpretation">
+                        <h4>Comprehensive Clinical Interpretation</h4>
+                        <div id="interpretation-text" class="interpretation-text">
+                            <!-- Interpretation will go here -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Tumor Type Predictions -->
                 <div class="tumor-predictions" id="tumor-predictions">
                     <h3>Predicted Cancer Types</h3>
@@ -273,6 +332,6 @@
         </div>
     </div>
 
-    <script src="renderer.js"></script>
+    <script src="renderer.js?v=2.0"></script>
 </body>
 </html>

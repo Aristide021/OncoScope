@@ -307,3 +307,6 @@ oncoscope_model/
 # Setup and Documentation
 # =================
 # Judge environment setup files
+
+# Backup folder for failed experiments
+.backup/
