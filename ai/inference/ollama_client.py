@@ -370,8 +370,15 @@ IMPORTANT: Your entire response must be only the JSON object, starting with {{ a
         try:
             logger.info("[DEBUG] Attempting to parse multi-mutation response")
             
-            # Clean up the response
+            # Aggressive cleaning of the response
             cleaned_response = response.strip()
+            
+            # Remove trailing whitespace/newlines that break JSON parsing
+            # Look for the last } and truncate everything after it
+            last_brace = cleaned_response.rfind('}')
+            if last_brace != -1:
+                cleaned_response = cleaned_response[:last_brace + 1]
+                logger.info(f"[DEBUG] Truncated response at last brace, new length: {len(cleaned_response)}")
             
             # Check if response is empty or just {}
             if not cleaned_response or cleaned_response == "{}":
@@ -401,19 +408,21 @@ IMPORTANT: Your entire response must be only the JSON object, starting with {{ a
                     
                 except json.JSONDecodeError as e:
                     logger.error(f"[DEBUG] JSON decode error: {e}")
-                    logger.error(f"[DEBUG] Failed JSON string: {cleaned_response[:200]}...")
+                    logger.error(f"[DEBUG] Failed JSON string first 200 chars: {cleaned_response[:200]}")
+                    logger.error(f"[DEBUG] Failed JSON string last 50 chars: '{cleaned_response[-50:]}'")
             
-            # If not valid JSON, try to extract JSON from the response
+            # If not valid JSON, try to extract JSON from the response with better regex
             import re
-            json_match = re.search(r'\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}', response, re.DOTALL)
+            # More comprehensive JSON extraction - find complete JSON objects
+            json_match = re.search(r'\{(?:[^{}]|(?:\{[^{}]*\}))*\}', response, re.DOTALL)
             if json_match:
                 try:
                     extracted_json = json.loads(json_match.group(0))
                     logger.info(f"[DEBUG] Extracted JSON from response. Keys: {list(extracted_json.keys())}")
                     if len(extracted_json) > 0:
                         return extracted_json
-                except:
-                    logger.error("[DEBUG] Failed to parse extracted JSON")
+                except Exception as extract_error:
+                    logger.error(f"[DEBUG] Failed to parse extracted JSON: {extract_error}")
             
             # Otherwise, structure the response
             logger.info("[DEBUG] No valid JSON found, structuring response manually")

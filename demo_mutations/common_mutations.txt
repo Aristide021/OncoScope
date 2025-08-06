@@ -2,12 +2,12 @@
 # Patient with multiple mutations identified in tumor genomic analysis
 
 BRCA1:c.68_69delAG
-BRCA1:p.Glu23ValfsTer17
 BRCA2:c.5946delT
-BRCA2:p.Ser1982ArgfsTer22
 VHL:c.482G>A
-VHL:p.Arg161Gln
 BRAF:c.1799T>A
-BRAF:p.Val600Glu
 BRCA1:c.5266dupC
-BRCA1:p.Gln1756ProfsTer74
+TP53:c.524G>A
+KRAS:c.35G>A
+PIK3CA:c.3140A>G
+EGFR:c.2369C>T
+APC:c.3927_3931delAAAGA

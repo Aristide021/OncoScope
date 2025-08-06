@@ -1,7 +1,7 @@
 # OncoScope™ - AI-Powered Precision Oncology Platform 🧬
 
 <div align="center">
-  <img src="frontend/assets/icons/icon.png" alt="OncoScope Logo" width="120"/>
+  <img src="OncoScope.png" alt="OncoScope - Privacy-First Cancer Genomics Analysis" width="600"/>
   
   ### Revolutionizing Cancer Treatment with Google's Gemma 3n AI
   
@@ -38,7 +38,7 @@ OncoScope transforms cancer mutation analysis using Google's Gemma 3n AI model, 
 - **💊 Treatment Matching**: AI-powered drug recommendations with FDA approval status
 - **📊 Risk Assessment**: Sophisticated scoring algorithms for clinical decision support
 - **🔒 Privacy-First**: 100% local processing - no patient data leaves the device
-- **⚡ Real-Time Analysis**: Results in 20-40 seconds vs. hours of manual research
+- **⚡ Real-Time Analysis**: Results in 2-5 minutes vs. hours of manual research
 - **🌐 Offline Operation**: Works without internet connection after installation
 
 ## 🏗️ Architecture
@@ -113,8 +113,8 @@ graph LR
 graph TD
     subgraph "Gemma 3n E4B - MatFormer Architecture"
         A[Input Layer]
-        B[Multi-Query Attention (MQA)]
-        C[LoRA Adapters (Rank 32)]
+        B[Multi-Query Attention MQA]
+        C[LoRA Adapters Rank 32]
         D[Output Layer]
     end
     
@@ -221,10 +221,11 @@ learning_rate = 1e-4
 
 | Metric | Value |
 |--------|-------|
-| Analysis Time | 20-40 seconds |
+| Analysis Time | 2-5 minutes (multi-mutation), 30-60 seconds (single mutation) |
 | Model Accuracy | High concordance with clinical data |
 | Mutations Supported | 5,998 in training set + COSMIC database |
 | Drug Database | 200+ targeted therapies |
+| Multi-Mutation Analysis | ✅ Yes - pathway convergence analysis |
 | Offline Capable | ✅ Yes |
 
 ## 🔬 Scientific Validation
