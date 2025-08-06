@@ -82,6 +82,9 @@ oncoscope.db*
 logs/
 *.log
 *.log.*
+backend.log
+server.log
+gradio.log
 
 # =================
 # AI Models & Data
