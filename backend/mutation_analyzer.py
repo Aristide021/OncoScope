@@ -260,7 +260,7 @@ class CancerMutationAnalyzer:
                 return match.group(1).upper(), match.group(2)
             return "UNKNOWN", mutation
     
-    async def analyze_single_mutation(self, mutation: str) -> MutationAnalysis:
+    async def analyze_single_mutation(self, mutation: str, patient_context: Optional[Dict[str, Any]] = None) -> MutationAnalysis:
         """Analyze individual mutation for clinical significance with caching"""
         logger.info(f"=== ANALYZING MUTATION: {mutation} ===")
         gene, variant = self.parse_mutation_notation(mutation)
@@ -288,7 +288,7 @@ class CancerMutationAnalyzer:
             db_data = self.mutation_db[gene][variant]
         
         # Call AI model for detailed analysis (showcasing Gemma 3n)
-        analysis = await self.ai_analyze_mutation(gene, variant, db_data)
+        analysis = await self.ai_analyze_mutation(gene, variant, db_data, patient_context)
         
         # Cache the result
         try:
@@ -304,11 +304,11 @@ class CancerMutationAnalyzer:
         
         return analysis
     
-    async def ai_analyze_mutation(self, gene: str, variant: str, db_data: Optional[Dict] = None) -> MutationAnalysis:
+    async def ai_analyze_mutation(self, gene: str, variant: str, db_data: Optional[Dict] = None, patient_context: Optional[Dict[str, Any]] = None) -> MutationAnalysis:
         """Use AI model for unknown mutations"""
         try:
             logger.info(f"Calling Gemma 3n AI model for {gene}:{variant}")
-            ai_analysis = await self.ollama_client.analyze_cancer_mutation(gene, variant)
+            ai_analysis = await self.ollama_client.analyze_cancer_mutation(gene, variant, patient_context)
             
             if not ai_analysis:
                 logger.warning(f"AI analysis returned None for {gene}:{variant}")
@@ -469,7 +469,7 @@ class CancerMutationAnalyzer:
             analyses = self._parse_multi_mutation_ai_response(ai_analysis, parsed_mutations)
         else:
             # Fallback to single mutation analysis
-            tasks = [self.analyze_single_mutation(mutation) for mutation in mutations]
+            tasks = [self.analyze_single_mutation(mutation, patient_context) for mutation in mutations]
             analyses = await asyncio.gather(*tasks)
         
         # Convert to dict format

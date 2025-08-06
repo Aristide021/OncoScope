@@ -235,6 +235,8 @@ PATHWAY CONVERGENCE ANALYSIS:
 
 {context_section}
 
+{'CRITICAL: This patient has an existing cancer diagnosis. Focus your analysis on how these mutations affect their current cancer, treatment options, and prognosis - NOT on predicting new cancer risks.' if patient_context and (patient_context.get('diagnosis') or patient_context.get('cancer_type')) else ''}
+
 COMPREHENSIVE MULTI-MUTATION ANALYSIS:
 
 1. MUTATION INTERACTION ANALYSIS:
@@ -616,14 +618,20 @@ IMPORTANT: Your entire response must be only the JSON object, starting with '{{'
         """Build patient context section including clustering analysis"""
         context_lines = ["PATIENT CONTEXT:"]
         
+        # Prioritize diagnosis/cancer_type
+        if patient_context.get('diagnosis'):
+            context_lines.append(f"Current Diagnosis: {patient_context['diagnosis']}")
+            context_lines.append("IMPORTANT: Analyze mutations in the context of this existing diagnosis, not as predictors of future cancer risk.")
+        elif patient_context.get('cancer_type'):
+            context_lines.append(f"Cancer Type: {patient_context['cancer_type']}")
+            context_lines.append("IMPORTANT: Analyze mutations in the context of this existing cancer type, not as predictors of future cancer risk.")
+        
         if patient_context.get('age'):
             context_lines.append(f"Age: {patient_context['age']}")
         
-        if patient_context.get('sex'):
-            context_lines.append(f"Sex: {patient_context['sex']}")
-        
-        if patient_context.get('cancer_type'):
-            context_lines.append(f"Cancer Type: {patient_context['cancer_type']}")
+        if patient_context.get('sex') or patient_context.get('gender'):
+            gender = patient_context.get('sex') or patient_context.get('gender')
+            context_lines.append(f"Sex: {gender}")
         
         if patient_context.get('family_history'):
             context_lines.append(f"Family History: {', '.join(patient_context['family_history'])}")

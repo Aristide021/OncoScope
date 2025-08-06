@@ -21,10 +21,10 @@ class OllamaClient:
         self.base_url = base_url or settings.ollama_base_url
         self.timeout = aiohttp.ClientTimeout(total=settings.ollama_timeout)
     
-    async def analyze_cancer_mutation(self, gene: str, variant: str) -> Dict:
+    async def analyze_cancer_mutation(self, gene: str, variant: str, patient_context: Optional[Dict] = None) -> Dict:
         """Analyze cancer mutation using fine-tuned Gemma 3n"""
         
-        prompt = self._create_mutation_analysis_prompt(gene, variant)
+        prompt = self._create_mutation_analysis_prompt(gene, variant, patient_context)
         logger.info(f"Analyzing {gene}:{variant} with Gemma 3n model")
         
         try:
@@ -101,7 +101,7 @@ class OllamaClient:
             logger.exception(e)  # Full traceback
             return self._fallback_multi_mutation_analysis()
     
-    def _create_mutation_analysis_prompt(self, gene: str, variant: str) -> str:
+    def _create_mutation_analysis_prompt(self, gene: str, variant: str, patient_context: Optional[Dict] = None) -> str:
         """Create structured prompt for mutation analysis"""
         
         # Add specific guidance for well-known mutations
@@ -113,18 +113,41 @@ class OllamaClient:
         elif gene == "EGFR" and variant == "c.2369C>T":
             context_hint = "\nNote: c.2369C>T in EGFR codes for the T790M mutation."
         
-        return f"""Analyze the cancer mutation {gene}:{variant} and provide a clinical assessment.{context_hint}
+        # Build patient context if provided
+        patient_info = ""
+        if patient_context:
+            context_parts = []
+            if patient_context.get('cancer_type') or patient_context.get('diagnosis'):
+                diagnosis = patient_context.get('cancer_type') or patient_context.get('diagnosis')
+                context_parts.append(f"Patient has been diagnosed with: {diagnosis}")
+            if patient_context.get('age'):
+                context_parts.append(f"Age: {patient_context['age']}")
+            if patient_context.get('sex') or patient_context.get('gender'):
+                gender = patient_context.get('sex') or patient_context.get('gender')
+                context_parts.append(f"Sex: {gender}")
+            
+            if context_parts:
+                patient_info = "\n\nPATIENT CONTEXT:\n" + "\n".join(context_parts) + "\n\nIMPORTANT: Analyze this mutation in the context of the patient's existing cancer diagnosis, not as a predictor of what cancer they might develop."
+        
+        # Build context-aware descriptions
+        cancer_types_desc = "<list of associated cancer types relevant to the patient's diagnosis>" if patient_info else "<list of associated cancer types>"
+        mechanism_desc = "<molecular mechanism of the mutation in the context of this cancer>" if patient_info else "<molecular mechanism of the mutation>"
+        therapies_desc = "<list of targeted therapies applicable to this patient>" if patient_info else "<list of targeted therapies>"
+        prognosis_desc = "<poor/moderate/good/uncertain for this specific cancer type>" if patient_info else "<poor/moderate/good/uncertain>"
+        clinical_desc = "<clinical interpretation and relevance for this patient's cancer>" if patient_info else "<clinical interpretation and relevance>"
+        
+        return f"""Analyze the cancer mutation {gene}:{variant} and provide a clinical assessment.{context_hint}{patient_info}
 
 Provide your analysis in the following JSON format:
 {{
     "pathogenicity": <float 0.0-1.0>,
-    "cancer_types": ["<list of associated cancer types>"],
+    "cancer_types": ["{cancer_types_desc}"],
     "protein_change": "<protein change notation>",
-    "mechanism": "<molecular mechanism of the mutation>",
+    "mechanism": "{mechanism_desc}",
     "significance": "<PATHOGENIC/LIKELY_PATHOGENIC/UNCERTAIN/LIKELY_BENIGN/BENIGN>",
-    "therapies": ["<list of targeted therapies>"],
-    "prognosis": "<poor/moderate/good/uncertain>",
-    "clinical_context": "<clinical interpretation and relevance>",
+    "therapies": ["{therapies_desc}"],
+    "prognosis": "{prognosis_desc}",
+    "clinical_context": "{clinical_desc}",
     "confidence": <float 0.0-1.0>
 }}
 
