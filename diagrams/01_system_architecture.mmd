@@ -1,0 +1,54 @@
+graph TB
+    subgraph "Frontend Layer"
+        A[Electron Desktop App]
+        B[HTML5/CSS3/JavaScript]
+        C[Local File System]
+    end
+    
+    subgraph "Backend Layer"
+        D[FastAPI Server]
+        E[Mutation Analyzer Engine]
+        F[Clustering Engine]
+        G[Risk Calculator]
+    end
+    
+    subgraph "Data Layer"
+        H[(SQLite Database)]
+        I[COSMIC Mutations]
+        J[Drug Associations]
+        K[Cancer Types DB]
+    end
+    
+    subgraph "AI Layer"
+        L[Ollama Server]
+        M[Gemma 3n Model]
+        N[Fine-tuned LoRA]
+        O[Inference Engine]
+    end
+    
+    A --> B
+    B --> D
+    C --> A
+    
+    D --> E
+    D --> F
+    D --> G
+    
+    E --> H
+    E --> L
+    F --> E
+    G --> E
+    
+    H --> I
+    H --> J
+    H --> K
+    
+    L --> M
+    M --> N
+    L --> O
+    O --> E
+    
+    style A fill:#2E86AB,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style D fill:#F24236,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style H fill:#F6AE2D,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style L fill:#2F4858,stroke:#ffffff,stroke-width:2px,color:#ffffff

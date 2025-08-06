@@ -1,0 +1,78 @@
+graph TB
+    subgraph "Presentation Layer"
+        A[Electron Framework v25.3.0]
+        B[HTML5 + Semantic Markup]
+        C[CSS3 + Custom Animations]
+        D[Vanilla JavaScript ES6+]
+    end
+    
+    subgraph "Application Layer"
+        E[FastAPI v0.104.1]
+        F[Pydantic v2.0]
+        G[AsyncIO + HTTPX]
+        H[Uvicorn ASGI Server]
+    end
+    
+    subgraph "Business Logic Layer"
+        I[Mutation Analyzer Engine]
+        J[Risk Scoring Algorithm]
+        K[Clustering Engine]
+        L[Clinical Recommendation System]
+    end
+    
+    subgraph "Data Access Layer"
+        M[SQLite 3.0]
+        N[SQLAlchemy ORM]
+        O[Async Database Queries]
+        P[Redis Cache <i>optional</i>]
+    end
+    
+    subgraph "AI Integration Layer"
+        Q[Ollama API Client]
+        R[Gemma 3n 2B Model]
+        S[LoRA Fine-tuning]
+        T[JSON Schema Validation]
+    end
+    
+    subgraph "Infrastructure"
+        U[Python 3.11+]
+        V[Node.js 18+]
+        W[Local Deployment]
+        X[Cross-Platform Support]
+    end
+    
+    A --> E
+    B --> A
+    C --> A
+    D --> A
+    
+    E --> I
+    F --> E
+    G --> E
+    H --> E
+    
+    I --> M
+    J --> I
+    K --> I
+    L --> I
+    
+    M --> N
+    N --> O
+    O --> P
+    
+    I --> Q
+    Q --> R
+    R --> S
+    Q --> T
+    
+    U --> E
+    V --> A
+    W --> U
+    W --> V
+    X --> W
+    
+    style A fill:#2E86AB,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style E fill:#F24236,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style I fill:#F6AE2D,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style M fill:#2F4858,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style Q fill:#8B5A3C,stroke:#ffffff,stroke-width:2px,color:#ffffff

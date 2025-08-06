@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoScope Architecture Diagrams</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #0066ff;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+        
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .diagram-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .diagram-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+        }
+        
+        .diagram-card h2 {
+            color: #00aaff;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        
+        .diagram-card p {
+            color: #888;
+            margin-bottom: 20px;
+        }
+        
+        .diagram-preview {
+            width: 100%;
+            height: 300px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .diagram-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .diagram-links {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .diagram-links a {
+            flex: 1;
+            text-align: center;
+            padding: 8px 16px;
+            background: #0066ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        
+        .diagram-links a:hover {
+            background: #0052cc;
+        }
+        
+        .mermaid {
+            background: #0a0a0a;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#0066ff',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#0066ff',
+                lineColor: '#5E5E5E',
+                secondaryColor: '#006100',
+                tertiaryColor: '#fff',
+                background: '#0a0a0a',
+                mainBkg: '#1a1a1a',
+                secondBkg: '#2a2a2a',
+                tertiaryBkg: '#3a3a3a'
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>OncoScope Architecture Diagrams</h1>
+        
+        <div class="diagram-grid">
+            <div class="diagram-card">
+                <h2>System Architecture Overview</h2>
+                <p>Complete system architecture showing Frontend, Backend, Data, and AI layers</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph TB
+                            A[Electron] --> B[FastAPI]
+                            B --> C[SQLite]
+                            B --> D[Ollama/Gemma 3n]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="01_system_architecture.mmd">Mermaid</a>
+                    <a href="01_system_architecture.svg">SVG</a>
+                    <a href="01_system_architecture.png">PNG</a>
+                </div>
+            </div>
+            
+            <div class="diagram-card">
+                <h2>Data Flow Pipeline</h2>
+                <p>End-to-end data processing from user input to clinical recommendations</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph LR
+                            A[Input] --> B[Process]
+                            B --> C[Analyze]
+                            C --> D[Output]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="02_data_flow_pipeline.mmd">Mermaid</a>
+                    <a href="02_data_flow_pipeline.svg">SVG</a>
+                    <a href="02_data_flow_pipeline.png">PNG</a>
+                </div>
+            </div>
+            
+            <div class="diagram-card">
+                <h2>AI Model Architecture</h2>
+                <p>Gemma 3n 2B parameter model with LoRA fine-tuning details</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph TD
+                            A[Input] --> B[Gemma 3n]
+                            B --> C[LoRA]
+                            C --> D[Output]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="03_ai_model_architecture.mmd">Mermaid</a>
+                    <a href="03_ai_model_architecture.svg">SVG</a>
+                    <a href="03_ai_model_architecture.png">PNG</a>
+                </div>
+            </div>
+            
+            <div class="diagram-card">
+                <h2>Technology Stack</h2>
+                <p>Comprehensive technology stack from presentation to infrastructure</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph TB
+                            A[Electron] --> B[FastAPI]
+                            B --> C[Business Logic]
+                            C --> D[Data + AI]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="04_technology_stack.mmd">Mermaid</a>
+                    <a href="04_technology_stack.svg">SVG</a>
+                    <a href="04_technology_stack.png">PNG</a>
+                </div>
+            </div>
+            
+            <div class="diagram-card">
+                <h2>Microservices Communication</h2>
+                <p>Service architecture and inter-service communication patterns</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph TD
+                            A[Client] --> B[Gateway]
+                            B --> C[Services]
+                            C --> D[External]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="05_microservices_communication.mmd">Mermaid</a>
+                    <a href="05_microservices_communication.svg">SVG</a>
+                    <a href="05_microservices_communication.png">PNG</a>
+                </div>
+            </div>
+            
+            <div class="diagram-card">
+                <h2>Deployment Architecture</h2>
+                <p>From development to production deployment across platforms</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph TB
+                            A[Dev] --> B[Build]
+                            B --> C[Distribute]
+                            C --> D[Deploy]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="06_deployment_architecture.mmd">Mermaid</a>
+                    <a href="06_deployment_architecture.svg">SVG</a>
+                    <a href="06_deployment_architecture.png">PNG</a>
+                </div>
+            </div>
+            
+            <div class="diagram-card">
+                <h2>Mutation Analysis Pipeline</h2>
+                <p>Detailed mutation processing workflow with AI enhancement</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph TD
+                            A[Parse] --> B[Lookup]
+                            B --> C[AI]
+                            C --> D[Report]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="07_mutation_analysis_pipeline.mmd">Mermaid</a>
+                    <a href="07_mutation_analysis_pipeline.svg">SVG</a>
+                    <a href="07_mutation_analysis_pipeline.png">PNG</a>
+                </div>
+            </div>
+            
+            <div class="diagram-card">
+                <h2>Security Architecture</h2>
+                <p>Privacy-first design with local processing and data protection</p>
+                <div class="diagram-preview">
+                    <div class="mermaid">
+                        %%{init: {'theme':'dark'}}%%
+                        graph TD
+                            A[Validate] --> B[Secure]
+                            B --> C[Protect]
+                            C --> D[Audit]
+                    </div>
+                </div>
+                <div class="diagram-links">
+                    <a href="08_security_architecture.mmd">Mermaid</a>
+                    <a href="08_security_architecture.svg">SVG</a>
+                    <a href="08_security_architecture.png">PNG</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>OncoScope Architecture Diagrams - Google Gemma AI Hackathon 2024</p>
+            <p>Built with Electron, FastAPI, and Gemma 3n</p>
+        </div>
+    </div>
+</body>
+</html>

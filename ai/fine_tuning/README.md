@@ -101,7 +101,7 @@ The expert dataset achieves:
 - **73.2% Tier 1 actionable** (FDA-approved therapies available)
 - **Real-world verification** (COSMIC + FDA + TCGA validated)
 
-## Competition Advantages
+## Dataset Facts
 
 ### 🏆 Highest Quality Data
 - Expert panel validated mutations

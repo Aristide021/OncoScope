@@ -1,0 +1,70 @@
+graph TD
+    subgraph "Input Processing"
+        A[Mutation Input<br/>EGFR:c.2573T>G]
+        B[Parse Gene Symbol]
+        C[Parse Variant]
+        D[Validate Format]
+    end
+    
+    subgraph "Database Enrichment"
+        E[COSMIC Lookup]
+        F[Known Pathogenicity]
+        G[Cancer Associations]
+        H[Drug Targets]
+    end
+    
+    subgraph "AI Enhancement"
+        I[Generate Prompt]
+        J[Ollama API Call]
+        K[Gemma 3n Inference]
+        L[Parse JSON Response]
+    end
+    
+    subgraph "Risk Assessment"
+        M[Pathogenicity Score]
+        N[Clinical Significance]
+        O[Composite Risk]
+        P[Confidence Metrics]
+    end
+    
+    subgraph "Clinical Output"
+        Q[Treatment Options]
+        R[Prognosis Impact]
+        S[Clinical Recommendations]
+        T[Structured Report]
+    end
+    
+    A --> B
+    A --> C
+    B --> D
+    C --> D
+    
+    D --> E
+    E --> F
+    E --> G
+    E --> H
+    
+    D --> I
+    I --> J
+    J --> K
+    K --> L
+    
+    F --> M
+    G --> M
+    L --> M
+    M --> N
+    N --> O
+    O --> P
+    
+    H --> Q
+    L --> Q
+    O --> R
+    P --> S
+    Q --> T
+    R --> T
+    S --> T
+    
+    style A fill:#FF6B6B,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style K fill:#4ECDC4,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style O fill:#95E1D3,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style T fill:#C7CEEA,stroke:#ffffff,stroke-width:2px,color:#ffffff

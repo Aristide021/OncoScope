@@ -1,0 +1,44 @@
+graph TD
+    subgraph "Client Layer"
+        CLIENT[Electron App]
+    end
+    
+    subgraph "API Gateway"
+        GW[FastAPI Gateway<br/>:8000]
+    end
+    
+    subgraph "Core Services"
+        MS1[Mutation Analyzer Service]
+        MS2[Database Service]
+        MS3[AI Inference Service]
+        MS4[Risk Scoring Service]
+        MS5[Clinical Recommendation Service]
+    end
+    
+    subgraph "External Services"
+        OLLAMA[Ollama Server<br/>:11434]
+        DB[(SQLite Database)]
+    end
+    
+    CLIENT -->|HTTP/REST| GW
+    
+    GW -->|/analyze/mutations| MS1
+    GW -->|/health| MS2
+    GW -->|/analysis/status| MS1
+    
+    MS1 -->|Parse & Validate| MS1
+    MS1 -->|Query Mutations| MS2
+    MS1 -->|AI Analysis| MS3
+    MS1 -->|Calculate Risk| MS4
+    MS1 -->|Generate Report| MS5
+    
+    MS2 -->|SQL Queries| DB
+    MS3 -->|HTTP API| OLLAMA
+    
+    MS4 -->|Risk Data| MS1
+    MS5 -->|Recommendations| MS1
+    
+    style CLIENT fill:#4ECDC4,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style GW fill:#FF6B6B,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style MS1 fill:#95E1D3,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style OLLAMA fill:#C7CEEA,stroke:#ffffff,stroke-width:2px,color:#ffffff

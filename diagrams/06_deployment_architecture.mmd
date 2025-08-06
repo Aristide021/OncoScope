@@ -1,0 +1,57 @@
+graph TB
+    subgraph "Development Environment"
+        DEV1[Developer Machine]
+        DEV2[Python 3.11+]
+        DEV3[Node.js 18+]
+        DEV4[Ollama CLI]
+        DEV5[Git Repository]
+    end
+    
+    subgraph "Build Process"
+        BUILD1[npm run build]
+        BUILD2[PyInstaller]
+        BUILD3[Electron Builder]
+        BUILD4[Model Bundling]
+    end
+    
+    subgraph "Distribution"
+        DIST1[macOS .dmg]
+        DIST2[Windows .exe]
+        DIST3[Linux .AppImage]
+        DIST4[Bundled Dependencies]
+    end
+    
+    subgraph "End User Environment"
+        USER1[Desktop Application]
+        USER2[Local Backend]
+        USER3[Embedded Ollama]
+        USER4[Offline Operation]
+    end
+    
+    DEV1 --> DEV2
+    DEV1 --> DEV3
+    DEV1 --> DEV4
+    DEV1 --> DEV5
+    
+    DEV5 --> BUILD1
+    BUILD1 --> BUILD2
+    BUILD2 --> BUILD3
+    BUILD3 --> BUILD4
+    
+    BUILD4 --> DIST1
+    BUILD4 --> DIST2
+    BUILD4 --> DIST3
+    BUILD4 --> DIST4
+    
+    DIST1 --> USER1
+    DIST2 --> USER1
+    DIST3 --> USER1
+    
+    USER1 --> USER2
+    USER2 --> USER3
+    USER3 --> USER4
+    
+    style DEV1 fill:#2E86AB,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style BUILD3 fill:#F24236,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style DIST1 fill:#F6AE2D,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style USER1 fill:#2F4858,stroke:#ffffff,stroke-width:2px,color:#ffffff

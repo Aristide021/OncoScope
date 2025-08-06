@@ -1,0 +1,53 @@
+graph TD
+    subgraph "Security Layers"
+        A[Input Validation]
+        B[Data Sanitization]
+        C[Local Processing Only]
+        D[No Cloud Dependencies]
+    end
+    
+    subgraph "Privacy Protection"
+        E[No PHI Storage]
+        F[Session-Based Memory]
+        G[Automatic Data Cleanup]
+        H[HIPAA Compliant Design]
+    end
+    
+    subgraph "Access Control"
+        I[Local Authentication]
+        J[File System Permissions]
+        K[Process Isolation]
+        L[Secure IPC]
+    end
+    
+    subgraph "Data Security"
+        M[Encrypted Communication]
+        N[Secure Model Storage]
+        O[Protected Databases]
+        P[Audit Logging]
+    end
+    
+    A --> B
+    B --> C
+    C --> D
+    
+    E --> F
+    F --> G
+    G --> H
+    
+    I --> J
+    J --> K
+    K --> L
+    
+    M --> N
+    N --> O
+    O --> P
+    
+    D --> E
+    H --> I
+    L --> M
+    
+    style A fill:#E63946,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style E fill:#F77F00,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style I fill:#06BCC1,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style M fill:#7209B7,stroke:#ffffff,stroke-width:2px,color:#ffffff

@@ -408,11 +408,7 @@ class OncoScopeApp {
                             if (status.progress !== undefined && status.message) {
                                 this.updateProgress(status.progress, status.message);
                                 
-                                // Update steps based on progress
-                                if (status.progress >= 25) this.activateStep('parsing');
-                                if (status.progress >= 50) this.activateStep('database');
-                                if (status.progress >= 75) this.activateStep('ai');
-                                if (status.progress >= 90) this.activateStep('report');
+                                // Steps removed - using loading animation instead
                             }
                             
                             // Check if analysis failed
@@ -429,12 +425,17 @@ class OncoScopeApp {
             
             // Complete progress
             this.updateProgress(100, 'Analysis complete! Generating clinical recommendations...');
-            this.activateStep('report');
             
             // Clear status polling since analysis is complete
             if (statusPollInterval) {
                 clearInterval(statusPollInterval);
                 statusPollInterval = null;
+            }
+            
+            // Clear fact rotation interval
+            if (this.factInterval) {
+                clearInterval(this.factInterval);
+                this.factInterval = null;
             }
             
             // Show results after brief delay
@@ -468,7 +469,7 @@ class OncoScopeApp {
     
     startProgress() {
         // Initialize progress display
-        this.updateProgress(0, 'Initializing OncoScope cancer genomics analysis...');
+        this.showCancerFacts();
         
         // Clear all step states
         Object.values(this.elements.steps).forEach(step => {
@@ -476,9 +477,70 @@ class OncoScopeApp {
         });
     }
     
+    showCancerFacts() {
+        const facts = [
+            {
+                title: "Did you know?",
+                text: "Precision oncology has improved 5-year survival rates by up to 30% for certain cancer types through targeted therapies."
+            },
+            {
+                title: "Genomic Insight",
+                text: "Over 400 genes have been identified as cancer drivers, with TP53 being mutated in over 50% of all cancers."
+            },
+            {
+                title: "AI in Oncology",
+                text: "Machine learning models can now predict drug response with 85% accuracy by analyzing mutation patterns."
+            },
+            {
+                title: "Personalized Medicine",
+                text: "Each tumor has an average of 4-5 driver mutations, making personalized treatment strategies essential."
+            },
+            {
+                title: "Clinical Impact",
+                text: "Targeted therapies based on genetic mutations have response rates 3x higher than traditional chemotherapy."
+            },
+            {
+                title: "Early Detection",
+                text: "Liquid biopsies can detect cancer mutations up to 4 years before traditional diagnostic methods."
+            },
+            {
+                title: "Treatment Evolution",
+                text: "Over 200 targeted cancer drugs have been approved since 2000, revolutionizing precision oncology."
+            },
+            {
+                title: "Mutation Analysis",
+                text: "OncoScope uses fine-tuned Gemma 3n to analyze complex mutation interactions and provide personalized insights."
+            }
+        ];
+        
+        let factIndex = 0;
+        const factElement = document.getElementById('cancer-fact');
+        
+        const showNextFact = () => {
+            const fact = facts[factIndex];
+            factElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                factElement.innerHTML = `
+                    <div class="cancer-fact-title">${fact.title}</div>
+                    <div>${fact.text}</div>
+                `;
+                factElement.style.opacity = '1';
+            }, 400);
+            
+            factIndex = (factIndex + 1) % facts.length;
+        };
+        
+        // Show first fact immediately
+        showNextFact();
+        
+        // Rotate facts every 6 seconds
+        this.factInterval = setInterval(showNextFact, 6000);
+    }
+    
     updateProgress(percent, message) {
-        this.elements.progressFill.style.width = `${percent}%`;
-        this.elements.progressText.textContent = message;
+        // Progress bar removed - using loading animation instead
+        console.log(`Progress: ${percent}% - ${message}`);
     }
     
     activateStep(stepName) {

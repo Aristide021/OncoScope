@@ -420,6 +420,86 @@ body {
     font-size: 0.875rem;
 }
 
+/* Loading Animation */
+.loading-container {
+    text-align: center;
+    padding: 60px 0;
+}
+
+.dna-loader {
+    display: inline-block;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 30px;
+}
+
+.dna-loader div {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    animation: dna-spin 2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.dna-loader div:nth-child(1) { animation-delay: -0.036s; top: 50px; left: 85px; }
+.dna-loader div:nth-child(2) { animation-delay: -0.072s; top: 30px; left: 80px; }
+.dna-loader div:nth-child(3) { animation-delay: -0.108s; top: 15px; left: 65px; }
+.dna-loader div:nth-child(4) { animation-delay: -0.144s; top: 10px; left: 45px; }
+.dna-loader div:nth-child(5) { animation-delay: -0.18s; top: 15px; left: 25px; }
+.dna-loader div:nth-child(6) { animation-delay: -0.216s; top: 30px; left: 15px; }
+.dna-loader div:nth-child(7) { animation-delay: -0.252s; top: 50px; left: 10px; }
+.dna-loader div:nth-child(8) { animation-delay: -0.288s; top: 70px; left: 15px; }
+.dna-loader div:nth-child(9) { animation-delay: -0.324s; top: 85px; left: 25px; }
+.dna-loader div:nth-child(10) { animation-delay: -0.36s; top: 90px; left: 45px; }
+.dna-loader div:nth-child(11) { animation-delay: -0.396s; top: 85px; left: 65px; }
+.dna-loader div:nth-child(12) { animation-delay: -0.432s; top: 70px; left: 80px; }
+
+@keyframes dna-spin {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(180deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0) rotate(360deg);
+    }
+}
+
+.loading-text {
+    font-size: 1.4em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.cancer-fact {
+    font-size: 1em;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 20px;
+    padding: 0 20px;
+    min-height: 80px;
+    transition: opacity 0.4s ease;
+}
+
+.cancer-fact-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .progress-steps {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

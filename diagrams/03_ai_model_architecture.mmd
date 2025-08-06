@@ -1,0 +1,56 @@
+graph TD
+    subgraph "Input Layer"
+        A[Gene Symbol]
+        B[Variant Notation]
+        C[Patient Context]
+        D[Clustering Context]
+    end
+    
+    subgraph "Gemma 3n Model - 2B Parameters"
+        E[Tokenization Layer]
+        F[Embedding Layer<br/>2048 dimensions]
+        G[Multi-Head Attention<br/>18 layers]
+        H[Feed Forward Network]
+        I[Layer Normalization]
+        J[Output Projection]
+    end
+    
+    subgraph "Fine-Tuning Layer"
+        K[LoRA Adapters<br/>Rank 16]
+        L[COSMIC Training Data<br/>28,000 samples]
+        M[Task-Specific Heads]
+    end
+    
+    subgraph "Output Processing"
+        N[JSON Decoder]
+        O[Structured Output]
+        P[Confidence Scores]
+        Q[Clinical Insights]
+    end
+    
+    A --> E
+    B --> E
+    C --> E
+    D --> E
+    
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> J
+    
+    G --> K
+    K --> G
+    L --> K
+    K --> M
+    
+    J --> N
+    M --> N
+    N --> O
+    N --> P
+    N --> Q
+    
+    style E fill:#FF6B6B,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style G fill:#4ECDC4,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style K fill:#95E1D3,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style O fill:#C7CEEA,stroke:#ffffff,stroke-width:2px,color:#ffffff

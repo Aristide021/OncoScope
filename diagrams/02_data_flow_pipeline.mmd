@@ -1,0 +1,56 @@
+graph LR
+    subgraph "Input Stage"
+        A[User Input]
+        B[Patient Context]
+        C[Mutation List]
+    end
+    
+    subgraph "Processing Stage"
+        D[Mutation Parser]
+        E[Validation Engine]
+        F[Database Lookup]
+        G[AI Analysis]
+        H[Clustering Analysis]
+    end
+    
+    subgraph "Analysis Stage"
+        I[Risk Calculation]
+        J[Drug Matching]
+        K[Pathway Analysis]
+        L[Clinical Recommendations]
+    end
+    
+    subgraph "Output Stage"
+        M[JSON Response]
+        N[Clinical Report]
+        O[Risk Visualization]
+        P[Treatment Options]
+    end
+    
+    A --> D
+    B --> D
+    C --> D
+    
+    D --> E
+    E --> F
+    F --> G
+    E --> H
+    
+    G --> I
+    H --> I
+    G --> J
+    G --> K
+    
+    I --> L
+    J --> L
+    K --> L
+    
+    L --> M
+    M --> N
+    M --> O
+    M --> P
+    
+    style A fill:#4ECDC4,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style G fill:#FF6B6B,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style I fill:#95E1D3,stroke:#ffffff,stroke-width:2px,color:#ffffff
+    style N fill:#C7CEEA,stroke:#ffffff,stroke-width:2px,color:#ffffff
