@@ -1,0 +1,23 @@
+# OncoScope Demo: Hereditary Cancer Risk Assessment
+# Patient with germline mutations from genetic counseling report
+
+BRCA1:c.68_69delAG
+BRCA1:p.Glu23ValfsTer17
+BRCA2:c.5946delT
+BRCA2:p.Ser1982ArgfsTer22
+MSH2:c.2038C>T
+MSH2:p.Arg680Ter
+MLH1:c.1558C>T
+MLH1:p.Arg520Ter
+APC:c.3927_3931delAAAGA
+APC:p.Glu1309AspfsTer4
+PTEN:c.388C>T
+PTEN:p.Arg130Ter
+PALB2:c.1592delT
+PALB2:p.Leu531ArgfsTer46
+CHEK2:c.1100delC
+CHEK2:p.Thr367MetfsTer15
+RAD51D:c.270_271delTG
+RAD51D:p.Cys91ValfsTer13
+VHL:c.482G>A
+VHL:p.Arg161Gln

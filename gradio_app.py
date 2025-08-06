@@ -20,7 +20,7 @@ EXAMPLE_MUTATIONS = {
     "Single Mutation": ["BRAF c.1799T>A"]
 }
 
-def analyze_mutations(mutations_text, patient_age, patient_gender, cancer_type):
+def analyze_mutations(mutations_text, patient_age, patient_gender, cancer_type, diagnosis):
     """Send mutations to OncoScope API for analysis"""
     
     # Parse mutations (one per line)
@@ -35,7 +35,8 @@ def analyze_mutations(mutations_text, patient_age, patient_gender, cancer_type):
         "patient_info": {
             "age": int(patient_age) if patient_age else 50,
             "gender": patient_gender.lower(),
-            "cancer_type": cancer_type.lower()
+            "cancer_type": cancer_type.lower(),
+            "diagnosis": diagnosis.strip() if diagnosis else None
         }
     }
     
@@ -160,7 +161,10 @@ with gr.Blocks(title="OncoScope - Molecular Tumor Board in a Box", theme=gr.them
     - 🔬 Pathogenicity assessment using ACMG/AMP guidelines
     - 💊 Targeted therapy recommendations
     - 🧪 Multi-mutation clustering analysis
+    - 🎯 Context-aware analysis based on patient's diagnosis
     - 🔒 Complete privacy - all analysis runs locally
+    
+    **Powered by Gemma 3n E4B** - Fine-tuned on 5,998 cancer genomics examples
     """)
     
     with gr.Row():
@@ -178,6 +182,12 @@ with gr.Blocks(title="OncoScope - Molecular Tumor Board in a Box", theme=gr.them
                 label="Cancer Type",
                 value="breast",
                 placeholder="e.g., breast, lung, colorectal"
+            )
+            
+            diagnosis = gr.Textbox(
+                label="Current Diagnosis (Optional)",
+                placeholder="e.g., Stage II breast adenocarcinoma, NSCLC, etc.",
+                info="Helps AI analyze mutations in context of existing diagnosis"
             )
             
             # Mutation Input
@@ -218,7 +228,7 @@ with gr.Blocks(title="OncoScope - Molecular Tumor Board in a Box", theme=gr.them
     # Connect the analyze button
     analyze_btn.click(
         fn=analyze_mutations,
-        inputs=[mutations_input, patient_age, patient_gender, cancer_type],
+        inputs=[mutations_input, patient_age, patient_gender, cancer_type, diagnosis],
         outputs=[summary_output, mutations_table, clustering_output]
     )
     

@@ -191,7 +191,7 @@ async def analyze_file(file: UploadFile = File(...)):
     """Analyze mutations from uploaded file"""
     try:
         # Validate file type
-        allowed_extensions = ['.vcf', '.csv', '.txt', '.json']
+        allowed_extensions = ['.csv', '.txt', '.json']
         file_ext = '.' + file.filename.split('.')[-1].lower()
         
         if file_ext not in allowed_extensions:
@@ -435,7 +435,7 @@ def parse_mutation_file(content: str, file_type: str) -> List[str]:
             except:
                 pass
         else:
-            # Simple parsing for CSV/TXT/VCF
+            # Simple parsing for CSV/TXT files with HGVS notation
             # Look for patterns like GENE:variant
             import re
             match = re.search(r'([A-Z0-9]+)[:_\s]+([cp]\.[A-Z0-9>]+)', line, re.IGNORECASE)

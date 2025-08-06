@@ -29,8 +29,8 @@ graph TB
     
     subgraph "AI Integration Layer"
         Q[Ollama API Client]
-        R[Gemma 3n 2B Model]
-        S[LoRA Fine-tuning]
+        R[Gemma 3n E4B Model<br/>MatFormer Architecture]
+        S[LoRA Fine-tuning<br/>Rank 32 via Unsloth]
         T[JSON Schema Validation]
     end
     

@@ -6,18 +6,18 @@ graph TD
         D[Clustering Context]
     end
     
-    subgraph "Gemma 3n Model - 2B Parameters"
+    subgraph "Gemma 3n E4B - MatFormer Architecture"
         E[Tokenization Layer]
-        F[Embedding Layer<br/>2048 dimensions]
-        G[Multi-Head Attention<br/>18 layers]
+        F[Embedding Layer<br/>Per-Layer Embeddings - PLE]
+        G[Multi-Query Attention - MQA<br/>8 heads, 256 dim K/V]
         H[Feed Forward Network]
         I[Layer Normalization]
         J[Output Projection]
     end
     
     subgraph "Fine-Tuning Layer"
-        K[LoRA Adapters<br/>Rank 16]
-        L[COSMIC Training Data<br/>28,000 samples]
+        K[LoRA Adapters<br/>Rank 32]
+        L[Mixed Training Data<br/>5,998 samples<br/>ClinVar + COSMIC + Expert]
         M[Task-Specific Heads]
     end
     

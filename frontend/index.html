@@ -38,7 +38,7 @@
         <main class="main-content">
             <!-- File Upload Section -->
             <section id="upload-section" class="card">
-                <h2>Upload Mutation Data</h2>
+                <h2>Enter Patient Mutations</h2>
                 <div class="upload-area" id="upload-area">
                     <div class="upload-placeholder">
                         <svg class="upload-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -46,9 +46,9 @@
                             <path d="M20 18H4V11H2V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V11H20V18Z" fill="#6b7280"/>
                         </svg>
                         <p>Drop mutation file here or click to upload</p>
-                        <p class="upload-hint">Supports: VCF, CSV, TXT formats</p>
+                        <p class="upload-hint">Supports: HGVS notation (TXT, CSV formats)</p>
                     </div>
-                    <input type="file" id="file-input" accept=".vcf,.csv,.txt,.json" hidden>
+                    <input type="file" id="file-input" accept=".csv,.txt,.json" hidden>
                 </div>
                 
                 <!-- Patient Information -->

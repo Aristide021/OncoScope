@@ -1,0 +1,27 @@
+# OncoScope Demo: Comprehensive Cancer Panel
+# Patient with extensive mutations from tumor genomic profiling report
+
+TP53:c.818G>A
+TP53:p.Arg273His
+BRAF:c.1799T>A
+BRAF:p.Val600Glu
+JAK2:c.1849G>T
+JAK2:p.Val617Phe
+PTEN:c.697C>T
+PTEN:p.Arg233Ter
+HRAS:c.181C>A
+HRAS:p.Gln61Lys
+KRAS:c.35G>A
+KRAS:p.Gly12Asp
+BRCA2:c.9097C>T
+BRCA2:p.Gln3033Ter
+BRCA1:c.68_69delAG
+BRCA1:p.Glu23ValfsTer17
+STK11:c.659G>A
+STK11:p.Arg220Gln
+ARID1A:c.4663C>T
+ARID1A:p.Gln1555Ter
+IDH1:c.395G>A
+IDH1:p.Arg132His
+ATR:c.2101G>A
+ATR:p.Asp701Asn

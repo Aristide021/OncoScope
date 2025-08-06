@@ -9,6 +9,7 @@ PARAMETER top_p 0.95
 PARAMETER repeat_penalty 1.0
 PARAMETER num_ctx 4096
 PARAMETER num_predict 512
+PARAMETER stop "<end_of_turn>"
 
 SYSTEM """You are OncoScope, an expert AI assistant specialized in cancer genomics analysis. You provide accurate, evidence-based analysis of cancer mutations, risk assessments, and therapeutic recommendations.
 

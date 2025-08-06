@@ -55,12 +55,7 @@ class OncoScopeApp {
             // Progress elements
             progressFill: document.getElementById('progress-fill'),
             progressText: document.getElementById('progress-text'),
-            steps: {
-                parsing: document.getElementById('step-1'),
-                database: document.getElementById('step-2'),
-                ai: document.getElementById('step-3'),
-                report: document.getElementById('step-4')
-            },
+            // Steps removed - using DNA loading animation instead
             
             // Results elements
             overallRiskScore: document.getElementById('overall-risk-score'),
@@ -471,10 +466,7 @@ class OncoScopeApp {
         // Initialize progress display
         this.showCancerFacts();
         
-        // Clear all step states
-        Object.values(this.elements.steps).forEach(step => {
-            step.classList.remove('active');
-        });
+        // Steps removed - using DNA loading animation instead
     }
     
     showCancerFacts() {
@@ -879,10 +871,7 @@ class OncoScopeApp {
         this.elements.progressSection.classList.add('hidden');
         this.elements.resultsSection.classList.add('hidden');
         
-        // Reset progress steps
-        Object.values(this.elements.steps).forEach(step => {
-            step.classList.remove('active');
-        });
+        // Steps removed - using DNA loading animation instead
         
         // Show requested section
         switch (section) {
