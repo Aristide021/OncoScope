@@ -280,18 +280,9 @@ flake8 backend/
 - [ ] Real-time clinical trial matching
 - [ ] Multi-language support
 
-## 🏆 Why OncoScope Wins
-
-1. **🎯 Solves Real Problem**: Addresses critical healthcare need
-2. **🧠 Advanced AI**: Leverages Gemma 3n's full potential
-3. **💡 Innovation**: First to combine multi-mutation analysis with Gemma
-4. **🚀 Market Ready**: Complete solution, not just a prototype
-5. **🌍 Global Impact**: Democratizes precision oncology
-
 ## 📞 Contact & Demo
 
-- **Demo Video**: [Watch on YouTube](https://youtube.com/demo)
-- **Live Demo**: [Schedule a session](https://calendly.com/oncoscope)
+- **Demo Video**: [Watch on YouTube](https://www.youtube.com/watch?v=bXMfIblP26s)
 - **Email**: aristide021@gmail.com
 
 ## 📄 License
