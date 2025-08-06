@@ -496,14 +496,35 @@ class OncoScopeApp {
             return;
         }
         
+        // Set timestamp
+        const timestamp = new Date().toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('analysis-timestamp').textContent = timestamp;
+        
         // Update overall risk score with animation
         const riskScore = analysis.overall_risk_score || 0;
         console.log('Risk score:', riskScore);
         this.animateRiskScore(riskScore);
         
-        // Update risk classification
+        // Update risk classification with color coding
         this.elements.riskClassification.textContent = analysis.risk_classification;
+        this.elements.riskClassification.className = 'risk-label';
+        if (riskScore >= 0.7) {
+            this.elements.riskClassification.classList.add('risk-high');
+        } else if (riskScore >= 0.5) {
+            this.elements.riskClassification.classList.add('risk-medium');
+        } else {
+            this.elements.riskClassification.classList.add('risk-low');
+        }
         this.updateRiskColor(riskScore);
+        
+        // Show risk alert based on classification
+        this.showRiskAlert(analysis);
         
         // Update metrics
         this.elements.confidenceScore.textContent = 
@@ -612,6 +633,48 @@ class OncoScopeApp {
         
         this.elements.riskCircle.style.stroke = color;
         this.elements.overallRiskScore.style.color = color;
+    }
+    
+    showRiskAlert(analysis) {
+        const alertElement = document.getElementById('risk-summary-alert');
+        const mutationCountElement = document.getElementById('mutation-count');
+        
+        if (!alertElement) return;
+        
+        const riskScore = analysis.overall_risk_score || 0;
+        const riskLevel = analysis.risk_classification || 'LOW';
+        
+        // Count total mutations analyzed
+        const totalMutations = analysis.individual_mutations.length;
+        
+        // Count pathogenic mutations
+        const pathogenicCount = analysis.individual_mutations.filter(m => 
+            m.clinical_significance === 'PATHOGENIC' || 
+            m.clinical_significance === 'LIKELY_PATHOGENIC'
+        ).length;
+        
+        // Use total mutations if no pathogenic found (for uncertain variants)
+        const mutationCount = pathogenicCount > 0 ? pathogenicCount : totalMutations;
+        
+        // Update mutation count
+        mutationCountElement.textContent = mutationCount;
+        
+        // Remove all risk classes
+        alertElement.classList.remove('moderate-risk', 'low-risk', 'hidden');
+        
+        if (riskLevel === 'HIGH' || riskLevel === 'MEDIUM-HIGH') {
+            // Show high risk alert
+            alertElement.classList.remove('hidden');
+        } else if (riskLevel === 'MEDIUM' || riskLevel === 'LOW-MEDIUM') {
+            // Show moderate risk
+            alertElement.classList.remove('hidden');
+            alertElement.classList.add('moderate-risk');
+            alertElement.querySelector('.alert-title').textContent = 'MODERATE RISK PROFILE';
+            alertElement.querySelector('.alert-action').textContent = 'Schedule oncology consultation';
+        } else {
+            // Low risk - hide alert
+            alertElement.classList.add('hidden');
+        }
     }
     
     displayTumorPredictions(predictions) {
@@ -726,7 +789,7 @@ class OncoScopeApp {
             const recElement = document.createElement('div');
             recElement.className = 'recommendation-item';
             recElement.innerHTML = `
-                <div class="recommendation-icon">=�</div>
+                <div class="recommendation-icon">•</div>
                 <div class="recommendation-text">${rec}</div>
             `;
             this.elements.clinicalRecommendations.appendChild(recElement);
@@ -979,7 +1042,7 @@ class OncoScopeApp {
         document.getElementById('precision-score').textContent = `${(precisionScore * 100).toFixed(0)}%`;
         
         // Display pathway convergence
-        this.displayPathwayConvergence(multiMutationData.pathway_analysis);
+        this.displayPathwayConvergence(multiMutationData.pathway_analysis, multiMutationData.mutation_profile);
         
         // Display therapeutic strategies
         this.displayTherapeuticStrategies(multiMutationData.therapeutic_strategy);
@@ -988,7 +1051,7 @@ class OncoScopeApp {
         this.displayClinicalInterpretation(multiMutationData.comprehensive_interpretation);
     }
     
-    displayPathwayConvergence(pathwayAnalysis) {
+    displayPathwayConvergence(pathwayAnalysis, mutationProfile) {
         if (!pathwayAnalysis) return;
         
         const pathwayNetwork = document.getElementById('pathway-network');
@@ -1000,17 +1063,50 @@ class OncoScopeApp {
         
         // Display pathway nodes
         const disruptedPathways = pathwayAnalysis.disrupted_pathways || [];
-        const dominantPathways = pathwayAnalysis.dominant_pathways || [];
+        const dominantPathways = mutationProfile?.dominant_pathways || [];
         
-        // Create pathway visualization
+        // Create pathway visualization with network diagram
         if (dominantPathways.length > 0) {
-            dominantPathways.forEach((pathway, index) => {
-                const node = document.createElement('div');
-                node.className = 'pathway-node';
-                if (index === 0) node.classList.add('convergent'); // Highlight main convergent pathway
-                node.textContent = this.formatDisplayString(pathway);
-                pathwayNetwork.appendChild(node);
-            });
+            // Create a simple network visualization
+            const networkHTML = `
+                <div class="pathway-network-container">
+                    <svg viewBox="0 0 440 320" class="pathway-svg">
+                        <!-- Central node for mutations -->
+                        <circle cx="220" cy="160" r="40" fill="#2563eb" opacity="0.2" stroke="#2563eb" stroke-width="2"/>
+                        <text x="220" y="165" text-anchor="middle" class="mutation-count-text">${mutationProfile?.total_mutations || 0} Mutations</text>
+                        
+                        ${dominantPathways.map((pathway, index) => {
+                            const angle = (index * 2 * Math.PI) / dominantPathways.length - Math.PI / 2;
+                            const x = 220 + 110 * Math.cos(angle);
+                            const y = 160 + 110 * Math.sin(angle);
+                            const isConvergent = index === 0;
+                            
+                            return `
+                                <!-- Pathway node -->
+                                <line x1="220" y1="160" x2="${x}" y2="${y}" stroke="${isConvergent ? '#ef4444' : '#6b7280'}" stroke-width="${isConvergent ? '3' : '2'}" opacity="0.5"/>
+                                <circle cx="${x}" cy="${y}" r="35" fill="${isConvergent ? '#fef2f2' : '#f9fafb'}" stroke="${isConvergent ? '#ef4444' : '#6b7280'}" stroke-width="2"/>
+                                <text x="${x}" y="${y + 5}" text-anchor="middle" class="pathway-text ${isConvergent ? 'convergent' : ''}">${this.formatDisplayString(pathway)}</text>
+                            `;
+                        }).join('')}
+                    </svg>
+                    
+                    <div class="pathway-legend">
+                        <div class="legend-item">
+                            <span class="legend-color convergent"></span>
+                            <span>Primary Convergence</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color normal"></span>
+                            <span>Affected Pathway</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            pathwayNetwork.innerHTML = networkHTML;
+        } else {
+            // Fallback if no dominant pathways
+            pathwayNetwork.innerHTML = '<p class="no-pathway-data">No pathway convergence data available</p>';
         }
         
         // Display detailed pathway information

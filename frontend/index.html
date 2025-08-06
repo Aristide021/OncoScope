@@ -155,8 +155,23 @@
 
             <!-- Results Section -->
             <section id="results-section" class="card hidden">
+                <div class="professional-header">
+                    <h1 class="analysis-title">OncoScope™ Precision Oncology Analysis</h1>
+                    <p class="analysis-timestamp">Analysis performed: <span id="analysis-timestamp"></span></p>
+                </div>
+                
+                <!-- High Risk Summary Alert -->
+                <div id="risk-summary-alert" class="risk-alert hidden">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h3 class="alert-title">HIGH RISK PROFILE DETECTED</h3>
+                        <p class="alert-message"><span id="mutation-count">0</span> driver mutations with synergistic interactions</p>
+                        <p class="alert-action">Immediate oncology consultation required</p>
+                    </div>
+                </div>
+                
                 <div class="results-header">
-                    <h2>Cancer Genomics Analysis Results</h2>
+                    <h2>Comprehensive Analysis Report</h2>
                     <button id="new-analysis-button" class="secondary-button" aria-label="Start a new mutation analysis">New Analysis</button>
                 </div>
                 

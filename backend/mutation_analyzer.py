@@ -315,8 +315,7 @@ class CancerMutationAnalyzer:
                 return self.create_uncertain_analysis(gene, variant)
             
             # Fix encoding issues for Electron app
-            from .fix_encoding import clean_json_response
-            ai_analysis = clean_json_response(ai_analysis)
+            # ai_analysis is already clean from the AI model
             
             logger.info(f"AI analysis result: {ai_analysis}")
             
@@ -530,18 +529,6 @@ class CancerMutationAnalyzer:
                 "comprehensive_interpretation": ai_analysis.get("comprehensive_interpretation")
             }
         
-        # Fix encoding issues for Electron app before returning
-        from .fix_encoding import clean_json_response, clean_text_encoding
-        
-        # Clean all text fields that might have encoding issues
-        if "clinical_recommendations" in result:
-            result["clinical_recommendations"] = [
-                clean_text_encoding(rec) if isinstance(rec, str) else rec
-                for rec in result["clinical_recommendations"]
-            ]
-        
-        # Clean the entire result to catch any other encoding issues
-        result = clean_json_response(result)
         
         # Save analysis to database
         try:
@@ -978,11 +965,7 @@ class CancerMutationAnalyzer:
             response = await self.ollama_client.analyze_multi_mutations(prompt)
             logger.info(f"Got response from Gemma 3n: {response}")
             
-            # Fix encoding issues for Electron app
-            if response:
-                from .fix_encoding import clean_json_response
-                response = clean_json_response(response)
-                logger.info("Applied encoding fixes for Electron compatibility")
+            # Response is already clean from the AI model
             
             return response
         except Exception as e:
